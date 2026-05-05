@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTC Flow Miner</title>
+    <!-- استدعاء مكتبات Firebase -->
+    <script src="https://gstatic.com"></script>
+    <script src="https://gstatic.com"></script>
+    
+    <style>
+        :root { --main-color: #4a148c; --accent-color: #ff4081; --bg-color: #fce4ec; }
+        body { background-color: var(--bg-color); font-family: sans-serif; margin: 0; padding: 0; direction: rtl; }
+        .header { background: white; padding: 25px; border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        .balance { font-size: 32px; font-weight: bold; color: var(--accent-color); margin: 10px 0; }
+        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
+        .card { background: white; border-radius: 20px; padding: 15px; text-align: center; box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
+        .btn-mine { grid-column: span 2; background: linear-gradient(45deg, #00c853, #b2ff59); color: white; padding: 20px; border-radius: 20px; font-size: 20px; font-weight: bold; border: none; cursor: pointer; }
+        .btn-blue { background: #2196f3; color: white; border: none; padding: 10px; border-radius: 10px; width: 100%; cursor: pointer; }
+        .btn-orange { background: #ff9800; color: white; border: none; padding: 10px; border-radius: 10px; width: 100%; cursor: pointer; }
+        .btn-purple { grid-column: span 2; background: var(--main-color); color: white; border: none; padding: 12px; border-radius: 15px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div style="color: #888;">إجمالي الرصيد (BTC)</div>
+    <div class="balance" id="btc-balance">0.000000000000</div>
+    <div style="font-size: 12px; color: #666;">سعر السوق الحالي: $64,200</div>
+</div>
+
+<div class="main-grid">
+    <button class="btn-mine" id="mine-btn" onclick="startMining()">⚡ ابدأ التعدين الآن</button>
+    
+    <div class="card">
+        <div>📺</div>
+        <b>مشاهدة إعلان</b>
+        <button class="btn-blue" onclick="alert('اربطه بـ Admob لاحقاً')">مشاهدة</button>
+    </div>
+
+    <div class="card">
+        <div>🛒</div>
+        <b>متجر القوة</b>
+        <button class="btn-orange" onclick="alert('قريباً: شراء Gh/s')">شراء</button>
+    </div>
+
+    <button class="btn-purple" onclick="alert('الحد الأدنى للسحب 0.005 BTC')">طلب سحب الأرباح 💰</button>
+</div>
+
+<script>
+    // بيانات الربط بمشروعك BTC Flow (من صورتك السابقة)
+    const firebaseConfig = {
+        apiKey: "AIzaSyCPC3sataoP06zEjA0ryOq9Gj5smFau0vo",
+        authDomain: "://firebaseapp.com",
+        databaseURL: "https://firebaseio.com",
+        projectId: "btc-flow-e6768",
+        appId: "1:863164678519:web:30bb2cef0d6eb9a3f56172"
+    };
+
+    // تشغيل النظام
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const userId = "user_1214834"; 
+    let currentBal = 0;
+
+    // جلب الرصيد فور فتح الصفحة لكي لا يصفر
+    db.ref('users/' + userId).on('value', (snapshot) => {
+        if (snapshot.exists()) {
+            currentBal = snapshot.val().balance;
+            document.getElementById('btc-balance').innerText = currentBal.toFixed(12);
+        }
+    });
+
+    function startMining() {
+        document.getElementById('mine-btn').innerText = "⌛ جاري التعدين...";
+        document.getElementById('mine-btn').disabled = true;
+        document.getElementById('mine-btn').style.background = "#aaa";
+
+        setInterval(() => {
+            currentBal += 0.000000000250;
+            document.getElementById('btc-balance').innerText = currentBal.toFixed(12);
+            
+            // حفظ الرصيد في السيرفر كل 3 ثوانٍ
+            db.ref('users/' + userId).set({
+                balance: currentBal
+            });
+        }, 3000);
+    }
+</script>
+
+</body>
+</html>
