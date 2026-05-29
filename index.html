@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BTC Flow Miner</title>
     
-    <!-- استدعاء مكتبات Firebase الصحيحة لضمان عمل الموقع -->
-    <script src="https://gstatic.com"></script>
-    <script src="https://gstatic.com"></script>
-    
     <style>
         :root { --main-color: #4a148c; --accent-color: #ff4081; --bg-color: #fce4ec; }
         body { background-color: var(--bg-color); font-family: sans-serif; margin: 0; padding: 0; direction: rtl; }
@@ -31,67 +27,41 @@
 </div>
 
 <div class="main-grid">
-    <!-- الزر يبدأ التعدين فور الضغط عليه -->
     <button class="btn-mine" id="mine-btn" onclick="startMining()">⚡ ابدأ التعدين الآن</button>
     <div class="card"><div>📺</div><b>مشاهدة إعلان</b><button class="btn-blue" onclick="alert( سيتم ربطه بـ Admob لاحقاً )">مشاهدة</button></div>
     <div class="card"><div>🛒</div><b>متجر القوة</b><button class="btn-orange" onclick="alert( قريباً )">شراء</button></div>
 </div>
 
 <script>
-    // إعدادات قاعدة بيانات Firebase الخاصة بك
-    const firebaseConfig = {
-        apiKey: "AIzaSyCPC3sataoP06zEjA0ryOq9Gj5smFau0vo",
-        authDomain: "://firebaseapp.com",
-        databaseURL: "https://firebaseio.com",
-        projectId: "btc-flow-e6768",
-        appId: "1:863164678519:web:30bb2cef0d6eb9a3f56172"
-    };
+    // استخدام الذاكرة المحلية بدلاً من Firebase لضمان عمل العداد 100%
+    let currentBal = parseFloat(localStorage.getItem( btc_balance )) || 0;
+    document.getElementById( btc-balance ).innerText = currentBal.toFixed(12);
 
-    // تهيئة نظام Firebase
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
-    
-    const db = firebase.database();
-    const userId = "user_1214834"; 
-    let currentBal = 0;
     let miningInterval;
 
-    // جلب الرصيد الحالي المخزن في السيرفر وتحديثه على الشاشة فوراً عند فتح الموقع
-    db.ref( users/  + userId).on( value , (snapshot) => {
-        if (snapshot.exists()) {
-            currentBal = snapshot.val().balance || 0;
-            document.getElementById( btc-balance ).innerText = currentBal.toFixed(12);
-        }
-    });
-
-    // دالة بدء التعدين بعد الضغط مباشرة
     window.startMining = function() {
         const btn = document.getElementById( mine-btn );
-        let duration = 60; // مدة التعدين بالثواني (دقيقة واحدة لكل ضغطة)
+        let duration = 60; // مدة التعدين بالثواني
 
-        btn.disabled = true; // تعطيل الزر لمنع الضغط المتكرر
+        btn.disabled = true;
 
-        // تشغيل العداد والتعدين الفوري
         miningInterval = setInterval(() => {
             if (duration > 0) {
-                // 1. زيادة الرصيد بمقدار صغير جداً كل ثانية
-                currentBal += 0.000000000083; 
+                // زيادة الرصيد وتحديث الواجهة
+                currentBal += 0.000000000250; 
                 document.getElementById( btc-balance ).innerText = currentBal.toFixed(12);
                 
-                // 2. تحديث الرصيد الجديد في قاعدة البيانات (Firebase) [1]
-                db.ref( users/  + userId).set({ balance: currentBal });
+                // حفظ الرصيد الجديد في ذاكرة الهاتف
+                localStorage.setItem( btc_balance , currentBal);
 
-                // 3. تحديث النص داخل الزر ليظهر الوقت المتبقي
                 btn.innerText = `⏳ جاري التعدين... (${duration} ثانية)`;
                 duration--;
             } else {
-                // إنهاء جلسة التعدين الحالية وإعادة تفعيل الزر
                 clearInterval(miningInterval);
                 btn.innerText = "⚡ ابدأ التعدين الآن";
                 btn.disabled = false;
             }
-        }, 1000); // يتكرر الأمر كل ثانية واحدة (1000 مللي ثانية)
+        }, 1000);
     };
 </script>
 </body>
