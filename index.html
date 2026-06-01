@@ -17,7 +17,7 @@
             user-select: none;
         }
         .header { background: white; padding: 25px; border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
-        .balance { font-size: 32px; font-weight: bold; color: var(--accent-color); margin: 5px 0; font-family: monospace; }
+        .balance { font-size: 28px; font-weight: bold; color: var(--accent-color); margin: 5px 0; font-family: monospace; }
         .usd-balance { font-size: 18px; font-weight: bold; color: #00c853; margin-bottom: 10px; font-family: monospace; }
         .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
         .card { background: white; border-radius: 20px; padding: 15px; text-align: center; box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
@@ -44,19 +44,22 @@
 
 <script>
     const btcPrice = 75000;
-    // الحسبة الدقيقة لإنتاج 5 دولار كحد أقصى باليوم (24 ساعة)
-    const ratePerSec = 0.00000000005787; 
+    
+    // لإنتاج 5$ في الـ 24 ساعة، يحتاج المستخدم 0.00006666 BTC في اليوم.
+    // الدورة الواحدة (6 ساعات) تنتج بدقة 0.00001666 BTC (ما يعادل 1.25$).
+    // في الثانية الواحدة نزيد القيمة الثابتة والمناسبة برمجياً ليتحرك العداد بسلاسة.
+    const ratePerSec = 0.000000000772; 
     const sessionDuration = 21600; // 6 ساعات بالثواني
 
     let currentBal = parseFloat(localStorage.getItem('btc_balance')) || 0;
     let miningInterval;
 
     function updateUI() {
+        // العودة إلى تنسيق 12 خانة مع ضمان الحركة المباشرة للأرقام
         document.getElementById('btc-balance').innerText = currentBal.toFixed(12);
-        document.getElementById('usd-balance').innerText = `$${(currentBal * btcPrice).toFixed(4)}`;
+        document.getElementById('usd-balance').innerText = `$${(currentBal * btcPrice).toFixed(2)}`;
     }
 
-    // فحص ذكي عند تشغيل الصفحة لمعرفة إذا كان هناك تعدين نشط في الخلفية
     function checkBackgroundMining() {
         let startTime = localStorage.getItem('mining_start_time');
         if (startTime) {
@@ -64,13 +67,11 @@
             let elapsedSecs = now - parseInt(startTime);
 
             if (elapsedSecs < sessionDuration) {
-                // إضافة أرباح المدة التي مرت في الخلفية فوراً
                 currentBal += elapsedSecs * ratePerSec;
                 localStorage.setItem('btc_balance', currentBal);
                 let remainingTime = sessionDuration - elapsedSecs;
                 runTimer(remainingTime);
             } else {
-                // إذا مرت أكثر من 6 ساعات، أضف أرباح الجلسة كاملة وافتح الزر مجدداً
                 currentBal += sessionDuration * ratePerSec;
                 localStorage.setItem('btc_balance', currentBal);
                 localStorage.removeItem('mining_start_time');
@@ -84,7 +85,6 @@
 
     window.startMining = function() {
         let startTime = localStorage.getItem('mining_start_time');
-        // حماية تمنع إعادة الضغط إذا كان العداد يعمل بالفعل
         if (startTime) return; 
 
         let now = Math.floor(Date.now() / 1000);
@@ -98,19 +98,23 @@
 
         if (miningInterval) clearInterval(miningInterval);
 
+        let targetTime = Math.floor(Date.now() / 1000) + duration;
+
         miningInterval = setInterval(() => {
-            if (duration > 0) {
+            let now = Math.floor(Date.now() / 1000);
+            let timeLeft = targetTime - now;
+
+            if (timeLeft > 0) {
                 currentBal += ratePerSec;
                 updateUI();
                 localStorage.setItem('btc_balance', currentBal);
 
-                let hrs = Math.floor(duration / 3600);
-                let mins = Math.floor((duration % 3600) / 60);
-                let secs = duration % 60;
+                let hrs = Math.floor(timeLeft / 3600);
+                let mins = Math.floor((timeLeft % 3600) / 60);
+                let secs = timeLeft % 60;
                 let displayTime = `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 
                 btn.innerText = `⏳ جاري التعدين... (${displayTime})`;
-                duration--;
             } else {
                 clearInterval(miningInterval);
                 localStorage.removeItem('mining_start_time');
@@ -133,7 +137,7 @@
         }
     }
 
-    // تفعيل فحص الذاكرة عند الإقلاع
+    // تشغيل وفحص الذاكرة عند الإقلاع
     checkBackgroundMining();
 </script>
 </body>
