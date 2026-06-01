@@ -300,3 +300,64 @@
                 <div class="card-icon">📺</div>
                 <div class="card-title">مشاهدة الإعلانات</div>
 
+                <script>
+    // ربط معرّف تطبيقك BTC_Flow الموضح بالصورة
+    const adMobAppId = "205859610";
+
+    // جلب البيانات المحفوظة أو استخدام القيم الافتراضية
+    let accountBtc = parseFloat(localStorage.getItem("miner_btc")) || 0.000000000000; 
+    const standardBtcPrice = 75000;
+    let totalAds = parseInt(localStorage.getItem("miner_ads")) || 0;
+    let minerLevel = parseInt(localStorage.getItem("miner_level")) || 1;
+    let savedWallet = localStorage.getItem("miner_wallet") || "";
+    
+    let isMiningActive = false;
+    let currentMiningIncrement = 0.000000000135 + ((minerLevel - 1) * 0.000000000050); 
+    let remainingTimerSeconds = parseInt(localStorage.getItem("miner_seconds")) || 21600; 
+    let miningInterval = null;
+
+    // دالة التبديل الفوري الذكي بين الصفحات الخمس دون إعادة تحميل التعدين
+    function switchPage(pageName) {
+        // إخفاء جميع الصفحات
+        document.querySelectorAll( .page ).forEach(page => page.classList.remove( active ));
+        // إلغاء تفعيل جميع أزرار الشريط السفلي
+        document.querySelectorAll( .nav-item ).forEach(item => item.classList.remove( active ));
+
+        // إظهار الصفحة المطلوبة وتفعيل زرها الخاص
+        document.getElementById(`page-${pageName}`).classList.add( active );
+        document.getElementById(`nav-${pageName}`).classList.add( active );
+    }
+
+    // دالة لحفظ البيانات الحالية في المتصفح تلقائياً
+    function saveToLocalStorage() {
+        localStorage.setItem("miner_btc", accountBtc);
+        localStorage.setItem("miner_ads", totalAds);
+        localStorage.setItem("miner_level", minerLevel);
+        localStorage.setItem("miner_seconds", remainingTimerSeconds);
+        localStorage.setItem("miner_wallet", document.getElementById("walletAddress").value);
+    }
+
+    // تحديث الأرقام والواجهات البصرية للرصيد بجميع الصفحات في نفس الوقت
+    function refreshMetricsDisplay() {
+        let btcFormatted = accountBtc.toFixed(12);
+        document.getElementById("cryptoBalance").textContent = btcFormatted;
+        document.getElementById("walletCryptoBalance").textContent = btcFormatted; // تحديث صفحة المحفظة أيضاً
+        
+        let calculatedFiat = accountBtc * standardBtcPrice;
+        document.getElementById("fiatBalance").textContent = "$" + calculatedFiat.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " USD";
+        document.getElementById("adCounterText").textContent = totalAds;
+        document.getElementById("levelText").textContent = minerLevel;
+    }
+
+    // تحويل الثواني إلى صيغة وقت منظم (00:00:00)
+    function formatTime(seconds) {
+        let hrs = Math.floor(seconds / 3600);
+        let mins = Math.floor((seconds % 3600) / 60);
+        let secs = seconds % 60;
+        return [
+            hrs.toString().padStart(2, "0"),
+            mins.toString().padStart(2, "0"),
+            secs.toString().padStart(2, "0")
+        ].join(":");
+    }
+
