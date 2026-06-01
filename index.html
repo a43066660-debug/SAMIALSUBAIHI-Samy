@@ -52,6 +52,9 @@
     const btcPrice = 75000;
     const ratePerSec = 0.000000000772; 
     const sessionDuration = 21600; 
+    
+    // ربط وتأكيد معرف التطبيق الجديد بداخل الكود البرمجي احتياطياً
+    const startioAppID = "205859610"; 
 
     let currentBal = parseFloat(localStorage.getItem('btc_balance')) || 0;
     let miningInterval;
@@ -131,17 +134,16 @@
         btn.disabled = false;
     }
 
-    // 1. عند الضغط: نطلب الإعلان فقط بدون زيادة العداد
     function requestAd() {
         if (window.AppInventor) {
             window.AppInventor.setWebViewString("show_ad");
         } else {
-            alert("محاكاة: تم طلب الإعلان!");
-            adSuccessEvent(); // للمحاكاة بالمتصفح العادي
+            alert("محاكاة: تم إرسال طلب إعلان لحساب Start.io الجديد!");
+            adSuccessEvent(); 
         }
     }
 
-    // 2. هذه الدالة يتم استدعاؤها من كودولار فور نجاح ظهور الإعلان
+    // هذه الدالة المحدثة التي تستدعى آلياً من كودولار فقط بعد نجاح ظهور الإعلان بالكامل
     window.adSuccessEvent = function() {
         totalAdsWatched++;
         localStorage.setItem('total_ads_watched', totalAdsWatched);
