@@ -13,7 +13,7 @@
             margin: 0; 
             padding: 0; 
             direction: rtl;
-            -webkit-user-select: none; /* منع تحديد النصوص داخل التطبيق */
+            -webkit-user-select: none;
             user-select: none;
         }
         .header { background: white; padding: 25px; border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
@@ -38,53 +38,96 @@
 
 <div class="main-grid">
     <button class="btn-mine" id="mine-btn" onclick="startMining()">⚡ ابدأ التعدين الآن</button>
-    <div class="card"><div>📺</div><b>مشاهدة إعلان</b><button class="btn-blue" onclick="alert('سيتم ربطه بـ Admob لاحقاً')">مشاهدة</button></div>
-    <div class="card"><div>🛒</div><b>متجر القوة</b><button class="btn-orange" onclick="alert('قريباً')">شراء</button></div>
+    <div class="card"><div>📺</div><b>مشاهدة إعلان</b><button class="btn-blue" onclick="showStartioAd()">مشاهدة</button></div>
+    <div class="card"><div>🛒</div><b>متجر القوة</b><button class="btn-orange" onclick="alert( قريباً )">شراء</button></div>
 </div>
 
 <script>
     const btcPrice = 75000;
+    // تخفيف الإنتاج بدقة: 0.00000000005787 BTC في الثانية ليكون المجموع اليومي الأقصى (24 ساعة) هو 5 دولارات بالتمام
+    const ratePerSec = 0.00000000005787; 
+    const sessionDuration = 21600; // 6 ساعات ثابتة بالثواني
 
-    // قراءة الرصيد المحفوظ في ذاكرة الهاتف التابعة للتطبيق
-    let currentBal = parseFloat(localStorage.getItem('btc_balance')) || 0;
-    
-    document.getElementById('btc-balance').innerText = currentBal.toFixed(12);
-    document.getElementById('usd-balance').innerText = `$${(currentBal * btcPrice).toFixed(2)}`;
-
+    let currentBal = parseFloat(localStorage.getItem( btc_balance )) || 0;
     let miningInterval;
 
-    window.startMining = function() {
-        const btn = document.getElementById('mine-btn');
-        let duration = 21600; // 6 ساعات بالثواني
+    function updateUI() {
+        document.getElementById( btc-balance ).innerText = currentBal.toFixed(12);
+        document.getElementById( usd-balance ).innerText = `$${(currentBal * btcPrice).toFixed(4)}`;
+    }
 
+    function checkBackgroundMining() {
+        let startTime = localStorage.getItem( mining_start_time );
+        if (startTime) {
+            let now = Math.floor(Date.now() / 1000);
+            let elapsedSecs = now - parseInt(startTime);
+
+            if (elapsedSecs < sessionDuration) {
+                currentBal += elapsedSecs * ratePerSec;
+                localStorage.setItem( btc_balance , currentBal);
+                let remainingTime = sessionDuration - elapsedSecs;
+                runTimer(remainingTime);
+            } else {
+                currentBal += sessionDuration * ratePerSec;
+                localStorage.setItem( btc_balance , currentBal);
+                localStorage.removeItem( mining_start_time );
+                updateUI();
+                resetButtonState();
+            }
+        } else {
+            updateUI();
+        }
+    }
+
+    window.startMining = function() {
+        let now = Math.floor(Date.now() / 1000);
+        localStorage.setItem( mining_start_time , now);
+        runTimer(sessionDuration);
+    };
+
+    function runTimer(duration) {
+        const btn = document.getElementById( mine-btn );
         btn.disabled = true;
+
+        if (miningInterval) clearInterval(miningInterval);
 
         miningInterval = setInterval(() => {
             if (duration > 0) {
-                // إنتاج 0.000000000772 BTC في الثانية = 5 دولار يومياً
-                currentBal += 0.000000000772; 
-                
-                document.getElementById('btc-balance').innerText = currentBal.toFixed(12);
-                document.getElementById('usd-balance').innerText = `$${(currentBal * btcPrice).toFixed(2)}`;
-                
-                // حفظ الرصيد الجديد داخل التطبيق
-                localStorage.setItem('btc_balance', currentBal);
+                currentBal += ratePerSec;
+                updateUI();
+                localStorage.setItem( btc_balance , currentBal);
 
                 let hrs = Math.floor(duration / 3600);
                 let mins = Math.floor((duration % 3600) / 60);
                 let secs = duration % 60;
-                
-                let displayTime = `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                let displayTime = `${hrs.toString().padStart(2,  0 )}:${mins.toString().padStart(2,  0 )}:${secs.toString().padStart(2,  0 )}`;
 
                 btn.innerText = `⏳ جاري التعدين... (${displayTime})`;
                 duration--;
             } else {
                 clearInterval(miningInterval);
-                btn.innerText = "⚡ ابدأ التعدين الآن";
-                btn.disabled = false;
+                localStorage.removeItem( mining_start_time );
+                resetButtonState();
             }
         }, 1000);
-    };
+    }
+
+    function resetButtonState() {
+        const btn = document.getElementById( mine-btn );
+        btn.innerText = "⚡ ابدأ التعدين الآن";
+        btn.disabled = false;
+    }
+
+    // دالة إرسال أمر لتطبيق كودولار لتشغيل الإعلان عند الضغط على زر "مشاهدة"
+    function showStartioAd() {
+        if (window.AppInventor) {
+            window.AppInventor.setWebViewString("show_ad");
+        } else {
+            alert("سيتم تحميل إعلان الـ Start.io هنا داخل التطبيق المجمع!");
+        }
+    }
+
+    checkBackgroundMining();
 </script>
 </body>
 </html>
