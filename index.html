@@ -294,20 +294,31 @@
 </div>
 
 <script>
-    let accountBtc = 0.000000000000; 
+    // جلب البيانات المحفوظة أو استخدام القيم الافتراضية
+    let accountBtc = parseFloat(localStorage.getItem("miner_btc")) || 0.000000000000; 
     const standardBtcPrice = 75000;
-    let totalAds = 0;
-    let minerLevel = 1;
+    let totalAds = parseInt(localStorage.getItem("miner_ads")) || 0;
+    let minerLevel = parseInt(localStorage.getItem("miner_level")) || 1;
     
     let isMiningActive = false;
-    let currentMiningIncrement = 0.000000000135; 
-    let remainingTimerSeconds = 21600; 
+    let currentMiningIncrement = 0.000000000135 + ((minerLevel - 1) * 0.000000000050); 
+    let remainingTimerSeconds = parseInt(localStorage.getItem("miner_seconds")) || 21600; 
     let miningInterval = null;
+
+    // دالة لحفظ البيانات الحالية في المتصفح
+    function saveToLocalStorage() {
+        localStorage.setItem("miner_btc", accountBtc);
+        localStorage.setItem("miner_ads", totalAds);
+        localStorage.setItem("miner_level", minerLevel);
+        localStorage.setItem("miner_seconds", remainingTimerSeconds);
+    }
 
     function refreshMetricsDisplay() {
         document.getElementById("cryptoBalance").textContent = accountBtc.toFixed(12);
         let calculatedFiat = accountBtc * standardBtcPrice;
         document.getElementById("fiatBalance").textContent = "$" + calculatedFiat.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " USD";
+        document.getElementById("adCounterText").textContent = totalAds;
+        document.getElementById("levelText").textContent = minerLevel;
     }
 
     function formatTime(seconds) {
@@ -315,28 +326,10 @@
         let mins = Math.floor((seconds % 3600) / 60);
         let secs = seconds % 60;
         return [
-            hrs.toString().padStart(2,  0 ),
-            mins.toString().padStart(2,  0 ),
-            secs.toString().padStart(2,  0 )
-        ].join( : );
+            hrs.toString().padStart(2, "0"),
+            mins.toString().padStart(2, "0"),
+            secs.toString().padStart(2, "0")
+        ].join(":");
     }
 
     function startMiningProcess() {
-        if (isMiningActive) return;
-        isMiningActive = true;
-
-        let btn = document.getElementById("startMiningBtn");
-        btn.disabled = true;
-        btn.textContent = "التعدين نشط حالياً";
-        
-        document.getElementById("statusBadge").classList.add("active");
-        document.getElementById("statusText").textContent = "نشط ومتصل";
-        document.getElementById("hashRateText").textContent = (120 + (minerLevel * 15)) + " TH/s";
-
-        refreshMetricsDisplay();
-
-        miningInterval = setInterval(() => {
-            if (remainingTimerSeconds > 0) {
-                remainingTimerSeconds--;
-                accountBtc += currentMiningIncrement; 
-
