@@ -3,8 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BTC Flow - تعدين سحابي</title>
+    <title>MultiMiner - لوحة التحكم</title>
     <style>
+        :root {
+            --bg-color: #0d0e12;
+            --card-bg: #161820;
+            --accent-color: #00e676;
+            --text-primary: #ffffff;
+            --text-secondary: #90a4ae;
+            --btn-blue: #2196f3;
+            --btn-orange: #ff9800;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -13,7 +23,8 @@
         }
 
         body {
-            background-color: #fce4ec; /* خلفية وردية فاتحة تناسب تصميمك */
+            background-color: var(--bg-color);
+            color: var(--text-primary);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,251 +32,296 @@
             padding: 15px;
         }
 
-        .container {
-            background-color: #ffffff;
+        .dashboard {
+            background-color: var(--card-bg);
             width: 100%;
-            max-width: 450px;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            max-width: 480px;
+            border-radius: 28px;
             padding: 24px;
-            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            border: 1px solid #252936;
         }
 
-        /* قسم الرصيد العلوي */
-        .balance-card {
-            background-color: #fffafb;
-            border: 2px solid #f8bbd0;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .balance-title {
-            font-size: 14px;
-            color: #888;
-            margin-bottom: 8px;
-        }
-
-        .btc-balance {
-            font-size: 24px;
-            font-weight: bold;
-            color: #e91e63; /* لون رقم الرصيد */
-            word-break: break-all;
-            margin-bottom: 5px;
-        }
-
-        .usd-balance {
-            font-size: 16px;
-            color: #4caf50;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .market-price {
-            font-size: 12px;
-            color: #666;
-        }
-
-        /* شريط الحالة والعداد */
-        .status-bar {
-            background-color: #b0bec5;
-            color: #ffffff;
-            border-radius: 12px;
-            padding: 10px;
-            font-size: 15px;
-            font-weight: bold;
-            margin-bottom: 24px;
+        /* رأس الصفحة والنظام */
+        .header {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .logo-section {
+            display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        /* قسم الأزرار */
-        .actions-grid {
-            display: grid;
-            grid-template-columns: 1
-fr 1fr;
-            gap: 15px;
+        .logo-icon {
+            font-size: 24px;
+            color: var(--accent-color);
         }
 
-        .card {
-            background: #ffffff;
-            border: 1px solid #eaeaea;
-            border-radius: 16px;
-            padding: 15px;
+        .logo-text {
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge {
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--accent-color);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        /* كرت عرض الرصيد الإجمالي */
+        .balance-box {
+            background: linear-gradient(135deg, #1e2230 0%, #1a1d29 100%);
+            border: 1px solid #2c3247;
+            border-radius: 20px;
+            padding: 22px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .balance-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .crypto-amount {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: monospace;
+            margin-bottom: 4px;
+            word-break: break-all;
+        }
+
+        .fiat-amount {
+            font-size: 16px;
+            color: var(--accent-color);
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .market-info {
+            font-size: 11px;
+            color: var(--text-secondary);
+            border-top: 1px solid #2c3247;
+            padding-top: 10px;
+        }
+
+        /* شريط معدل التعدين السريع */
+        .stats-strip {
+            background-color: #1f2330;
+            border-radius: 14px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            font-size: 13px;
+        }
+
+        .hash-rate {
+            color: var(--text-primary);
+            font-weight: bold;
+        }
+
+        /* شبكة التحكم والتفاعل */
+        .grid-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .card-option {
+            background: #1c1f2b;
+            border: 1px solid #282f42;
+            border-radius: 18px;
+            padding: 18px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            text-align: center;
         }
 
         .card-icon {
-            font-size: 24px;
-            margin-bottom: 8px;
+            font-size: 28px;
+            margin-bottom: 10px;
         }
 
         .card-title {
             font-size: 14px;
             font-weight: 600;
-            color: #333;
-            margin-bottom: 12px;
+            color: var(--text-primary);
+            margin-bottom: 14px;
         }
 
         .btn {
             width: 100%;
-            padding: 10px;
+            padding: 11px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             color: white;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             transition: background 0.2s, transform 0.1s;
         }
 
         .btn:active {
-            transform: scale(0.98);
+            transform: scale(0.97);
         }
 
-        /* ألوان الأزرار المتطابقة مع تصميمك */
-        .btn-blue {
-            background-color: #2196f3;
-        }
-        .btn-blue:hover { background-color: #1e88e5; }
+        .btn-blue { background-color: var(--btn-blue); }
+        .btn-blue:hover { background-color: #1976d2; }
 
-        .btn-orange {
-            background-color: #ff9800;
-        }
+        .btn-orange { background-color: var(--btn-orange); }
         .btn-orange:hover { background-color: #f57c00; }
 
         .btn:disabled {
-            background-color: #bdbdbd !important;
+            background-color: #424242 !important;
+            color: #757575;
             cursor: not-allowed;
         }
 
-        .stats-text {
+        .meta-text {
             font-size: 11px;
-            color: #777;
-            margin-top: 8px;
+            color: var(--text-secondary);
+            margin-top: 10px;
+        }
+
+        @keyframes blink {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- كارت إجمالي الرصيد -->
-    <div class="balance-card">
-        <div class="balance-title">إجمالي الرصيد (BTC)</div>
-        <div class="btc-balance" id="btcBalance">0.000000017756</div>
-        <div class="usd-balance" id="usdBalance">0.00 دولار</div>
-        <div class="market-price">سعر السوق الثابت: $75,000</div>
+<div class="dashboard">
+    <!-- الرأس هيدر المنصة -->
+    <div class="header">
+        <div class="logo-section">
+            <span class="logo-icon">⚡</span>
+            <span class="logo-text">MultiMiner</span>
+        </div>
+        <div class="status-badge">
+            <div class="pulse"></div>
+            <span>نشط ومتصل</span>
+        </div>
     </div>
 
-    <!-- شريط حالة التعدين والوقت -->
-    <div class="status-bar">
-        <span>⏳ جاري التعدين...</span>
-        <span id="timer">(05:59:37)</span>
+    <!-- كرت الرصيد والعداد -->
+    <div class="balance-box">
+        <div class="balance-label">إجمالي الرصيد المستخرج (BTC)</div>
+        <div class="crypto-amount" id="cryptoBalance">0.000000000000</div>
+        <div class="fiat-amount" id="fiatBalance">$0.00 USD</div>
+        <div class="market-info">سعر البيتكوين المرجعي المتزامن: $75,000</div>
     </div>
 
-    <!-- شبكة التحكم (الأزرار) -->
-    <div class="actions-grid">
-        <!-- كارت مشاهدة الإعلانات -->
-        <div class="card">
+    <!-- شريط معلومات التعدين الحالي -->
+    <div class="stats-strip">
+        <span>المؤقت: <span id="timeCounter">05:59:37</span></span>
+        <span>سرعة الهاش: <span class="hash-rate" id="hashRateText">120 TH/s</span></span>
+    </div>
+
+    <!-- كروت التحكم الأساسية -->
+    <div class="grid-options">
+        <!-- الخيار الأول: مشاهدة الإعلانات لدعم السرعة -->
+        <div class="card-option">
             <div class="card-icon">📺</div>
-            <div class="card-title">مشاهدة إعلان</div>
-            <button class="btn btn-blue" id="adBtn">مشاهدة</button>
-            <div class="stats-text">الإعلانات المشاهدة: <span id="adCount">1</span></div>
+            <div class="card-title">مشاهدة الإعلانات</div>
+            <button class="btn btn-blue" id="actionAdBtn">مطالبة بمكافأة</button>
+            <div class="meta-text">عداد المشاهدة: <span id="adCounterText">0</span></div>
         </div>
 
-        <!-- كارت متجر القوة -->
-        <div class="card">
-            <div class="card-icon">🛒</div>
-            <div class="card-title">متجر القوة</div>
-            <button class="btn btn-orange" id="shopBtn">شراء</button>
-            <div class="stats-text">مضاعف السرعة: <span id="speedMultiplier">1x</span></div>
+        <!-- الخيار الثاني: متجر ترقية الأجهزة -->
+        <div class="card-option">
+            <div class="card-icon">⛏️</div>
+            <div class="card-title">ترقية العتاد</div>
+            <button class="btn btn-orange" id="actionUpgradeBtn">شراء طاقة</button>
+            <div class="meta-text">المستوى الحالي: <span id="levelText">1</span></div>
         </div>
     </div>
 </div>
 
 <script>
-    // الإعدادات الافتراضية للقيم
-    let btc = 0.000000017756;
-    const btcPriceUsd = 75000;
-    let adsWatched = 1;
-    let miningSpeed = 0.000000000005; // مقدار الزيادة في الثانية
-    let countdownSeconds = 21577; // ما يعادل 05:59:37 بالثواني
+    // القيم الحسابية المبدئية للعدادات
+    let accountBtc = 0.000000017756;
+    const standardBtcPrice = 75000;
+    let totalAds = 0;
+    let minerLevel = 1;
+    
+    // مقدار الزيادة التلقائية في الرصيد بكل ثانية
+    let currentMiningIncrement = 0.000000000008; 
+    let remainingTimerSeconds = 21577; // الوقت المتبقي بالثواني الموازية لـ 05:59:37
 
-    // عناصر الواجهة
-    const btcBalanceEl = document.getElementById('btcBalance');
-    const usdBalanceEl = document.getElementById('usdBalance');
-    const timerEl = document.getElementById('timer');
-    const adBtn = document.getElementById('adBtn');
-    const shopBtn = document.getElementById('shopBtn');
-    const adCountEl = document.getElementById('adCount');
-    const speedMultiplierEl = document.getElementById('speedMultiplier');
+    // ربط العناصر البرمجية بالواجهة
+    const cryptoBalanceEl = document.getElementById('cryptoBalance');
+    const fiatBalanceEl = document.getElementById('fiatBalance');
+    const timeCounterEl = document.getElementById('timeCounter');
+    const hashRateTextEl = document.getElementById('hashRateText');
+    const actionAdBtn = document.getElementById('actionAdBtn');
+    const actionUpgradeBtn = document.getElementById('actionUpgradeBtn');
+    const adCounterTextEl = document.getElementById('adCounterText');
+    const levelTextEl = document.getElementById('levelText');
 
-    // دالة لتحديث الأرقام على الشاشة بدقة عالية وبدون تأخير
-    function updateDisplay() {
-        btcBalanceEl.textContent = btc.toFixed(12);
-        let usdValue = btc * btcPriceUsd;
-        usdBalanceEl.textContent = usdValue.toFixed(2) + " دولار";
+    // دالة التحديث الرسومية الفورية للأرقام والمبالغ
+    function refreshMetricsDisplay() {
+        cryptoBalanceEl.textContent = accountBtc.toFixed(12);
+        let calculatedFiat = accountBtc * standardBtcPrice;
+        fiatBalanceEl.textContent = "$" + calculatedFiat.toFixed(2) + " USD";
     }
 
-    // 1. محاكاة عملية التعدين (تحديث تلقائي كل ثانية)
+    // العداد التلقائي (تحديث الرصيد والمؤقت ثانية بثانية)
     setInterval(() => {
-        btc += miningSpeed;
-        updateDisplay();
-        
-        // تحديث عداد الوقت التنازلي
-        if (countdownSeconds > 0) {
-            countdownSeconds--;
-            let hrs = Math.floor(countdownSeconds / 3600).toString().padStart(2, '0');
-            let mins = Math.floor((countdownSeconds % 3600) / 60).toString().padStart(2, '0');
-            let secs = (countdownSeconds % 60).toString().padStart(2, '0');
-            timerEl.textContent = `(${hrs}:${mins}:${secs})`;
+        accountBtc += currentMiningIncrement;
+        refreshMetricsDisplay();
+
+        if (remainingTimerSeconds > 0) {
+            remainingTimerSeconds--;
+            let hours = Math.floor(remainingTimerSeconds / 3600).toString().padStart(2, '0');
+            let minutes = Math.floor((remainingTimerSeconds % 3600) / 60).toString().padStart(2, '0');
+            let seconds = (remainingTimerSeconds % 60).toString().padStart(2, '0');
+            timeCounterEl.textContent = `${hours}:${minutes}:${seconds}`;
         }
     }, 1000);
 
-    // 2. معالج حدث زر الإعلانات (مكتوب بطريقة غير متزامنة لمنع الـ INP Issue)
-    adBtn.addEventListener('click', async () => {
-        // تغيير فوري لشكل الزر لإعلام المستخدم بالاستجابة
-        adBtn.disabled = true;
-        adBtn.textContent = "جاري التحميل...";
+    // حدث زر مشاهدة الإعلانات والمكافآت (معالج غير متزامن كلياً لمنع تعليق المتصفح)
+    actionAdBtn.addEventListener('click', async () => {
+        actionAdBtn.disabled = true;
+        actionAdBtn.textContent = "جاري التحقق...";
 
-        // محاكاة انتظار غير متزامن (كأنه يجلب إعلان أو يتصل بالسيرفر)
-        await new Promise(resolve => setTimeout(resolve, 800)); 
-
-        // تنفيذ المكافأة بعد انتهاء الانتظار دون تجميد الشاشة
-        btc += 0.000000005000; 
-        adsWatched++;
-        adCountEl.textContent = adsWatched;
-        updateDisplay();
-
-        // إعادة تفعيل الزر
-        adBtn.disabled = false;
-        adBtn.textContent = "مشاهدة";
-    });
-
-    // 3. معالج حدث زر متجر القوة 
-    shopBtn.addEventListener('click', async () => {
-        shopBtn.disabled = true;
-        shopBtn.textContent = "جاري الشراء...";
-
-        // محاكاة معالجة سريعة وغير متزامنة
+        // محاكاة الاتصال الفوري والانتظار دون تجميد واجهة الـ UI
         await new Promise(resolve => setTimeout(resolve, 600));
 
-        // زيادة سرعة التعدين كمكافأة للشراء
-        miningSpeed += 0.000000000005;
-        speedMultiplierEl.textContent = (miningSpeed / 0.000000000005).toFixed(0) + "x";
-        
-        shopBtn.disabled = false;
-        shopBtn.textContent = "شراء";
+        accountBtc += 0.000000003500;
+        totalAds++;
+        adCounterTextEl.textContent = totalAds;
+        refreshMetricsDisplay();
+
+        actionAdBtn.disabled = false;
+        actionAdBtn.textContent = "مطالبة بمكافأة";
     });
 
-    // التحديث الأولي عند تحميل الصفحة
-    updateDisplay();
-</script>
-
-</body>
-</html>
+    // حدث زر ترقية طاقة وأجهزة العتاد لزيادة سرعة العداد التلقائي
+    actionUpgradeBtn.addEventListener('click', async () => {
+        actionUpgradeBtn.disabled = true;
