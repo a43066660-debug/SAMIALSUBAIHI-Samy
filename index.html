@@ -383,3 +383,115 @@
             secs.toString().padStart(2, "0")
         ].join(":");
     }
+
+            function startMiningProcess() {
+        if (isMiningActive) return;
+        isMiningActive = true;
+
+        let btn = document.getElementById("startMiningBtn");
+        btn.disabled = true;
+        btn.textContent = "التعدين نشط حالياً";
+        
+        document.getElementById("statusBadge").classList.add("active");
+        document.getElementById("statusText").textContent = "نشط ومتصل";
+        document.getElementById("hashRateText").textContent = (120 + (minerLevel * 15)) + " TH/s";
+
+        refreshMetricsDisplay();
+
+        miningInterval = setInterval(() => {
+            if (remainingTimerSeconds > 0) {
+                remainingTimerSeconds--;
+                accountBtc += currentMiningIncrement; 
+                document.getElementById("timeCounter").textContent = formatTime(remainingTimerSeconds);
+                refreshMetricsDisplay();
+                saveToLocalStorage(); 
+            } else {
+                clearInterval(miningInterval);
+                isMiningActive = false;
+                btn.disabled = false;
+                btn.textContent = "اضغط لبدء التعدين (6 ساعات)";
+                document.getElementById("statusBadge").classList.remove("active");
+                document.getElementById("statusText").textContent = "متوقف";
+                document.getElementById("hashRateText").textContent = "0 TH/s";
+                remainingTimerSeconds = 21600;
+                saveToLocalStorage();
+            }
+        }, 1000);
+    }
+
+    // إرسال إشارة إلى Kodular لتشغيل إعلان مكافأة حقيقي
+    function watchAd() {
+        if (window.AppInventor) {
+            window.AppInventor.setWebViewString("WATCH_AD");
+        } else {
+            alert("يرجى تشغيل الكود داخل التطبيق لمشاهدة الإعلانات.");
+        }
+    }
+
+    // دالة يستدعيها تطبيق Kodular تلقائياً بعد اكتمال مشاهدة الإعلان لمنح الجائزة
+    function rewardUserForAd() {
+        totalAds++;
+        accountBtc += 0.000000000500; 
+        refreshMetricsDisplay();
+        saveToLocalStorage();
+        alert("حصلت على مكافأة مشاهدة الإعلان الحقيقي!");
+    }
+
+    function upgradeHardware() {
+        let cost = 0.000000002000 * minerLevel;
+        if (accountBtc >= cost) {
+            accountBtc -= cost;
+            minerLevel++;
+            currentMiningIncrement += 0.000000000050;
+            refreshMetricsDisplay();
+            if (isMiningActive) {
+                document.getElementById("hashRateText").textContent = (120 + (minerLevel * 15)) + " TH/s";
+            }
+            saveToLocalStorage();
+        } else {
+            alert("الرصيد غير كافٍ للترقية!");
+        }
+    }
+
+    // معالجة طلب السحب وإرسال البيانات إلى Kodular لحفظها سحابياً
+    function processWithdrawal() {
+        let wallet = document.getElementById("walletAddress").value.trim();
+        const minWithdraw = 0.00050000;
+
+        if (wallet === "") {
+            alert("يرجى إدخال عنوان محفظة البيتكوين أولاً!");
+            return;
+        }
+
+        if (accountBtc < minWithdraw) {
+            alert("رصيدك الحالي غير كافٍ! الحد الأدنى للسحب هو " + minWithdraw.toFixed(8) + " BTC");
+            return;
+        }
+
+        // إرسال طلب السحب إلى بلكات Kodular بصيغة نصية واضحة ليتم معالجتها سحابياً
+        if (window.AppInventor) {
+            window.AppInventor.setWebViewString("WITHDRAW:" + wallet + ":" + minWithdraw);
+            accountBtc -= minWithdraw; 
+            refreshMetricsDisplay();
+            saveToLocalStorage();
+            alert("تم إرسال طلب السحب للتطبيق بنجاح.");
+        } else {
+            alert("خاصية السحب تعمل فقط من داخل التطبيق المثبت.");
+        }
+    }
+
+    window.onload = function() {
+        document.getElementById("walletAddress").value = savedWallet;
+        refreshMetricsDisplay();
+        document.getElementById("timeCounter").textContent = formatTime(remainingTimerSeconds);
+        
+        if (remainingTimerSeconds < 21600 && remainingTimerSeconds > 0) {
+            startMiningProcess();
+        }
+    };
+    
+    document.getElementById("walletAddress").oninput = saveToLocalStorage;
+</script>
+
+</body>
+</html>
