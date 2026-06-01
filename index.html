@@ -39,38 +39,41 @@
 <div class="main-grid">
     <button class="btn-mine" id="mine-btn" onclick="startMining()">⚡ ابدأ التعدين الآن</button>
     <div class="card"><div>📺</div><b>مشاهدة إعلان</b><button class="btn-blue" onclick="showStartioAd()">مشاهدة</button></div>
-    <div class="card"><div>🛒</div><b>متجر القوة</b><button class="btn-orange" onclick="alert( قريباً )">شراء</button></div>
+    <div class="card"><div>🛒</div><b>متجر القوة</b><button class="btn-orange" onclick="alert('قريباً')">شراء</button></div>
 </div>
 
 <script>
     const btcPrice = 75000;
-    // تخفيف الإنتاج بدقة: 0.00000000005787 BTC في الثانية ليكون المجموع اليومي الأقصى (24 ساعة) هو 5 دولارات بالتمام
+    // الحسبة الدقيقة لإنتاج 5 دولار كحد أقصى باليوم (24 ساعة)
     const ratePerSec = 0.00000000005787; 
-    const sessionDuration = 21600; // 6 ساعات ثابتة بالثواني
+    const sessionDuration = 21600; // 6 ساعات بالثواني
 
-    let currentBal = parseFloat(localStorage.getItem( btc_balance )) || 0;
+    let currentBal = parseFloat(localStorage.getItem('btc_balance')) || 0;
     let miningInterval;
 
     function updateUI() {
-        document.getElementById( btc-balance ).innerText = currentBal.toFixed(12);
-        document.getElementById( usd-balance ).innerText = `$${(currentBal * btcPrice).toFixed(4)}`;
+        document.getElementById('btc-balance').innerText = currentBal.toFixed(12);
+        document.getElementById('usd-balance').innerText = `$${(currentBal * btcPrice).toFixed(4)}`;
     }
 
+    // فحص ذكي عند تشغيل الصفحة لمعرفة إذا كان هناك تعدين نشط في الخلفية
     function checkBackgroundMining() {
-        let startTime = localStorage.getItem( mining_start_time );
+        let startTime = localStorage.getItem('mining_start_time');
         if (startTime) {
             let now = Math.floor(Date.now() / 1000);
             let elapsedSecs = now - parseInt(startTime);
 
             if (elapsedSecs < sessionDuration) {
+                // إضافة أرباح المدة التي مرت في الخلفية فوراً
                 currentBal += elapsedSecs * ratePerSec;
-                localStorage.setItem( btc_balance , currentBal);
+                localStorage.setItem('btc_balance', currentBal);
                 let remainingTime = sessionDuration - elapsedSecs;
                 runTimer(remainingTime);
             } else {
+                // إذا مرت أكثر من 6 ساعات، أضف أرباح الجلسة كاملة وافتح الزر مجدداً
                 currentBal += sessionDuration * ratePerSec;
-                localStorage.setItem( btc_balance , currentBal);
-                localStorage.removeItem( mining_start_time );
+                localStorage.setItem('btc_balance', currentBal);
+                localStorage.removeItem('mining_start_time');
                 updateUI();
                 resetButtonState();
             }
@@ -80,13 +83,17 @@
     }
 
     window.startMining = function() {
+        let startTime = localStorage.getItem('mining_start_time');
+        // حماية تمنع إعادة الضغط إذا كان العداد يعمل بالفعل
+        if (startTime) return; 
+
         let now = Math.floor(Date.now() / 1000);
-        localStorage.setItem( mining_start_time , now);
+        localStorage.setItem('mining_start_time', now);
         runTimer(sessionDuration);
     };
 
     function runTimer(duration) {
-        const btn = document.getElementById( mine-btn );
+        const btn = document.getElementById('mine-btn');
         btn.disabled = true;
 
         if (miningInterval) clearInterval(miningInterval);
@@ -95,38 +102,38 @@
             if (duration > 0) {
                 currentBal += ratePerSec;
                 updateUI();
-                localStorage.setItem( btc_balance , currentBal);
+                localStorage.setItem('btc_balance', currentBal);
 
                 let hrs = Math.floor(duration / 3600);
                 let mins = Math.floor((duration % 3600) / 60);
                 let secs = duration % 60;
-                let displayTime = `${hrs.toString().padStart(2,  0 )}:${mins.toString().padStart(2,  0 )}:${secs.toString().padStart(2,  0 )}`;
+                let displayTime = `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 
                 btn.innerText = `⏳ جاري التعدين... (${displayTime})`;
                 duration--;
             } else {
                 clearInterval(miningInterval);
-                localStorage.removeItem( mining_start_time );
+                localStorage.removeItem('mining_start_time');
                 resetButtonState();
             }
         }, 1000);
     }
 
     function resetButtonState() {
-        const btn = document.getElementById( mine-btn );
+        const btn = document.getElementById('mine-btn');
         btn.innerText = "⚡ ابدأ التعدين الآن";
         btn.disabled = false;
     }
 
-    // دالة إرسال أمر لتطبيق كودولار لتشغيل الإعلان عند الضغط على زر "مشاهدة"
     function showStartioAd() {
         if (window.AppInventor) {
             window.AppInventor.setWebViewString("show_ad");
         } else {
-            alert("سيتم تحميل إعلان الـ Start.io هنا داخل التطبيق المجمع!");
+            alert("سيتم استدعاء إعلان Start.io المربوط داخل تطبيق كودولار!");
         }
     }
 
+    // تفعيل فحص الذاكرة عند الإقلاع
     checkBackgroundMining();
 </script>
 </body>
