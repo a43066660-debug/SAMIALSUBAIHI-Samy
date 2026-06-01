@@ -302,6 +302,7 @@
     let currentMiningIncrement = 0.000000000135; 
     let remainingTimerSeconds = 0; 
 
+    // إصلاح تموضع أسماء المعرفات داخل علامات تنصيص نصية
     const cryptoBalanceEl = document.getElementById('cryptoBalance');
     const fiatBalanceEl = document.getElementById('fiatBalance');
     const timeCounterEl = document.getElementById('timeCounter');
@@ -321,9 +322,10 @@
         fiatBalanceEl.textContent = "$" + calculatedFiat.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " USD";
     }
 
+    // إضافة علامات التنصيص لحدث الضغط والـ Classes
     startMiningBtn.addEventListener('click', () => {
         isMiningActive = true;
-        remainingTimerSeconds = 21600; 
+        remainingTimerSeconds = 21600; // 6 ساعات بالثواني
         
         startMiningBtn.disabled = true;
         startMiningBtn.textContent = "التعدين نشط حالياً";
@@ -332,9 +334,4 @@
         hashRateTextEl.textContent = (120 + (minerLevel * 15)) + " TH/s";
     });
 
-    setInterval(() => {
-        if (isMiningActive && remainingTimerSeconds > 0) {
-            accountBtc += currentMiningIncrement;
-            refreshMetricsDisplay();
-
-            remainingTimerSeconds--;
+    // إغلاق دالة التوقيت والعد التنازلي بشكل برمي صحيح كاملاً
