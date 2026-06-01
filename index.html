@@ -24,9 +24,8 @@
         .btn-mine { grid-column: span 2; background: linear-gradient(45deg, #00c853, #b2ff59); color: white; padding: 20px; border-radius: 20px; font-size: 20px; font-weight: bold; border: none; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,200,83,0.3); }
         .btn-mine:disabled { background: #9e9e9e; color: #fff; cursor: not-allowed; box-shadow: none; }
         .btn-blue { background: #2196f3; color: white; border: none; padding: 10px; border-radius: 10px; width: 100%; cursor: pointer; margin-top: 10px; }
-        .btn-blue:disabled { background: #9e9e9e; cursor: not-allowed; }
         .btn-orange { background: #ff9800; color: white; border: none; padding: 10px; border-radius: 10px; width: 100%; cursor: pointer; margin-top: 10px; }
-        .ad-count { font-size: 11px; color: #777; display: block; margin-top: 5px; }
+        .ad-count { font-size: 12px; color: #666; display: block; margin-top: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -44,7 +43,8 @@
         <div>📺</div>
         <b>مشاهدة إعلان</b>
         <button class="btn-blue" id="ad-btn" onclick="showStartioAd()">مشاهدة</button>
-        <span class="ad-count" id="ad-count">المتبقي اليوم: 5</span>
+        <!-- العداد التصاعدي المحدث لعرض المجموع الكلي للمشاهدات الناجحة -->
+        <span class="ad-count" id="ad-count">الإعلانات المشاهدة: 0</span>
     </div>
     <div class="card"><div>🛒</div><b>متجر القوة</b><button class="btn-orange" onclick="alert('قريباً')">شراء</button></div>
 </div>
@@ -57,39 +57,14 @@
     let currentBal = parseFloat(localStorage.getItem('btc_balance')) || 0;
     let miningInterval;
 
-    // إعدادات نظام تحديد الإعلانات (5 إعلانات باليوم)
-    const MAX_ADS = 5;
-    let todayStr = new Date().toDateString();
-    let lastAdDate = localStorage.getItem('last_ad_date') || "";
-    let adsWatchedToday = parseInt(localStorage.getItem('ads_watched_today')) || 0;
-
-    // تصفير عداد الإعلانات إذا مر يوم جديد
-    if (lastAdDate !== todayStr) {
-        adsWatchedToday = 0;
-        localStorage.setItem('ads_watched_today', 0);
-        localStorage.setItem('last_ad_date', todayStr);
-    }
+    // قراءة المجموع الإجمالي للإعلانات المشاهدة من الذاكرة
+    let totalAdsWatched = parseInt(localStorage.getItem('total_ads_watched')) || 0;
 
     function updateUI() {
         document.getElementById('btc-balance').innerText = currentBal.toFixed(12);
         document.getElementById('usd-balance').innerText = `$${(currentBal * btcPrice).toFixed(2)}`;
-        updateAdButtonUI();
-    }
-
-    function updateAdButtonUI() {
-        const adBtn = document.getElementById('ad-btn');
-        const adCountSpan = document.getElementById('ad-count');
-        let remaining = MAX_ADS - adsWatchedToday;
-        
-        if (remaining <= 0) {
-            adBtn.disabled = true;
-            adBtn.innerText = "انتهت اليوم";
-            adCountSpan.innerText = "انتظر حتى الغد";
-        } else {
-            adBtn.disabled = false;
-            adBtn.innerText = "مشاهدة";
-            adCountSpan.innerText = `المتبقي اليوم: ${remaining}`;
-        }
+        // تحديث نص العداد التصاعدي على الواجهة
+        document.getElementById('ad-count').innerText = `الإعلانات المشاهدة: ${totalAdsWatched}`;
     }
 
     function checkBackgroundMining() {
@@ -160,24 +135,19 @@
         btn.disabled = false;
     }
 
-    // دالة استدعاء الإعلان في Kodular
+    // دالة استدعاء الإعلان في Kodular واحتساب المشاهدة الناجحة
     function showStartioAd() {
-        if (adsWatchedToday >= MAX_ADS) return;
-
         if (window.AppInventor) {
-            // إرسال إشارة لكودولار لتشغيل الإعلان
             window.AppInventor.setWebViewString("show_ad");
             
-            // احتساب المشاهدة وحفظها
-            adsWatchedToday++;
-            localStorage.setItem('ads_watched_today', adsWatchedToday);
-            localStorage.setItem('last_ad_date', new Date().toDateString());
+            // زيادة العداد وحفظه في ذاكرة الهاتف لكي لا يختفي الرقم عند إغلاق التطبيق
+            totalAdsWatched++;
+            localStorage.setItem('total_ads_watched', totalAdsWatched);
             updateUI();
         } else {
-            // محاكاة داخل المتصفح العادي للتحقق
             alert("تم إرسال أمر تشغيل إعلان Start.io لكودولار!");
-            adsWatchedToday++;
-            localStorage.setItem('ads_watched_today', adsWatchedToday);
+            totalAdsWatched++;
+            localStorage.setItem('total_ads_watched', totalAdsWatched);
             updateUI();
         }
     }
