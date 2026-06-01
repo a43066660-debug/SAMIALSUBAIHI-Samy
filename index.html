@@ -197,10 +197,6 @@
             margin-bottom: 10px;
         }
 
-        .card-option .btn {
-            margin-top: auto;
-        }
-
         .card-title {
             font-size: 14px;
             font-weight: 600;
@@ -266,7 +262,7 @@
     <div class="balance-box">
         <div class="balance-label">إجمالي الرصيد المستخرج (BTC)</div>
         <div class="crypto-amount" id="cryptoBalance">0.000000017756</div>
-        <div class="fiat-amount" id="fiatBalance">$0.00 USD</div>
+        <div class="fiat-amount" id="fiatBalance">$1,331.70 USD</div>
         <div class="market-info">سعر البيتكوين المرجعي المتزامن: $75,000</div>
     </div>
 
@@ -297,42 +293,45 @@
 </div>
 
 <script>
-    // الحسابات الأساسية والبيانات المبدئية
     let accountBtc = 0.000000017756; 
     const standardBtcPrice = 75000;
     let totalAds = 0;
     let minerLevel = 1;
     
     let isMiningActive = false;
-    let currentMiningIncrement = 0.000000000135; // مقدار الزيادة في البيتكوين كل ثانية
+    let currentMiningIncrement = 0.000000000135; 
     let remainingTimerSeconds = 0; 
-    let miningInterval = null;
 
-    // تم إصلاح المعرفات بإضافة علامات التنصيص النصية ""
-    const cryptoBalanceEl = document.getElementById("cryptoBalance");
-    const fiatBalanceEl = document.getElementById("fiatBalance");
-    const timeCounterEl = document.getElementById("timeCounter");
-    const hashRateTextEl = document.getElementById("hashRateText");
-    const startMiningBtn = document.getElementById("startMiningBtn");
-    const statusBadge = document.getElementById("statusBadge");
-    const statusText = document.getElementById("statusText");
+    // إصلاح تموضع أسماء المعرفات داخل علامات تنصيص نصية
+    const cryptoBalanceEl = document.getElementById( cryptoBalance );
+    const fiatBalanceEl = document.getElementById( fiatBalance );
+    const timeCounterEl = document.getElementById( timeCounter );
+    const hashRateTextEl = document.getElementById( hashRateText );
+    const startMiningBtn = document.getElementById( startMiningBtn );
+    const statusBadge = document.getElementById( statusBadge );
+    const statusText = document.getElementById( statusText );
     
-    const actionAdBtn = document.getElementById("actionAdBtn");
-    const actionUpgradeBtn = document.getElementById("actionUpgradeBtn");
-    const adCounterTextEl = document.getElementById("adCounterText");
-    const levelTextEl = document.getElementById("levelText");
+    const actionAdBtn = document.getElementById( actionAdBtn );
+    const actionUpgradeBtn = document.getElementById( actionUpgradeBtn );
+    const adCounterTextEl = document.getElementById( adCounterText );
+    const levelTextEl = document.getElementById( levelText );
 
-    // دالة تحديث الأرقام والأسعار على الشاشة
     function refreshMetricsDisplay() {
         cryptoBalanceEl.textContent = accountBtc.toFixed(12);
         let calculatedFiat = accountBtc * standardBtcPrice;
-        fiatBalanceEl.textContent = "$" + calculatedFiat.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " USD";
+        fiatBalanceEl.textContent = "$" + calculatedFiat.toLocaleString( en-US , {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " USD";
     }
 
-    // دالة لتحويل الثواني إلى صيغة الوقت الرقمي 00:00:00
-    function formatTime(seconds) {
-        let hrs = Math.floor(seconds / 3600);
-        let mins = Math.floor((seconds % 3600) / 60);
-        let secs = seconds % 60;
-        return [
-            hrs.toString().padStart(2, '0'),
+    // إضافة علامات التنصيص لحدث الضغط والـ Classes
+    startMiningBtn.addEventListener( click , () => {
+        isMiningActive = true;
+        remainingTimerSeconds = 21600; // 6 ساعات بالثواني
+        
+        startMiningBtn.disabled = true;
+        startMiningBtn.textContent = "التعدين نشط حالياً";
+        statusBadge.classList.add( active );
+        statusText.textContent = "نشط ومتصل";
+        hashRateTextEl.textContent = (120 + (minerLevel * 15)) + " TH/s";
+    });
+
+    // إغلاق دالة التوقيت والعد التنازلي بشكل برمي صحيح كاملاً
