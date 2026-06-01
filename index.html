@@ -19,7 +19,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family:  Segoe UI , Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
@@ -197,10 +197,6 @@
             margin-bottom: 10px;
         }
 
-        .card-option .btn {
-            margin-top: auto;
-        }
-
         .card-title {
             font-size: 14px;
             font-weight: 600;
@@ -218,6 +214,7 @@
             font-size: 13px;
             cursor: pointer;
             transition: background 0.2s, transform 0.1s;
+            margin-top: auto;
         }
 
         .btn:active {
@@ -297,18 +294,18 @@
 </div>
 
 <script>
-    // الحسابات الأساسية والبيانات المبدئية
+    // الحسابات والبيانات الأساسية للمستخدم
     let accountBtc = 0.000000017756; 
     const standardBtcPrice = 75000;
     let totalAds = 0;
     let minerLevel = 1;
     
     let isMiningActive = false;
-    let currentMiningIncrement = 0.000000000135; // مقدار الزيادة في البيتكوين كل ثانية
+    let currentMiningIncrement = 0.000000000135; // معدل إضافة الربح في الثانية
     let remainingTimerSeconds = 0; 
     let miningInterval = null;
 
-    // تم إصلاح المعرفات بإضافة علامات التنصيص النصية ""
+    // جلب عناصر الواجهة مع إصلاح علامات التنصيص
     const cryptoBalanceEl = document.getElementById("cryptoBalance");
     const fiatBalanceEl = document.getElementById("fiatBalance");
     const timeCounterEl = document.getElementById("timeCounter");
@@ -322,17 +319,19 @@
     const adCounterTextEl = document.getElementById("adCounterText");
     const levelTextEl = document.getElementById("levelText");
 
-    // دالة تحديث الأرقام والأسعار على الشاشة
+    // دالة تحديث وعرض الرصيد وحساب قيمته الفورية بالدولار
     function refreshMetricsDisplay() {
         cryptoBalanceEl.textContent = accountBtc.toFixed(12);
         let calculatedFiat = accountBtc * standardBtcPrice;
         fiatBalanceEl.textContent = "$" + calculatedFiat.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " USD";
     }
 
-    // دالة لتحويل الثواني إلى صيغة الوقت الرقمي 00:00:00
+    // دالة تحويل الثواني إلى صيغة عداد رقمي (00:00:00)
     function formatTime(seconds) {
         let hrs = Math.floor(seconds / 3600);
         let mins = Math.floor((seconds % 3600) / 60);
         let secs = seconds % 60;
         return [
             hrs.toString().padStart(2, '0'),
+            mins.toString().padStart(2, '0'),
+            secs.toString().padStart(2, '0')
