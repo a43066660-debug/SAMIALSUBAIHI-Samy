@@ -262,7 +262,7 @@
 
     <div class="balance-box">
         <div class="balance-label">إجمالي الرصيد المستخرج (BTC)</div>
-        <div class="crypto-amount" id="cryptoBalance">0.000000017756</div>
+        <div class="crypto-amount" id="cryptoBalance">0.000000000000</div>
         <div class="fiat-amount" id="fiatBalance">$0.00 USD</div>
         <div class="market-info">سعر البيتكوين المرجعي المتزامن: $75,000</div>
     </div>
@@ -294,8 +294,8 @@
 </div>
 
 <script>
-    // 1. البيانات الأساسية المبدئية
-    let accountBtc = 0.000000017756; 
+    // 1. تصفير العداد والبيانات المبدئية لتبدأ من الصفر تماماً
+    let accountBtc = 0.000000000000; 
     const standardBtcPrice = 75000;
     let totalAds = 0;
     let minerLevel = 1;
@@ -305,7 +305,7 @@
     let remainingTimerSeconds = 0; 
     let miningInterval = null;
 
-    // 2. جلب عناصر واجهة المستخدم
+    // 2. جلب وتصحيح معرفات واجهة المستخدم (IDs)
     const cryptoBalanceEl = document.getElementById("cryptoBalance");
     const fiatBalanceEl = document.getElementById("fiatBalance");
     const timeCounterEl = document.getElementById("timeCounter");
@@ -319,81 +319,20 @@
     const adCounterTextEl = document.getElementById("adCounterText");
     const levelTextEl = document.getElementById("levelText");
 
-    // 3. دالة التحديث المباشر للرصيد الحسابي والدولار
+    // 3. دالة تحديث الأرقام وحساب قيمتها بالدولار
     function refreshMetricsDisplay() {
         cryptoBalanceEl.textContent = accountBtc.toFixed(12);
         let calculatedFiat = accountBtc * standardBtcPrice;
         fiatBalanceEl.textContent = "$" + calculatedFiat.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " USD";
     }
 
-    // 4. دالة تحويل صيغة الثواني إلى عداد رقمي
+    // 4. دالة تحويل الثواني إلى ساعة:دقيقة:ثانية
     function formatTime(seconds) {
         let hrs = Math.floor(seconds / 3600);
         let mins = Math.floor((seconds % 3600) / 60);
         let secs = seconds % 60;
         return [
-            hrs.toString().padStart(2,  0 ),
-            mins.toString().padStart(2,  0 ),
-            secs.toString().padStart(2,  0 )
-        ].join( : );
-    }
-
-    // 5. دالة إيقاف دورة التعدين
-    function stopMining() {
-        clearInterval(miningInterval);
-        isMiningActive = false;
-        remainingTimerSeconds = 0;
-        startMiningBtn.disabled = false;
-        startMiningBtn.textContent = "اضغط لبدء التعدين (6 ساعات)";
-        statusBadge.classList.remove("active");
-        statusText.textContent = "متوقف";
-        hashRateTextEl.textContent = "0 TH/s";
-    }
-
-    // 6. تشغيل العمليات والعداد بعد ضغط زر البدء
-    startMiningBtn.addEventListener("click", () => {
-        if (isMiningActive) return;
-
-        isMiningActive = true;
-        remainingTimerSeconds = 21600; 
-        
-        startMiningBtn.disabled = true;
-        startMiningBtn.textContent = "التعدين نشط حالياً";
-        statusBadge.classList.add("active");
-        statusText.textContent = "نشط ومتصل";
-        hashRateTextEl.textContent = (120 + (minerLevel * 15)) + " TH/s";
-
-        refreshMetricsDisplay();
-
-        miningInterval = setInterval(() => {
-            if (remainingTimerSeconds > 0) {
-                remainingTimerSeconds--;
-                accountBtc += currentMiningIncrement; 
-                timeCounterEl.textContent = formatTime(remainingTimerSeconds); 
-                refreshMetricsDisplay(); 
-            } else {
-                stopMining();
-            }
-        }, 1000);
-    });
-
-    // 7. تشغيل زر مكافآت الإعلانات
-    actionAdBtn.addEventListener("click", () => {
-        totalAds++;
-        adCounterTextEl.textContent = totalAds;
-        if (isMiningActive) {
-            accountBtc += 0.000000000500;
-            refreshMetricsDisplay();
-        }
-    });
-
-    // 8. تشغيل زر ترقية العتاد
-    actionUpgradeBtn.addEventListener("click", () => {
-        minerLevel++;
-        levelTextEl.textContent = minerLevel;
-        currentMiningIncrement += 0.000000000050;
-        if (isMiningActive) {
-            hashRateTextEl.textContent = (120 + (minerLevel * 15)) + " TH/s";
-        }
-    });
-</script>
+            hrs.toString().padStart(2, '0'),
+            mins.toString().padStart(2, '0'),
+            secs.toString().padStart(2, '0')
+        ].join(':');
