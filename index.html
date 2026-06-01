@@ -19,7 +19,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family:  Segoe UI , Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
@@ -268,7 +268,7 @@
     </div>
 
     <div class="start-mining-container">
-        <button class="btn-start-mining" id="startMiningBtn">اضغط لبدء التعدين (6 ساعات)</button>
+        <button class="btn-start-mining" id="startMiningBtn" onclick="startMiningProcess()">اضغط لبدء التعدين (6 ساعات)</button>
     </div>
 
     <div class="stats-strip">
@@ -280,21 +280,20 @@
         <div class="card-option">
             <div class="card-icon">📺</div>
             <div class="card-title">مشاهدة الإعلانات</div>
-            <button class="btn btn-blue" id="actionAdBtn">مطالبة بمكافأة</button>
+            <button class="btn btn-blue" id="actionAdBtn" onclick="watchAd()">مطالبة بمكافأة</button>
             <div class="meta-text">عداد المشاهدة: <span id="adCounterText">0</span></div>
         </div>
 
         <div class="card-option">
             <div class="card-icon">⛏️</div>
             <div class="card-title">ترقية العتاد</div>
-            <button class="btn btn-orange" id="actionUpgradeBtn">شراء طاقة</button>
+            <button class="btn btn-orange" id="actionUpgradeBtn" onclick="upgradeHardware()">شراء طاقة</button>
             <div class="meta-text">المستوى الحالي: <span id="levelText">1</span></div>
         </div>
     </div>
 </div>
 
 <script>
-    // 1. تصفير العداد والبيانات المبدئية لتبدأ من الصفر تماماً
     let accountBtc = 0.000000000000; 
     const standardBtcPrice = 75000;
     let totalAds = 0;
@@ -302,37 +301,42 @@
     
     let isMiningActive = false;
     let currentMiningIncrement = 0.000000000135; 
-    let remainingTimerSeconds = 0; 
+    let remainingTimerSeconds = 21600; 
     let miningInterval = null;
 
-    // 2. جلب وتصحيح معرفات واجهة المستخدم (IDs)
-    const cryptoBalanceEl = document.getElementById("cryptoBalance");
-    const fiatBalanceEl = document.getElementById("fiatBalance");
-    const timeCounterEl = document.getElementById("timeCounter");
-    const hashRateTextEl = document.getElementById("hashRateText");
-    const startMiningBtn = document.getElementById("startMiningBtn");
-    const statusBadge = document.getElementById("statusBadge");
-    const statusText = document.getElementById("statusText");
-    
-    const actionAdBtn = document.getElementById("actionAdBtn");
-    const actionUpgradeBtn = document.getElementById("actionUpgradeBtn");
-    const adCounterTextEl = document.getElementById("adCounterText");
-    const levelTextEl = document.getElementById("levelText");
-
-    // 3. دالة تحديث الأرقام وحساب قيمتها بالدولار
     function refreshMetricsDisplay() {
-        cryptoBalanceEl.textContent = accountBtc.toFixed(12);
+        document.getElementById("cryptoBalance").textContent = accountBtc.toFixed(12);
         let calculatedFiat = accountBtc * standardBtcPrice;
-        fiatBalanceEl.textContent = "$" + calculatedFiat.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " USD";
+        document.getElementById("fiatBalance").textContent = "$" + calculatedFiat.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " USD";
     }
 
-    // 4. دالة تحويل الثواني إلى ساعة:دقيقة:ثانية
     function formatTime(seconds) {
         let hrs = Math.floor(seconds / 3600);
         let mins = Math.floor((seconds % 3600) / 60);
         let secs = seconds % 60;
         return [
-            hrs.toString().padStart(2, '0'),
-            mins.toString().padStart(2, '0'),
-            secs.toString().padStart(2, '0')
-        ].join(':');
+            hrs.toString().padStart(2,  0 ),
+            mins.toString().padStart(2,  0 ),
+            secs.toString().padStart(2,  0 )
+        ].join( : );
+    }
+
+    function startMiningProcess() {
+        if (isMiningActive) return;
+        isMiningActive = true;
+
+        let btn = document.getElementById("startMiningBtn");
+        btn.disabled = true;
+        btn.textContent = "التعدين نشط حالياً";
+        
+        document.getElementById("statusBadge").classList.add("active");
+        document.getElementById("statusText").textContent = "نشط ومتصل";
+        document.getElementById("hashRateText").textContent = (120 + (minerLevel * 15)) + " TH/s";
+
+        refreshMetricsDisplay();
+
+        miningInterval = setInterval(() => {
+            if (remainingTimerSeconds > 0) {
+                remainingTimerSeconds--;
+                accountBtc += currentMiningIncrement; 
+
