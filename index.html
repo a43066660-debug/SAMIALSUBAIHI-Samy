@@ -42,8 +42,7 @@
     <div class="card">
         <div>📺</div>
         <b>مشاهدة إعلان</b>
-        <button class="btn-blue" id="ad-btn" onclick="showStartioAd()">مشاهدة</button>
-        <!-- العداد التصاعدي المحدث لعرض المجموع الكلي للمشاهدات الناجحة -->
+        <button class="btn-blue" id="ad-btn" onclick="requestAd()">مشاهدة</button>
         <span class="ad-count" id="ad-count">الإعلانات المشاهدة: 0</span>
     </div>
     <div class="card"><div>🛒</div><b>متجر القوة</b><button class="btn-orange" onclick="alert('قريباً')">شراء</button></div>
@@ -56,14 +55,11 @@
 
     let currentBal = parseFloat(localStorage.getItem('btc_balance')) || 0;
     let miningInterval;
-
-    // قراءة المجموع الإجمالي للإعلانات المشاهدة من الذاكرة
     let totalAdsWatched = parseInt(localStorage.getItem('total_ads_watched')) || 0;
 
     function updateUI() {
         document.getElementById('btc-balance').innerText = currentBal.toFixed(12);
         document.getElementById('usd-balance').innerText = `$${(currentBal * btcPrice).toFixed(2)}`;
-        // تحديث نص العداد التصاعدي على الواجهة
         document.getElementById('ad-count').innerText = `الإعلانات المشاهدة: ${totalAdsWatched}`;
     }
 
@@ -135,22 +131,22 @@
         btn.disabled = false;
     }
 
-    // دالة استدعاء الإعلان في Kodular واحتساب المشاهدة الناجحة
-    function showStartioAd() {
+    // 1. عند الضغط: نطلب الإعلان فقط بدون زيادة العداد
+    function requestAd() {
         if (window.AppInventor) {
             window.AppInventor.setWebViewString("show_ad");
-            
-            // زيادة العداد وحفظه في ذاكرة الهاتف لكي لا يختفي الرقم عند إغلاق التطبيق
-            totalAdsWatched++;
-            localStorage.setItem('total_ads_watched', totalAdsWatched);
-            updateUI();
         } else {
-            alert("تم إرسال أمر تشغيل إعلان Start.io لكودولار!");
-            totalAdsWatched++;
-            localStorage.setItem('total_ads_watched', totalAdsWatched);
-            updateUI();
+            alert("محاكاة: تم طلب الإعلان!");
+            adSuccessEvent(); // للمحاكاة بالمتصفح العادي
         }
     }
+
+    // 2. هذه الدالة يتم استدعاؤها من كودولار فور نجاح ظهور الإعلان
+    window.adSuccessEvent = function() {
+        totalAdsWatched++;
+        localStorage.setItem('total_ads_watched', totalAdsWatched);
+        updateUI();
+    };
 
     checkBackgroundMining();
 </script>
