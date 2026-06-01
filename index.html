@@ -133,7 +133,6 @@
             padding-top: 10px;
         }
 
-        /* زر التشغيل الكبير الـ 6 ساعات */
         .start-mining-container {
             margin-bottom: 20px;
         }
@@ -267,7 +266,6 @@
         <div class="market-info">سعر البيتكوين المرجعي المتزامن: $75,000</div>
     </div>
 
-    <!-- زر تشغيل التعدين اليدوي -->
     <div class="start-mining-container">
         <button class="btn-start-mining" id="startMiningBtn">اضغط لبدء التعدين (6 ساعات)</button>
     </div>
@@ -295,15 +293,15 @@
 </div>
 
 <script>
-    let accountBtc = 0.000000017756; 
+    // جلب البيانات المخزنة سابِقاً أو وضع قيم افتراضية
+    let accountBtc = parseFloat(localStorage.getItem('btc_bal')) || 0.000000017756;
+    let totalAds = parseInt(localStorage.getItem('ad_count')) || 0;
+    let minerLevel = parseInt(localStorage.getItem('miner_lvl')) || 1;
+    let remainingTimerSeconds = parseInt(localStorage.getItem('timer_sec')) || 0;
+    let isMiningActive = localStorage.getItem('is_mining') === 'true';
+
     const standardBtcPrice = 75000;
-    let totalAds = 0;
-    let minerLevel = 1;
-    
-    // حالة التعدين والوقت (6 ساعات تعادل 21600 ثانية)
-    let isMiningActive = false;
-    let currentMiningIncrement = 0.000000000135; 
-    let remainingTimerSeconds = 0; 
+    let currentMiningIncrement = 0.000000000135 + (minerLevel * 0.000000000050); 
 
     const cryptoBalanceEl = document.getElementById('cryptoBalance');
     const fiatBalanceEl = document.getElementById('fiatBalance');
@@ -312,7 +310,6 @@
     const startMiningBtn = document.getElementById('startMiningBtn');
     const statusBadge = document.getElementById('statusBadge');
     const statusText = document.getElementById('statusText');
-    
     const actionAdBtn = document.getElementById('actionAdBtn');
     const actionUpgradeBtn = document.getElementById('actionUpgradeBtn');
     const adCounterTextEl = document.getElementById('adCounterText');
@@ -322,15 +319,10 @@
         cryptoBalanceEl.textContent = accountBtc.toFixed(12);
         let calculatedFiat = accountBtc * standardBtcPrice;
         fiatBalanceEl.textContent = "$" + calculatedFiat.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " USD";
-    }
-
-    // تفعيل زر التشغيل اليدوي
-    startMiningBtn.addEventListener('click', () => {
-        isMiningActive = true;
-        remainingTimerSeconds = 21600; // ضبط العداد على 6 ساعات كاملة
+        adCounterTextEl.textContent = totalAds;
+        levelTextEl.textContent = minerLevel;
         
-        // تحديث المظهر والشارات
-        startMiningBtn.disabled = true;
-        startMiningBtn.textContent = "التعدين نشط حالياً";
-        statusBadge.classList.add('active');
-        statusText.textContent = "نشط ومتصل";
+        // حفظ البيانات في المتصفح فورا لحمايتها من الضياع
+        localStorage.setItem('btc_bal', accountBtc);
+        localStorage.setItem('ad_count', totalAds);
+        localStorage.setItem('miner_lvl', minerLevel);
