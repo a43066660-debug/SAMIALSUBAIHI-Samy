@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MultiMiner - لوحة التحكم المطورة</title>
+    <title>MultiMiner - لوحة التحكم</title>
     <style>
         :root {
             --bg-color: #0d0e12;
@@ -14,7 +14,6 @@
             --btn-blue: #2196f3;
             --btn-orange: #ff9800;
             --btn-purple: #9c27b0;
-            --nav-bg: #1a1d29;
         }
 
         * {
@@ -32,7 +31,6 @@
             align-items: center;
             min-height: 100vh;
             padding: 15px;
-            padding-bottom: 95px; /* مسافة واضحة لمنع تداخل الشريط السفلي */
         }
 
         .dashboard {
@@ -43,23 +41,6 @@
             padding: 24px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
             border: 1px solid #252936;
-            min-height: 480px;
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 20px;
-        }
-
-        /* إدارة التنقل بين الصفحات */
-        .page {
-            display: none;
-            animation: fadeIn 0.3s ease-in-out;
-            flex-direction: column;
-            gap: 15px;
-            flex-grow: 1;
-        }
-
-        .page.active {
-            display: flex;
         }
 
         .header {
@@ -75,8 +56,16 @@
             gap: 8px;
         }
 
-        .logo-icon { font-size: 24px; color: var(--accent-color); }
-        .logo-text { font-size: 20px; font-weight: bold; letter-spacing: 0.5px; }
+        .logo-icon {
+            font-size: 24px;
+            color: var(--accent-color);
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
 
         .status-badge {
             background: rgba(244, 67, 54, 0.1);
@@ -95,59 +84,59 @@
             color: var(--accent-color);
         }
 
-        .pulse { width: 8px; height: 8px; background-color: #f44336; border-radius: 50%; }
-        .status-badge.active .pulse { background-color: var(--accent-color); animation: blink 1.5s infinite; }
-
-        /* شريط التنقل السفلي الاحترافي والجذاب */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 480px;
-            background-color: var(--nav-bg);
-            border-top: 1px solid #2c3247;
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            padding: 12px 0;
-            border-radius: 24px 24px 0 0;
-            box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
-            z-index: 999;
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background-color: #f44336;
+            border-radius: 50%;
         }
 
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-            font-size: 11px;
-            cursor: pointer;
-            gap: 5px;
-            transition: color 0.2s, transform 0.1s;
+        .status-badge.active .pulse {
+            background-color: var(--accent-color);
+            animation: blink 1.5s infinite;
         }
 
-        .nav-item.active {
-            color: var(--accent-color);
-            font-weight: bold;
-        }
-
-        .nav-icon { font-size: 22px; }
-
-        /* البطاقات والصناديق التجميلية */
         .balance-box {
             background: linear-gradient(135deg, #1e2230 0%, #1a1d29 100%);
             border: 1px solid #2c3247;
             border-radius: 20px;
             padding: 22px;
             text-align: center;
+            margin-bottom: 20px;
         }
 
-        .balance-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; }
-        .crypto-amount { font-size: 24px; font-weight: 700; color: var(--text-primary); font-family: monospace; margin-bottom: 4px; word-break: break-all; }
-        .fiat-amount { font-size: 16px; color: var(--accent-color); font-weight: 600; margin-bottom: 12px; }
-        .market-info { font-size: 11px; color: var(--text-secondary); border-top: 1px solid #2c3247; padding-top: 10px; }
+        .balance-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .crypto-amount {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: monospace;
+            margin-bottom: 4px;
+            word-break: break-all;
+        }
+
+        .fiat-amount {
+            font-size: 16px;
+            color: var(--accent-color);
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .market-info {
+            font-size: 11px;
+            color: var(--text-secondary);
+            border-top: 1px solid #2c3247;
+            padding-top: 10px;
+        }
+
+        .start-mining-container {
+            margin-bottom: 20px;
+        }
 
         .btn-start-mining {
             width: 100%;
@@ -163,24 +152,35 @@
             transition: all 0.2s;
         }
 
-        .btn-start-mining:disabled { background: #1f2330; color: #607d8b; border: 1px solid #2c3247; box-shadow: none; cursor: not-allowed; }
+        .btn-start-mining:disabled {
+            background: #1f2330;
+            color: #607d8b;
+            border: 1px solid #2c3247;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
 
         .stats-strip {
             background-color: #1f2330;
             border-radius: 14px;
-            padding: 14px;
+            padding: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 24px;
             font-size: 13px;
         }
 
-        .hash-rate { color: var(--text-primary); font-weight: bold; }
+        .hash-rate {
+            color: var(--text-primary);
+            font-weight: bold;
+        }
 
         .grid-options {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 16px;
+            margin-bottom: 20px;
         }
 
         .card-option {
@@ -194,8 +194,33 @@
             text-align: center;
         }
 
-        .card-icon { font-size: 32px; margin-bottom: 8px; }
-        .card-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; }
+        .card-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 14px;
+        }
+
+        .withdraw-section {
+            background: #1c1f2b;
+            border: 1px solid #282f42;
+            border-radius: 20px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .withdraw-title {
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+        }
 
         .wallet-input {
             width: 100%;
@@ -209,11 +234,14 @@
             text-align: center;
             outline: none;
         }
-        .wallet-input:focus { border-color: var(--btn-purple); }
+
+        .wallet-input:focus {
+            border-color: var(--btn-purple);
+        }
 
         .btn {
             width: 100%;
-            padding: 12px;
+            padding: 11px;
             border: none;
             border-radius: 12px;
             color: white;
@@ -221,43 +249,44 @@
             font-size: 13px;
             cursor: pointer;
             transition: background 0.2s, transform 0.1s;
+            margin-top: auto;
         }
-        .btn:active { transform: scale(0.97); }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
         .btn-blue { background-color: var(--btn-blue); }
         .btn-blue:hover { background-color: #1976d2; }
+
         .btn-orange { background-color: var(--btn-orange); }
         .btn-orange:hover { background-color: #f57c00; }
+
         .btn-purple { background-color: var(--btn-purple); }
         .btn-purple:hover { background-color: #7b1fa2; }
 
-        .settings-item {
-            background: #1c1f2b;
-            border: 1px solid #282f42;
-            border-radius: 14px;
-            padding: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
+        .btn:disabled {
+            background-color: #424242 !important;
+            color: #757575;
+            cursor: not-allowed;
         }
 
-        .empty-store-container {
-            border: 2px dashed #2c3247;
-            border-radius: 18px;
-            padding: 40px 20px;
-            text-align: center;
+        .meta-text {
+            font-size: 11px;
             color: var(--text-secondary);
-            font-size: 13px;
+            margin-top: 10px;
         }
 
-        @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes blink {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
     </style>
 </head>
 <body>
 
 <div class="dashboard">
-    <!-- الهيدر العلوي المستمر لجميع الصفحات -->
     <div class="header">
         <div class="logo-section">
             <span class="logo-icon">⚡</span>
@@ -269,27 +298,89 @@
         </div>
     </div>
 
-    <!-- 1. صفحة القائمة الرئيسية (تمت إعادة الأزرار والترقيات والعداد هنا بالكامل) -->
-    <div id="page-home" class="page active">
-        <div class="balance-box">
-            <div class="balance-label">إجمالي الرصيد المستخرج (BTC)</div>
-            <div class="crypto-amount" id="cryptoBalance">0.000000000000</div>
-            <div class="fiat-amount" id="fiatBalance">$0.00 USD</div>
-            <div class="market-info">سعر البيتكوين المرجعي المتزامن: $75,000</div>
+    <div class="balance-box">
+        <div class="balance-label">إجمالي الرصيد المستخرج (BTC)</div>
+        <div class="crypto-amount" id="cryptoBalance">0.000000000000</div>
+        <div class="fiat-amount" id="fiatBalance">$0.00 USD</div>
+        <div class="market-info">سعر البيتكوين المرجعي المتزامن: $75,000</div>
+    </div>
+
+    <div class="start-mining-container">
+        <button class="btn-start-mining" id="startMiningBtn" onclick="startMiningProcess()">اضغط لبدء التعدين (6 ساعات)</button>
+    </div>
+
+    <div class="stats-strip">
+        <span>المؤقت: <span id="timeCounter">00:00:00</span></span>
+        <span>سرعة الهاش: <span class="hash-rate" id="hashRateText">0 TH/s</span></span>
+    </div>
+
+    <div class="grid-options">
+        <div class="card-option">
+            <div class="card-icon">📺</div>
+            <div class="card-title">مشاهدة الإعلانات</div>
+            <button class="btn btn-blue" id="actionAdBtn" onclick="watchAd()">مطالبة بمكافأة</button>
+            <div class="meta-text">عداد المشاهدة: <span id="adCounterText">0</span></div>
         </div>
-        <div class="start-mining-container" style="margin-top: 5px;">
-            <button class="btn-start-mining" id="startMiningBtn" onclick="startMiningProcess()">اضغط لبدء التعدين (6 ساعات)</button>
+
+        <div class="card-option">
+            <div class="card-icon">⛏️</div>
+            <div class="card-title">ترقية العتاد</div>
+            <button class="btn btn-orange" id="actionUpgradeBtn" onclick="upgradeHardware()">شراء طاقة</button>
+            <div class="meta-text">المستوى الحالي: <span id="levelText">1</span></div>
         </div>
-        <div class="stats-strip">
-            <span>المؤقت: <span id="timeCounter">00:00:00</span></span>
-            <span>سرعة الهاش: <span class="hash-rate" id="hashRateText">0 TH/s</span></span>
-        </div>
-        
-        <!-- الأزرار الفرعية أصبحت بالكامل داخل الصفحة الرئيسية الآن -->
-        <div class="grid-options" style="margin-top: 5px;">
-            <div class="card-option">
-                <div class="card-icon">📺</div>
-                <div class="card-title">مشاهدة الإعلانات</div>
-                <button class="btn btn-blue" id="actionAdBtn" onclick="watchAd()">مطالبة بمكافأة</button>
-                <div class="meta-text" style="margin-top: 8px;">عداد المشاهدة: <span id="adCounterText">0</span></div>
-            </div>
+    </div>
+
+    <div class="withdraw-section">
+        <div class="withdraw-title">💳 سحب الأرباح لمستودعك</div>
+        <input type="text" class="wallet-input" id="walletAddress" placeholder="أدخل عنوان محفظة Bitcoin (BTC)">
+        <button class="btn btn-purple" onclick="processWithdrawal()">تقديم طلب سحب</button>
+        <div class="meta-text" style="text-align: center;">الحد الأدنى للسحب: <span style="font-family: monospace; color:#ff9800;">0.00050000</span> BTC</div>
+    </div>
+</div>
+
+    <script>
+    // ربط معرّف تطبيقك BTC_Flow الموضح بالصورة
+    const adMobAppId = "205859610";
+
+    // جلب البيانات المحفوظة أو استخدام القيم الافتراضية
+    let accountBtc = parseFloat(localStorage.getItem("miner_btc")) || 0.000000000000; 
+    const standardBtcPrice = 75000;
+    let totalAds = parseInt(localStorage.getItem("miner_ads")) || 0;
+    let minerLevel = parseInt(localStorage.getItem("miner_level")) || 1;
+    let savedWallet = localStorage.getItem("miner_wallet") || "";
+    
+    let isMiningActive = false;
+    let currentMiningIncrement = 0.000000000135 + ((minerLevel - 1) * 0.000000000050); 
+    let remainingTimerSeconds = parseInt(localStorage.getItem("miner_seconds")) || 21600; 
+    let miningInterval = null;
+
+    // دالة لحفظ البيانات الحالية في المتصفح تلقائياً
+    function saveToLocalStorage() {
+        localStorage.setItem("miner_btc", accountBtc);
+        localStorage.setItem("miner_ads", totalAds);
+        localStorage.setItem("miner_level", minerLevel);
+        localStorage.setItem("miner_seconds", remainingTimerSeconds);
+        localStorage.setItem("miner_wallet", document.getElementById("walletAddress").value);
+    }
+
+    // تحديث الأرقام والواجهات البصرية للرصيد
+    function refreshMetricsDisplay() {
+        document.getElementById("cryptoBalance").textContent = accountBtc.toFixed(12);
+        let calculatedFiat = accountBtc * standardBtcPrice;
+        document.getElementById("fiatBalance").textContent = "$" + calculatedFiat.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " USD";
+        document.getElementById("adCounterText").textContent = totalAds;
+        document.getElementById("levelText").textContent = minerLevel;
+    }
+
+    // تحويل الثواني إلى صيغة وقت منظم (00:00:00)
+    function formatTime(seconds) {
+        let hrs = Math.floor(seconds / 3600);
+        let mins = Math.floor((seconds % 3600) / 60);
+        let secs = seconds % 60;
+        return [
+            hrs.toString().padStart(2, "0"),
+            mins.toString().padStart(2, "0"),
+            secs.toString().padStart(2, "0")
+        ].join(":");
+    }
+
