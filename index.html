@@ -28,19 +28,19 @@
 
 <div class="main-grid">
     <button class="btn-mine" id="mine-btn" onclick="startMining()">⚡ ابدأ التعدين الآن</button>
-    <div class="card"><div>📺</div><b>مشاهدة إعلان</b><button class="btn-blue" onclick="alert( سيتم ربطه بـ Admob لاحقاً )">مشاهدة</button></div>
-    <div class="card"><div>🛒</div><b>متجر القوة</b><button class="btn-orange" onclick="alert( قريباً )">شراء</button></div>
+    <div class="card"><div>📺</div><b>مشاهدة إعلان</b><button class="btn-blue" onclick="alert('سيتم ربطه بـ Admob لاحقاً')">مشاهدة</button></div>
+    <div class="card"><div>🛒</div><b>متجر القوة</b><button class="btn-orange" onclick="alert('قريباً')">شراء</button></div>
 </div>
 
 <script>
-    // استخدام الذاكرة المحلية بدلاً من Firebase لضمان عمل العداد 100%
-    let currentBal = parseFloat(localStorage.getItem( btc_balance )) || 0;
-    document.getElementById( btc-balance ).innerText = currentBal.toFixed(12);
+    // تم تصحيح الأقواس وعلامات الاقتباس هنا ليعمل حفظ الذاكرة بشكل صحيح 100%
+    let currentBal = parseFloat(localStorage.getItem('btc_balance')) || 0;
+    document.getElementById('btc-balance').innerText = currentBal.toFixed(12);
 
     let miningInterval;
 
     window.startMining = function() {
-        const btn = document.getElementById( mine-btn );
+        const btn = document.getElementById('mine-btn');
         let duration = 60; // مدة التعدين بالثواني
 
         btn.disabled = true;
@@ -49,10 +49,10 @@
             if (duration > 0) {
                 // زيادة الرصيد وتحديث الواجهة
                 currentBal += 0.000000000250; 
-                document.getElementById( btc-balance ).innerText = currentBal.toFixed(12);
+                document.getElementById('btc-balance').innerText = currentBal.toFixed(12);
                 
                 // حفظ الرصيد الجديد في ذاكرة الهاتف
-                localStorage.setItem( btc_balance , currentBal);
+                localStorage.setItem('btc_balance', currentBal);
 
                 btn.innerText = `⏳ جاري التعدين... (${duration} ثانية)`;
                 duration--;
