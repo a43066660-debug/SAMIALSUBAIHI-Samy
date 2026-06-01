@@ -326,7 +326,7 @@
         fiatBalanceEl.textContent = "$" + calculatedFiat.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " USD";
     }
 
-    // دالة تحويل الثواني إلى صيغة عداد رقمي (00:00:00)
+    // دالة تحويل الثواني إلى صيغة عداد رقمي (06:00:00)
     function formatTime(seconds) {
         let hrs = Math.floor(seconds / 3600);
         let mins = Math.floor((seconds % 3600) / 60);
