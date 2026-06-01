@@ -293,15 +293,14 @@
 </div>
 
 <script>
-    // جلب البيانات المخزنة سابِقاً أو وضع قيم افتراضية
-    let accountBtc = parseFloat(localStorage.getItem('btc_bal')) || 0.000000017756;
-    let totalAds = parseInt(localStorage.getItem('ad_count')) || 0;
-    let minerLevel = parseInt(localStorage.getItem('miner_lvl')) || 1;
-    let remainingTimerSeconds = parseInt(localStorage.getItem('timer_sec')) || 0;
-    let isMiningActive = localStorage.getItem('is_mining') === 'true';
-
+    let accountBtc = 0.000000017756; 
     const standardBtcPrice = 75000;
-    let currentMiningIncrement = 0.000000000135 + (minerLevel * 0.000000000050); 
+    let totalAds = 0;
+    let minerLevel = 1;
+    
+    let isMiningActive = false;
+    let currentMiningIncrement = 0.000000000135; 
+    let remainingTimerSeconds = 0; 
 
     const cryptoBalanceEl = document.getElementById('cryptoBalance');
     const fiatBalanceEl = document.getElementById('fiatBalance');
@@ -310,6 +309,7 @@
     const startMiningBtn = document.getElementById('startMiningBtn');
     const statusBadge = document.getElementById('statusBadge');
     const statusText = document.getElementById('statusText');
+    
     const actionAdBtn = document.getElementById('actionAdBtn');
     const actionUpgradeBtn = document.getElementById('actionUpgradeBtn');
     const adCounterTextEl = document.getElementById('adCounterText');
@@ -319,10 +319,22 @@
         cryptoBalanceEl.textContent = accountBtc.toFixed(12);
         let calculatedFiat = accountBtc * standardBtcPrice;
         fiatBalanceEl.textContent = "$" + calculatedFiat.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " USD";
-        adCounterTextEl.textContent = totalAds;
-        levelTextEl.textContent = minerLevel;
+    }
+
+    startMiningBtn.addEventListener('click', () => {
+        isMiningActive = true;
+        remainingTimerSeconds = 21600; 
         
-        // حفظ البيانات في المتصفح فورا لحمايتها من الضياع
-        localStorage.setItem('btc_bal', accountBtc);
-        localStorage.setItem('ad_count', totalAds);
-        localStorage.setItem('miner_lvl', minerLevel);
+        startMiningBtn.disabled = true;
+        startMiningBtn.textContent = "التعدين نشط حالياً";
+        statusBadge.classList.add('active');
+        statusText.textContent = "نشط ومتصل";
+        hashRateTextEl.textContent = (120 + (minerLevel * 15)) + " TH/s";
+    });
+
+    setInterval(() => {
+        if (isMiningActive && remainingTimerSeconds > 0) {
+            accountBtc += currentMiningIncrement;
+            refreshMetricsDisplay();
+
+            remainingTimerSeconds--;
