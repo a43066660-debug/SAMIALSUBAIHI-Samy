@@ -262,8 +262,8 @@
 
     <div class="balance-box">
         <div class="balance-label">إجمالي الرصيد المستخرج (BTC)</div>
-        <div class="crypto-amount" id="cryptoBalance">0.000000000000</div>
-        <div class="fiat-amount" id="fiatBalance">$0,000.00 USD</div>
+        <div class="crypto-amount" id="cryptoBalance">0.000000017756</div>
+        <div class="fiat-amount" id="fiatBalance">$1,331.70 USD</div>
         <div class="market-info">سعر البيتكوين المرجعي المتزامن: $75,000</div>
     </div>
 
@@ -295,14 +295,14 @@
 </div>
 
 <script>
-    let accountBtc = 0.000000000000; 
+    let accountBtc = 0.000000017756; 
     const standardBtcPrice = 75000;
-    let totalAds = 1;
+    let totalAds = 0;
     let minerLevel = 1;
     
     // حالة التعدين والوقت (6 ساعات تعادل 21600 ثانية)
     let isMiningActive = false;
-    let currentMiningIncrement = 0.000000000035; 
+    let currentMiningIncrement = 0.000000000135; 
     let remainingTimerSeconds = 0; 
 
     const cryptoBalanceEl = document.getElementById('cryptoBalance');
