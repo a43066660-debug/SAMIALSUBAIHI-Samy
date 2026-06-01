@@ -9,7 +9,8 @@
         :root { --main-color: #4a148c; --accent-color: #ff4081; --bg-color: #fce4ec; }
         body { background-color: var(--bg-color); font-family: sans-serif; margin: 0; padding: 0; direction: rtl; }
         .header { background: white; padding: 25px; border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
-        .balance { font-size: 32px; font-weight: bold; color: var(--accent-color); margin: 10px 0; font-family: monospace; }
+        .balance { font-size: 32px; font-weight: bold; color: var(--accent-color); margin: 5px 0; font-family: monospace; }
+        .usd-balance { font-size: 18px; font-weight: bold; color: #00c853; margin-bottom: 10px; font-family: monospace; }
         .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
         .card { background: white; border-radius: 20px; padding: 15px; text-align: center; box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
         .btn-mine { grid-column: span 2; background: linear-gradient(45deg, #00c853, #b2ff59); color: white; padding: 20px; border-radius: 20px; font-size: 20px; font-weight: bold; border: none; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,200,83,0.3); }
@@ -23,7 +24,9 @@
 <div class="header">
     <div style="color: #888;">إجمالي الرصيد (BTC)</div>
     <div class="balance" id="btc-balance">0.000000000000</div>
-    <div style="font-size: 12px; color: #666;">سعر السوق الحالي: $64,200</div>
+    <!-- العداد الجديد المقابل بالدولار الأمريكي -->
+    <div class="usd-balance" id="usd-balance">$0.00</div>
+    <div style="font-size: 12px; color: #666;">سعر السوق الثابت: $75,000</div>
 </div>
 
 <div class="main-grid">
@@ -33,28 +36,41 @@
 </div>
 
 <script>
-    // تم تصحيح الأقواس وعلامات الاقتباس هنا ليعمل حفظ الذاكرة بشكل صحيح 100%
+    // السعر الثابت المعتمد في الحسبة
+    const btcPrice = 75000;
+
     let currentBal = parseFloat(localStorage.getItem('btc_balance')) || 0;
+    
+    // تحديث واجهة الـ BTC والـ USD عند فتح الصفحة مباشرة
     document.getElementById('btc-balance').innerText = currentBal.toFixed(12);
+    document.getElementById('usd-balance').innerText = `$${(currentBal * btcPrice).toFixed(2)}`;
 
     let miningInterval;
 
     window.startMining = function() {
         const btn = document.getElementById('mine-btn');
-        let duration = 60; // مدة التعدين بالثواني
+        let duration = 21600; // 6 ساعات بالثواني
 
         btn.disabled = true;
 
         miningInterval = setInterval(() => {
             if (duration > 0) {
-                // زيادة الرصيد وتحديث الواجهة
-                currentBal += 0.000000000250; 
-                document.getElementById('btc-balance').innerText = currentBal.toFixed(12);
+                // إضافة القيمة الجديدة لإنتاج 5 دولار يومياً (بناءً على السعر 75,000$)
+                currentBal += 0.000000000772; 
                 
-                // حفظ الرصيد الجديد في ذاكرة الهاتف
+                // تحديث القيم وحفظها
+                document.getElementById('btc-balance').innerText = currentBal.toFixed(12);
+                document.getElementById('usd-balance').innerText = `$${(currentBal * btcPrice).toFixed(2)}`;
+                
                 localStorage.setItem('btc_balance', currentBal);
 
-                btn.innerText = `⏳ جاري التعدين... (${duration} ثانية)`;
+                let hrs = Math.floor(duration / 3600);
+                let mins = Math.floor((duration % 3600) / 60);
+                let secs = duration % 60;
+                
+                let displayTime = `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+                btn.innerText = `⏳ جاري التعدين... (${displayTime})`;
                 duration--;
             } else {
                 clearInterval(miningInterval);
