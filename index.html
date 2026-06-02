@@ -285,3 +285,56 @@
     </style>
 </head>
 
+<body>
+
+<div class="dashboard">
+    <div class="header">
+        <div class="logo-section">
+            <span class="logo-icon">⚡</span>
+            <span class="logo-text">MultiMiner</span>
+        </div>
+        <div class="status-badge" id="statusBadge">
+            <div class="pulse"></div>
+            <span id="statusText">متوقف</span>
+        </div>
+    </div>
+
+    <div class="balance-box">
+        <div class="balance-label">إجمالي الرصيد المستخرج (BTC)</div>
+        <div class="crypto-amount" id="cryptoBalance">0.000000000000</div>
+        <div class="fiat-amount" id="fiatBalance">$0.00 USD</div>
+        <div class="market-info">سعر البيتكوين المرجعي المتزامن: $75,000</div>
+    </div>
+
+    <div class="start-mining-container">
+        <button class="btn-start-mining" id="startMiningBtn" onclick="startMiningProcess()">اضغط لبدء التعدين (6 ساعات)</button>
+    </div>
+
+    <div class="stats-strip">
+        <span>المؤقت: <span id="timeCounter">06:00:00</span></span>
+        <span>سرعة الهاش: <span class="hash-rate" id="hashRateText">0 TH/s</span></span>
+    </div>
+
+    <div class="grid-options">
+        <div class="card-option">
+            <div class="card-icon">📺</div>
+            <div class="card-title">مشاهدة الإعلانات</div>
+            <button class="btn btn-blue" id="actionAdBtn" onclick="watchAd()">مطالبة بمكافأة</button>
+            <div class="meta-text">عداد المشاهدة: <span id="adCounterText">0</span></div>
+        </div>
+
+        <div class="card-option">
+            <div class="card-icon">⏳</div>
+            <div class="card-title">زيادة وقت التعدين</div>
+            <button class="btn btn-orange" id="actionUpgradeBtn" onclick="requestUpgradeAd()">إعلان (+2 س)</button>
+            <div class="meta-text">الحد الأقصى الحالي: <span id="maxDurationText">6</span> ساعات</div>
+        </div>
+    </div>
+
+    <div class="withdraw-section">
+        <div class="withdraw-title">💳 سحب الأرباح لمستودعك</div>
+        <input type="text" class="wallet-input" id="walletAddress" placeholder="أدخل عنوان محفظة Bitcoin (BTC)">
+        <button class="btn btn-purple" onclick="processWithdrawal()">تقديم طلب سحب</button>
+        <div class="meta-text" style="text-align: center;">الحد الأدنى للسحب: <span style="font-family: monospace; color:#ff9800;">0.00050000</span> BTC</div>
+    </div>
+</div>
