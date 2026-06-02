@@ -203,3 +203,48 @@
         </div>
     </nav>
 </div>
+<script>
+    // دالة التبديل السلس بين الصفحات الأربع وتغيير حالة أزرار الشريط السفلي
+    function switchPage(pageName) {
+        let targetPage =   ;
+        
+        // التحقق الذكي لتجنب الأخطاء في حال كتابة الكلمات بدون علامات اقتباس
+        if (typeof pageName ===  string ) {
+            targetPage = pageName;
+        } else {
+            // تحويل المعامل تلقائياً إلى نص للتعامل مع التعديل في الـ HTML
+            targetPage = String(pageName);
+        }
+
+        // 1. إخفاء جميع الصفحات أولاً
+        const allPages = document.querySelectorAll( .page );
+        allPages.forEach(page => {
+            page.classList.remove( active );
+        });
+
+        // 2. إزالة الحالة النشطة من جميع أزرار شريط التنقل
+        const navItems = document.querySelectorAll( .nav-item );
+        navItems.forEach(item => {
+            item.classList.remove( active );
+        });
+
+        // 3. إظهار الصفحة المطلوبة بناءً على الاختيار
+        const selectedPage = document.getElementById( page-  + targetPage);
+        if (selectedPage) {
+            selectedPage.classList.add( active );
+        }
+
+        // 4. تفعيل زر التنقل المطابق في الشريط السفلي
+        let index = 0;
+        if (targetPage ===  shop ) index = 1;
+        if (targetPage ===  wallet ) index = 2;
+        if (targetPage ===  settings ) index = 3;
+        
+        if (navItems[index]) {
+            navItems[index].classList.add( active );
+        }
+    }
+</script>
+
+</body>
+</html>
