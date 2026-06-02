@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MultiMiner Pro</title>
+    <title>MultiMiner - لوحة التحكم</title>
     <style>
         :root {
             --bg-color: #0d0e12;
@@ -11,19 +11,16 @@
             --accent-color: #00e676;
             --text-primary: #ffffff;
             --text-secondary: #90a4ae;
-            --nav-bg: #1a1d29;
-            --nav-active: #00e676;
-            --nav-inactive: #607d8b;
-            --danger-color: #ff5252;
-            --blue-color: #2196f3;
+            --btn-blue: #2196f3;
+            --btn-orange: #ff9800;
+            --btn-purple: #9c27b0;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family:  Segoe UI , Tahoma, Geneva, Verdana, sans-serif;
-            -webkit-tap-highlight-color: transparent;
+            font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
@@ -33,284 +30,493 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            padding: 15px;
         }
 
-        .app-container {
-            background-color: var(--bg-color);
+        .dashboard {
+            background-color: var(--card-bg);
             width: 100%;
             max-width: 480px;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .content-area {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            padding-bottom: 90px;
-        }
-
-        .page {
-            display: none;
-            animation: fadeIn 0.25s ease-in-out;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        .page-header {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid #1f2330;
-            padding-bottom: 10px;
-        }
-
-        /* تنسيق العناصر الاحترافية داخل الصفحات */
-        .pro-card {
-            background: linear-gradient(135deg, #1e2230 0%, #161820 100%);
+            border-radius: 28px;
+            padding: 24px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
             border: 1px solid #252936;
-            border-radius: 18px;
-            padding: 16px;
-            margin-bottom: 16px;
         }
 
-        .stat-row {
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            font-size: 24px;
+            color: var(--accent-color);
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge {
+            background: rgba(244, 67, 54, 0.1);
+            color: #f44336;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-badge.active {
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--accent-color);
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background-color: #f44336;
+            border-radius: 50%;
+        }
+
+        .status-badge.active .pulse {
+            background-color: var(--accent-color);
+            animation: blink 1.5s infinite;
+        }
+
+        .balance-box {
+            background: linear-gradient(135deg, #1e2230 0%, #1a1d29 100%);
+            border: 1px solid #2c3247;
+            border-radius: 20px;
+            padding: 22px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .balance-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .crypto-amount {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: monospace;
+            margin-bottom: 4px;
+            word-break: break-all;
+        }
+
+        .fiat-amount {
+            font-size: 16px;
+            color: var(--accent-color);
+            font-weight: 600;
             margin-bottom: 12px;
         }
 
-        .stat-row:last-child {
-            margin-bottom: 0;
+        .market-info {
+            font-size: 11px;
+            color: var(--text-secondary);
+            border-top: 1px solid #2c3247;
+            padding-top: 10px;
         }
 
-        .btn-action {
+        .start-mining-container {
+            margin-bottom: 20px;
+        }
+
+        .btn-start-mining {
             width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 12px;
+            padding: 16px;
+            background: linear-gradient(135deg, #00e676 0%, #00b0ff 100%);
             color: #0d0e12;
-            background: var(--accent-color);
+            font-size: 16px;
             font-weight: bold;
-            font-size: 14px;
+            border: none;
+            border-radius: 16px;
             cursor: pointer;
-            transition: transform 0.1s;
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
+            transition: all 0.2s;
         }
 
-        .btn-action:active {
-            transform: scale(0.98);
+        .btn-start-mining:disabled {
+            background: #1f2330;
+            color: #607d8b;
+            border: 1px solid #2c3247;
+            box-shadow: none;
+            cursor: not-allowed;
         }
 
-        /* شريط التصفح السفلي المحسن */
-        .bottom-nav {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 70px;
-            background-color: var(--nav-bg);
-            border-top: 1px solid #252936;
+        .stats-strip {
+            background-color: #1f2330;
+            border-radius: 14px;
+            padding: 12px;
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             align-items: center;
-            z-index: 100;
+            margin-bottom: 24px;
+            font-size: 13px;
         }
 
-        .nav-item {
+        .hash-rate {
+            color: var(--text-primary);
+            font-weight: bold;
+        }
+
+        .grid-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .card-option {
+            background: #1c1f2b;
+            border: 1px solid #282f42;
+            border-radius: 18px;
+            padding: 18px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            color: var(--nav-inactive);
-            font-size: 11px;
+            text-align: center;
+        }
+
+        .card-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 14px;
             font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 14px;
+        }
+
+        .withdraw-section {
+            background: #1c1f2b;
+            border: 1px solid #282f42;
+            border-radius: 20px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .withdraw-title {
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .wallet-input {
+            width: 100%;
+            padding: 12px;
+            background: #0d0e12;
+            border: 1px solid #2c3247;
+            border-radius: 10px;
+            color: #ffffff;
+            font-family: monospace;
+            font-size: 13px;
+            text-align: center;
+            outline: none;
+        }
+
+        .wallet-input:focus {
+            border-color: var(--btn-purple);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 11px;
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: bold;
+            font-size: 13px;
             cursor: pointer;
-            width: 25%;
-            height: 100%;
-            transition: all 0.2s;
-            gap: 4px;
+            transition: background 0.2s, transform 0.1s;
+            margin-top: auto;
         }
 
-        .nav-item .icon {
-            font-size: 22px;
+        .btn:active {
+            transform: scale(0.97);
         }
 
-        .nav-item.active {
-            color: var(--nav-active);
+        .btn-blue { background-color: var(--btn-blue); }
+        .btn-blue:hover { background-color: #1976d2; }
+
+        .btn-orange { background-color: var(--btn-orange); }
+        .btn-orange:hover { background-color: #f57c00; }
+
+        .btn-purple { background-color: var(--btn-purple); }
+        .btn-purple:hover { background-color: #7b1fa2; }
+
+        .btn:disabled {
+            background-color: #424242 !important;
+            color: #757575;
+            cursor: not-allowed;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
+        .meta-text {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 10px;
+        }
+
+        @keyframes blink {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
         }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div class="content-area">
-        
-        <!-- 1. صفحة القائمة (لوحة التحكم الرئيسية) -->
-        <div id="page-home" class="page active">
-            <div class="page-header"><span>📋</span> لوحة التعدين</div>
-            
-            <div class="pro-card" style="text-align: center; padding: 24px 16px;">
-                <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;">إجمالي الرصيد المستخرج</div>
-                <div style="font-size: 28px; font-weight: 700; font-family: monospace; color: #fff; margin-bottom: 6px;">0.000000000000</div>
-                <div style="font-size: 16px; color: var(--accent-color); font-weight: 600;">$0.00 USD</div>
-            </div>
-
-            <div class="pro-card">
-                <div class="stat-row">
-                    <span style="color: var(--text-secondary);">حالة الاتصال:</span>
-                    <span style="color: var(--danger-color); font-weight: 600;">متوقف</span>
-                </div>
-                <div class="stat-row">
-                    <span style="color: var(--text-secondary);">سرعة الهاش الحالية:</span>
-                    <span style="font-weight: bold;">0 TH/s</span>
-                </div>
-                <div class="stat-row">
-                    <span style="color: var(--text-secondary);">المؤقت المتبقي:</span>
-                    <span style="font-family: monospace; font-weight: bold; color: var(--blue-color);">06:00:00</span>
-                </div>
-            </div>
-
-            <button class="btn-action">بدء جلسة تعدين جديدة</button>
+<div class="dashboard">
+    <div class="header">
+        <div class="logo-section">
+            <span class="logo-icon">⚡</span>
+            <span class="logo-text">MultiMiner</span>
         </div>
-
-        <!-- 2. صفحة المتجر الرقمي -->
-        <div id="page-shop" class="page">
-            <div class="page-header"><span>🛒</span> المتجر الرقمي</div>
-            
-            <div class="pro-card">
-                <div style="font-weight: bold; font-size: 16px; margin-bottom: 6px;">بطاقة عتاد ليفل 1</div>
-                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">تزيد من سرعة التعدين بمقدار +15 TH/s ثابتة</div>
-                <div class="stat-row">
-                    <span style="color: var(--accent-color); font-weight: bold;">0.000000002000 BTC</span>
-                    <button class="btn-action" style="width: auto; padding: 6px 14px; font-size: 12px;">شراء الطاقة</button>
-                </div>
-            </div>
-
-            <div class="pro-card">
-                <div style="font-weight: bold; font-size: 16px; margin-bottom: 6px;">مسرع الجلسة الفوري</div>
-                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">مشاهدة إعلان مكافأة للحصول على +2 ساعتين للتعدين</div>
-                <div class="stat-row">
-                    <span style="color: var(--blue-color); font-weight: bold;">مجاني (إعلان)</span>
-                    <button class="btn-action" style="width: auto; padding: 6px 14px; font-size: 12px; background: var(--blue-color); color: white;">شاهد الآن</button>
-                </div>
-            </div>
+        <div class="status-badge" id="statusBadge">
+            <div class="pulse"></div>
+            <span id="statusText">متوقف</span>
         </div>
-
-        <!-- 3. صفحة المحفظة -->
-        <div id="page-wallet" class="page">
-            <div class="page-header"><span>💳</span> محفظتي الرقمية</div>
-            
-            <div class="pro-card" style="padding: 20px 16px;">
-                <div class="stat-row">
-                    <span style="color: var(--text-secondary);">الحد الأدنى للسحب:</span>
-                    <span style="font-family: monospace; color: var(--btn-orange); font-weight: bold;">0.00050000 BTC</span>
-                </div>
-            </div>
-
-            <div class="pro-card">
-                <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; text-align: center;">عنوان مستودع البيتكوين الخاص بك</div>
-                <input type="text" placeholder="أدخل عنوان محفظة BTC هنا" style="width: 100%; padding: 12px; background: #0d0e12; border: 1px solid #2c3247; border-radius: 10px; color: white; text-align: center; font-family: monospace; font-size: 13px; outline: none; margin-bottom: 14px;">
-                <button class="btn-action" style="background: var(--btn-purple); color: white;">تقديم طلب سحب الأرباح</button>
-            </div>
-        </div>
-
-        <!-- 4. صفحة الإعدادات -->
-        <div id="page-settings" class="page">
-            <div class="page-header"><span>⚙️</span> الإعدادات العامة</div>
-            
-            <div class="pro-card" style="padding: 10px 16px;">
-                <div class="stat-row" style="border-bottom: 1px solid #252936; padding: 12px 0;">
-                    <span>معرف التطبيق الخاص بك</span>
-                    <span style="font-family: monospace; color: var(--text-secondary);">205859610</span>
-                </div>
-                <div class="stat-row" style="border-bottom: 1px solid #252936; padding: 12px 0;">
-                    <span>حفظ البيانات سحابياً</span>
-                    <span style="color: var(--accent-color); font-weight: bold;">مفعل تلقائياً</span>
-                </div>
-                <div class="stat-row" style="padding: 12px 0;">
-                    <span>إصدار لوحة التحكم</span>
-                    <span style="color: var(--text-secondary);">Pro V2.5</span>
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    <!-- شريط التنقل السفلي التفاعلي المصمم بدقة -->
-    <nav class="bottom-nav">
-        <div class="nav-item active" onclick="switchPage( home )">
-            <span class="icon">📋</span>
-            <span>القائمة</span>
+    <div class="balance-box">
+        <div class="balance-label">إجمالي الرصيد المستخرج (BTC)</div>
+        <div class="crypto-amount" id="cryptoBalance">0.000000000000</div>
+        <div class="fiat-amount" id="fiatBalance">$0.00 USD</div>
+        <div class="market-info">سعر البيتكوين المرجعي المتزامن: $75,000</div>
+    </div>
+
+    <div class="start-mining-container">
+        <button class="btn-start-mining" id="startMiningBtn" onclick="startMiningProcess()">اضغط لبدء التعدين (6 ساعات)</button>
+    </div>
+
+    <div class="stats-strip">
+        <span>المؤقت: <span id="timeCounter">06:00:00</span></span>
+        <span>سرعة الهاش: <span class="hash-rate" id="hashRateText">0 TH/s</span></span>
+    </div>
+
+    <div class="grid-options">
+        <div class="card-option">
+            <div class="card-icon">📺</div>
+            <div class="card-title">مشاهدة الإعلانات</div>
+            <button class="btn btn-blue" id="actionAdBtn" onclick="watchAd()">مطالبة بمكافأة</button>
+            <div class="meta-text">عداد المشاهدة: <span id="adCounterText">0</span></div>
         </div>
-        <div class="nav-item" onclick="switchPage( shop )">
-            <span class="icon">🛒</span>
-            <span>المتجر</span>
+
+        <div class="card-option">
+            <div class="card-icon">⏳</div>
+            <div class="card-title">زيادة وقت التعدين</div>
+            <button class="btn btn-orange" id="actionUpgradeBtn" onclick="requestUpgradeAd()">إعلان (+2 س)</button>
+            <div class="meta-text">الحد الأقصى الحالي: <span id="maxDurationText">6</span> ساعات</div>
         </div>
-        <div class="nav-item" onclick="switchPage( wallet )">
-            <span class="icon">💳</span>
-            <span>المحفظة</span>
-        </div>
-        <div class="nav-item" onclick="switchPage( settings )">
-            <span class="icon">⚙️</span>
-            <span>الإعدادات</span>
-        </div>
-    </nav>
+    </div>
+
+    <div class="withdraw-section">
+        <div class="withdraw-title">💳 سحب الأرباح لمستودعك</div>
+        <input type="text" class="wallet-input" id="walletAddress" placeholder="أدخل عنوان محفظة Bitcoin (BTC)">
+        <button class="btn btn-purple" onclick="processWithdrawal()">تقديم طلب سحب</button>
+        <div class="meta-text" style="text-align: center;">الحد الأدنى للسحب: <span style="font-family: monospace; color:#ff9800;">0.00050000</span> BTC</div>
+    </div>
 </div>
 <script>
-    // دالة التبديل السلس والسريع بين الأقسام الأربعة داخل التطبيق
-    function switchPage(pageName) {
-        let targetPage =   ;
+    const adMobAppId = "205859610";
+
+    let accountBtc = parseFloat(localStorage.getItem("miner_btc")) || 0.000000000000; 
+    const standardBtcPrice = 75000;
+    let totalAds = parseInt(localStorage.getItem("miner_ads")) || 0;
+    let savedWallet = localStorage.getItem("miner_wallet") || "";
+    
+    // إعدادات وقت التعدين المطور
+    let maxMiningSeconds = parseInt(localStorage.getItem("miner_max_seconds")) || 21600; // الافتراضي 6 ساعات (21600 ثانية)
+    let remainingTimerSeconds = localStorage.getItem("miner_seconds") !== null ? parseInt(localStorage.getItem("miner_seconds")) : maxMiningSeconds; 
+
+    let isMiningActive = false;
+    let currentMiningIncrement = 0.000000000135; 
+    let miningInterval = null;
+    
+    // متغير ذكي لمعرفة نوع الإعلان الحالي (عادي أم ترقية وقت)
+    let currentAdTask = "NORMAL"; 
+
+    function saveToLocalStorage() {
+        localStorage.setItem("miner_btc", accountBtc);
+        localStorage.setItem("miner_ads", totalAds);
+        localStorage.setItem("miner_max_seconds", maxMiningSeconds);
+        localStorage.setItem("miner_seconds", remainingTimerSeconds);
+        localStorage.setItem("miner_wallet", document.getElementById("walletAddress").value);
+    }
+
+    function refreshMetricsDisplay() {
+        document.getElementById("cryptoBalance").textContent = accountBtc.toFixed(12);
+        let calculatedFiat = accountBtc * standardBtcPrice;
+        document.getElementById("fiatBalance").textContent = "$" + calculatedFiat.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " USD";
+        document.getElementById("adCounterText").textContent = totalAds;
         
-        // فحص نوع المدخلات وتحويلها تلقائياً إلى نصوص لتجنب مشاكل حذف علامات الاقتباس
-        if (typeof pageName ===  string ) {
-            targetPage = pageName;
+        let maxHours = maxMiningSeconds / 3600;
+        document.getElementById("maxDurationText").textContent = maxHours;
+        
+        let startBtn = document.getElementById("startMiningBtn");
+        if (!isMiningActive) {
+            startBtn.textContent = `اضغط لبدء التعدين (${maxHours} ساعات)`;
+        }
+
+        let upgradeBtn = document.getElementById("actionUpgradeBtn");
+        if (maxMiningSeconds >= 86400) { // 24 ساعة = 86400 ثانية
+            upgradeBtn.disabled = true;
+            upgradeBtn.textContent = "الحد الأقصى";
         } else {
-            // معالجة ذكية لتحويل الكلمات غير المعرفة إلى قيم نصية مطابقة تماماً
-            targetPage = String(pageName);
-        }
-
-        // 1. إخفاء كافة واجهات الصفحات الحالية
-        const allPages = document.querySelectorAll( .page );
-        allPages.forEach(page => {
-            page.classList.remove( active );
-        });
-
-        // 2. إزالة لون التحديد النشط من جميع أيقونات شريط التنقل السفلي
-        const navItems = document.querySelectorAll( .nav-item );
-        navItems.forEach(item => {
-            item.classList.remove( active );
-        });
-
-        // 3. إظهار واجهة الصفحة المطلوبة التي حددها المستخدم
-        const selectedPage = document.getElementById( page-  + targetPage);
-        if (selectedPage) {
-            selectedPage.classList.add( active );
-        }
-
-        // 4. إضاءة وتفعيل أيقونة الزر المطابق في الشريط السفلي باللون النيون الأخضر
-        let index = 0;
-        if (targetPage ===  shop ) index = 1;
-        if (targetPage ===  wallet ) index = 2;
-        if (targetPage ===  settings ) index = 3;
-        
-        if (navItems[index]) {
-            navItems[index].classList.add( active );
+            upgradeBtn.disabled = false;
+            upgradeBtn.textContent = "إعلان (+2 س)";
         }
     }
+
+    function formatTime(seconds) {
+        let hrs = Math.floor(seconds / 3600);
+        let mins = Math.floor((seconds % 3600) / 60);
+        let secs = seconds % 60;
+        return [
+            hrs.toString().padStart(2, "0"),
+            mins.toString().padStart(2, "0"),
+            secs.toString().padStart(2, "0")
+        ].join(":");
+    }
+
+    function startMiningProcess() {
+        if (isMiningActive) return;
+        isMiningActive = true;
+
+        let btn = document.getElementById("startMiningBtn");
+        btn.disabled = true;
+        btn.textContent = "التعدين نشط حالياً";
+        
+        document.getElementById("statusBadge").classList.add("active");
+        document.getElementById("statusText").textContent = "نشط ومتصل";
+        document.getElementById("hashRateText").textContent = "120 TH/s";
+
+        refreshMetricsDisplay();
+
+        miningInterval = setInterval(() => {
+            if (remainingTimerSeconds > 0) {
+                remainingTimerSeconds--;
+                accountBtc += currentMiningIncrement; 
+                document.getElementById("timeCounter").textContent = formatTime(remainingTimerSeconds);
+                refreshMetricsDisplay();
+                saveToLocalStorage(); 
+            } else {
+                clearInterval(miningInterval);
+                isMiningActive = false;
+                btn.disabled = false;
+                document.getElementById("statusBadge").classList.remove("active");
+                document.getElementById("statusText").textContent = "متوقف";
+                document.getElementById("hashRateText").textContent = "0 TH/s";
+                remainingTimerSeconds = maxMiningSeconds; 
+                document.getElementById("timeCounter").textContent = formatTime(remainingTimerSeconds);
+                refreshMetricsDisplay();
+                saveToLocalStorage();
+            }
+        }, 1000);
+    }
+
+    function watchAd() {
+        currentAdTask = "NORMAL";
+        if (window.AppInventor) {
+            window.AppInventor.setWebViewString("WATCH_AD");
+        } else {
+            alert("يرجى تشغيل الكود داخل التطبيق لمشاهدة الإعلانات.");
+        }
+    }
+
+    function requestUpgradeAd() {
+        if (maxMiningSeconds >= 86400) {
+            alert("لقد وصلت بالفعل للحد الأقصى (24 ساعة)!");
+            return;
+        }
+        
+        currentAdTask = "UPGRADE"; // تحديد أن الإعلان القادم لزيادة الوقت
+        if (window.AppInventor) {
+            window.AppInventor.setWebViewString("WATCH_AD"); // نرسل كلمة WATCH_AD المبرمجة في بلوكاتك الحالية ليفتح الإعلان فوراً
+        } else {
+            alert("يرجى فتح التطبيق لمشاهدة إعلان الترقية وزيادة الوقت.");
+        }
+    }
+
+    // هذه الدالة المربوطة ببلوك كودولار الحالية لديك؛ ستقوم بالفصل تلقائياً وتوزيع المكافأة المناسبة
+    function rewardUserForAd() {
+        totalAds++;
+        
+        if (currentAdTask === "UPGRADE") {
+            // إذا كان المستخدم ضغط زر زيادة الوقت:
+            if (maxMiningSeconds < 86400) {
+                maxMiningSeconds += 7200; // رفع الحد الأقصى ساعتين
+                remainingTimerSeconds += 7200; // إضافة ساعتين فورا للعداد الحالي
+                document.getElementById("timeCounter").textContent = formatTime(remainingTimerSeconds);
+                alert("تمت مشاهدة الإعلان بنجاح! تم إضافة ساعتين إضافيتين لوقت التعدين الحالي.");
+            }
+        } else {
+            // إذا كان ضغط زر مكافأة الإعلان العادية:
+            accountBtc += 0.000000000500; 
+            alert("حصلت على مكافأة مشاهدة الإعلان الحقيقي!");
+        }
+        
+        currentAdTask = "NORMAL";
+        refreshMetricsDisplay();
+        saveToLocalStorage();
+    }
+
+    function processWithdrawal() {
+        let wallet = document.getElementById("walletAddress").value.trim();
+        const minWithdraw = 0.00050000;
+
+        if (wallet === "") {
+            alert("يرجى إدخال عنوان محفظة البيتكوين أولاً!");
+            return;
+        }
+
+        if (accountBtc < minWithdraw) {
+            alert("رصيدك الحالي غير كافٍ! الحد الأدنى للسحب هو " + minWithdraw.toFixed(8) + " BTC");
+            return;
+        }
+
+        if (window.AppInventor) {
+            window.AppInventor.setWebViewString("WITHDRAW:" + wallet + ":" + minWithdraw);
+            accountBtc -= minWithdraw; 
+            refreshMetricsDisplay();
+            saveToLocalStorage();
+            alert("تم إرسال طلب السحب للتطبيق بنجاح.");
+        } else {
+            alert("خاصية السحب تعمل فقط من داخل التطبيق المثبت.");
+        }
+    }
+
+    window.onload = function() {
+        document.getElementById("walletAddress").value = savedWallet;
+        refreshMetricsDisplay();
+        document.getElementById("timeCounter").textContent = formatTime(remainingTimerSeconds);
+        
+        if (remainingTimerSeconds < maxMiningSeconds && remainingTimerSeconds > 0) {
+            startMiningProcess();
+        }
+    };
+    
+    document.getElementById("walletAddress").oninput = saveToLocalStorage;
 </script>
 
 </body>
