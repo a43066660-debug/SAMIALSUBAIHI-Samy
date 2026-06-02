@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MultiMiner V2 - التطبيق المطور</title>
+    <title>MultiMiner Pro</title>
     <style>
         :root {
             --bg-color: #0d0e12;
@@ -14,13 +14,15 @@
             --nav-bg: #1a1d29;
             --nav-active: #00e676;
             --nav-inactive: #607d8b;
+            --danger-color: #ff5252;
+            --blue-color: #2196f3;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
+            font-family:  Segoe UI , Tahoma, Geneva, Verdana, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -33,7 +35,6 @@
             min-height: 100vh;
         }
 
-        /* حاوية التطبيق الشبيهة بالهاتف */
         .app-container {
             background-color: var(--bg-color);
             width: 100%;
@@ -43,49 +44,73 @@
             flex-direction: column;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
 
-        /* حاوية الصفحات المتغيرة */
         .content-area {
             flex: 1;
-            padding: 24px;
+            padding: 20px;
             overflow-y: auto;
-            padding-bottom: 90px; /* مساحة لعدم التداخل مع شريط التنقل */
+            padding-bottom: 90px;
         }
 
-        /* تأثير إخفاء وإظهار الصفحات */
         .page {
             display: none;
-            animation: fadeIn 0.3s ease-in-out;
+            animation: fadeIn 0.25s ease-in-out;
         }
 
         .page.active {
             display: block;
         }
 
-        /* عناصر الصفحات الفارغة كقوالب جاهزة لتصميمك */
         .page-header {
-            font-size: 24px;
-            font-weight: bold;
+            font-size: 22px;
+            font-weight: 700;
             margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
+            border-bottom: 1px solid #1f2330;
+            padding-bottom: 10px;
         }
 
-        .placeholder-card {
-            background-color: var(--card-bg);
-            border: 1px dashed #2c3247;
-            border-radius: 20px;
-            padding: 40px 20px;
-            text-align: center;
-            color: var(--text-secondary);
+        /* تنسيق العناصر الاحترافية داخل الصفحات */
+        .pro-card {
+            background: linear-gradient(135deg, #1e2230 0%, #161820 100%);
+            border: 1px solid #252936;
+            border-radius: 18px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .stat-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            color: #0d0e12;
+            background: var(--accent-color);
+            font-weight: bold;
             font-size: 14px;
-            margin-top: 15px;
+            cursor: pointer;
+            transition: transform 0.1s;
         }
 
-        /* شريط التصفح السفلي الاحترافي */
+        .btn-action:active {
+            transform: scale(0.98);
+        }
+
+        /* شريط التصفح السفلي المحسن */
         .bottom-nav {
             position: absolute;
             bottom: 0;
@@ -111,26 +136,20 @@
             cursor: pointer;
             width: 25%;
             height: 100%;
-            transition: all 0.2s ease-in-out;
+            transition: all 0.2s;
             gap: 4px;
         }
 
         .nav-item .icon {
             font-size: 22px;
-            transition: transform 0.2s;
         }
 
-        /* التنسيق عند تحديد الصفحة ونشاطها */
         .nav-item.active {
             color: var(--nav-active);
         }
 
-        .nav-item.active .icon {
-            transform: scale(1.15);
-        }
-
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
@@ -138,52 +157,100 @@
 <body>
 
 <div class="app-container">
-    <!-- منطقة عرض محتوى الصفحات التفاعلية -->
     <div class="content-area">
         
-        <!-- 1. صفحة القائمة (الرئيسية) -->
+        <!-- 1. صفحة القائمة (لوحة التحكم الرئيسية) -->
         <div id="page-home" class="page active">
-            <div class="page-header">
-                <span>📋</span> القائمة الرئيسية
+            <div class="page-header"><span>📋</span> لوحة التعدين</div>
+            
+            <div class="pro-card" style="text-align: center; padding: 24px 16px;">
+                <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;">إجمالي الرصيد المستخرج</div>
+                <div style="font-size: 28px; font-weight: 700; font-family: monospace; color: #fff; margin-bottom: 6px;">0.000000000000</div>
+                <div style="font-size: 16px; color: var(--accent-color); font-weight: 600;">$0.00 USD</div>
             </div>
-            <div class="placeholder-card">
-                تصميم صفحة القائمة الرئيسية سيكون هنا لاحقاً...
+
+            <div class="pro-card">
+                <div class="stat-row">
+                    <span style="color: var(--text-secondary);">حالة الاتصال:</span>
+                    <span style="color: var(--danger-color); font-weight: 600;">متوقف</span>
+                </div>
+                <div class="stat-row">
+                    <span style="color: var(--text-secondary);">سرعة الهاش الحالية:</span>
+                    <span style="font-weight: bold;">0 TH/s</span>
+                </div>
+                <div class="stat-row">
+                    <span style="color: var(--text-secondary);">المؤقت المتبقي:</span>
+                    <span style="font-family: monospace; font-weight: bold; color: var(--blue-color);">06:00:00</span>
+                </div>
             </div>
+
+            <button class="btn-action">بدء جلسة تعدين جديدة</button>
         </div>
 
-        <!-- 2. صفحة المتجر -->
+        <!-- 2. صفحة المتجر الرقمي -->
         <div id="page-shop" class="page">
-            <div class="page-header">
-                <span>🛒</span> المتجر الرقمي
+            <div class="page-header"><span>🛒</span> المتجر الرقمي</div>
+            
+            <div class="pro-card">
+                <div style="font-weight: bold; font-size: 16px; margin-bottom: 6px;">بطاقة عتاد ليفل 1</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">تزيد من سرعة التعدين بمقدار +15 TH/s ثابتة</div>
+                <div class="stat-row">
+                    <span style="color: var(--accent-color); font-weight: bold;">0.000000002000 BTC</span>
+                    <button class="btn-action" style="width: auto; padding: 6px 14px; font-size: 12px;">شراء الطاقة</button>
+                </div>
             </div>
-            <div class="placeholder-card">
-                تصميم منتجات وباقات المتجر سيكون هنا لاحقاً...
+
+            <div class="pro-card">
+                <div style="font-weight: bold; font-size: 16px; margin-bottom: 6px;">مسرع الجلسة الفوري</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">مشاهدة إعلان مكافأة للحصول على +2 ساعتين للتعدين</div>
+                <div class="stat-row">
+                    <span style="color: var(--blue-color); font-weight: bold;">مجاني (إعلان)</span>
+                    <button class="btn-action" style="width: auto; padding: 6px 14px; font-size: 12px; background: var(--blue-color); color: white;">شاهد الآن</button>
+                </div>
             </div>
         </div>
 
         <!-- 3. صفحة المحفظة -->
         <div id="page-wallet" class="page">
-            <div class="page-header">
-                <span>💳</span> محفظتي الإلكترونية
+            <div class="page-header"><span>💳</span> محفظتي الرقمية</div>
+            
+            <div class="pro-card" style="padding: 20px 16px;">
+                <div class="stat-row">
+                    <span style="color: var(--text-secondary);">الحد الأدنى للسحب:</span>
+                    <span style="font-family: monospace; color: var(--btn-orange); font-weight: bold;">0.00050000 BTC</span>
+                </div>
             </div>
-            <div class="placeholder-card">
-                تصميم الرصيد وعناوين السحب سيكون هنا لاحقاً...
+
+            <div class="pro-card">
+                <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; text-align: center;">عنوان مستودع البيتكوين الخاص بك</div>
+                <input type="text" placeholder="أدخل عنوان محفظة BTC هنا" style="width: 100%; padding: 12px; background: #0d0e12; border: 1px solid #2c3247; border-radius: 10px; color: white; text-align: center; font-family: monospace; font-size: 13px; outline: none; margin-bottom: 14px;">
+                <button class="btn-action" style="background: var(--btn-purple); color: white;">تقديم طلب سحب الأرباح</button>
             </div>
         </div>
 
         <!-- 4. صفحة الإعدادات -->
         <div id="page-settings" class="page">
-            <div class="page-header">
-                <span>⚙️</span> الإعدادات العامة
-            </div>
-            <div class="placeholder-card">
-                تصميم خيارات التطبيق والتحكم سيكون هنا لاحقاً...
+            <div class="page-header"><span>⚙️</span> الإعدادات العامة</div>
+            
+            <div class="pro-card" style="padding: 10px 16px;">
+                <div class="stat-row" style="border-bottom: 1px solid #252936; padding: 12px 0;">
+                    <span>معرف التطبيق الخاص بك</span>
+                    <span style="font-family: monospace; color: var(--text-secondary);">205859610</span>
+                </div>
+                <div class="stat-row" style="border-bottom: 1px solid #252936; padding: 12px 0;">
+                    <span>حفظ البيانات سحابياً</span>
+                    <span style="color: var(--accent-color); font-weight: bold;">مفعل تلقائياً</span>
+                </div>
+                <div class="stat-row" style="padding: 12px 0;">
+                    <span>إصدار لوحة التحكم</span>
+                    <span style="color: var(--text-secondary);">Pro V2.5</span>
+                </div>
             </div>
         </div>
 
     </div>
 
-    <!-- شريط التنقل السفلي الثابت -->
+    <!-- شريط التنقل السفلي التفاعلي المصمم بدقة -->
     <nav class="bottom-nav">
         <div class="nav-item active" onclick="switchPage( home )">
             <span class="icon">📋</span>
@@ -204,37 +271,37 @@
     </nav>
 </div>
 <script>
-    // دالة التبديل السلس بين الصفحات الأربع وتغيير حالة أزرار الشريط السفلي
+    // دالة التبديل السلس والسريع بين الأقسام الأربعة داخل التطبيق
     function switchPage(pageName) {
         let targetPage =   ;
         
-        // التحقق الذكي لتجنب الأخطاء في حال كتابة الكلمات بدون علامات اقتباس
+        // فحص نوع المدخلات وتحويلها تلقائياً إلى نصوص لتجنب مشاكل حذف علامات الاقتباس
         if (typeof pageName ===  string ) {
             targetPage = pageName;
         } else {
-            // تحويل المعامل تلقائياً إلى نص للتعامل مع التعديل في الـ HTML
+            // معالجة ذكية لتحويل الكلمات غير المعرفة إلى قيم نصية مطابقة تماماً
             targetPage = String(pageName);
         }
 
-        // 1. إخفاء جميع الصفحات أولاً
+        // 1. إخفاء كافة واجهات الصفحات الحالية
         const allPages = document.querySelectorAll( .page );
         allPages.forEach(page => {
             page.classList.remove( active );
         });
 
-        // 2. إزالة الحالة النشطة من جميع أزرار شريط التنقل
+        // 2. إزالة لون التحديد النشط من جميع أيقونات شريط التنقل السفلي
         const navItems = document.querySelectorAll( .nav-item );
         navItems.forEach(item => {
             item.classList.remove( active );
         });
 
-        // 3. إظهار الصفحة المطلوبة بناءً على الاختيار
+        // 3. إظهار واجهة الصفحة المطلوبة التي حددها المستخدم
         const selectedPage = document.getElementById( page-  + targetPage);
         if (selectedPage) {
             selectedPage.classList.add( active );
         }
 
-        // 4. تفعيل زر التنقل المطابق في الشريط السفلي
+        // 4. إضاءة وتفعيل أيقونة الزر المطابق في الشريط السفلي باللون النيون الأخضر
         let index = 0;
         if (targetPage ===  shop ) index = 1;
         if (targetPage ===  wallet ) index = 2;
