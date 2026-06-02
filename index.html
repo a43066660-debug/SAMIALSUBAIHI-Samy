@@ -135,3 +135,71 @@
         }
     </style>
 </head>
+<body>
+
+<div class="app-container">
+    <!-- منطقة عرض محتوى الصفحات التفاعلية -->
+    <div class="content-area">
+        
+        <!-- 1. صفحة القائمة (الرئيسية) -->
+        <div id="page-home" class="page active">
+            <div class="page-header">
+                <span>📋</span> القائمة الرئيسية
+            </div>
+            <div class="placeholder-card">
+                تصميم صفحة القائمة الرئيسية سيكون هنا لاحقاً...
+            </div>
+        </div>
+
+        <!-- 2. صفحة المتجر -->
+        <div id="page-shop" class="page">
+            <div class="page-header">
+                <span>🛒</span> المتجر الرقمي
+            </div>
+            <div class="placeholder-card">
+                تصميم منتجات وباقات المتجر سيكون هنا لاحقاً...
+            </div>
+        </div>
+
+        <!-- 3. صفحة المحفظة -->
+        <div id="page-wallet" class="page">
+            <div class="page-header">
+                <span>💳</span> محفظتي الإلكترونية
+            </div>
+            <div class="placeholder-card">
+                تصميم الرصيد وعناوين السحب سيكون هنا لاحقاً...
+            </div>
+        </div>
+
+        <!-- 4. صفحة الإعدادات -->
+        <div id="page-settings" class="page">
+            <div class="page-header">
+                <span>⚙️</span> الإعدادات العامة
+            </div>
+            <div class="placeholder-card">
+                تصميم خيارات التطبيق والتحكم سيكون هنا لاحقاً...
+            </div>
+        </div>
+
+    </div>
+
+    <!-- شريط التنقل السفلي الثابت -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchPage( home )">
+            <span class="icon">📋</span>
+            <span>القائمة</span>
+        </div>
+        <div class="nav-item" onclick="switchPage( shop )">
+            <span class="icon">🛒</span>
+            <span>المتجر</span>
+        </div>
+        <div class="nav-item" onclick="switchPage( wallet )">
+            <span class="icon">💳</span>
+            <span>المحفظة</span>
+        </div>
+        <div class="nav-item" onclick="switchPage( settings )">
+            <span class="icon">⚙️</span>
+            <span>الإعدادات</span>
+        </div>
+    </nav>
+</div>
