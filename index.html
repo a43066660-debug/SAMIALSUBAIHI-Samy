@@ -96,3 +96,113 @@
             animation: blink 1.5s infinite;
         }
 
+                .balance-box {
+            background: linear-gradient(135deg, #1e2230 0%, #1a1d29 100%);
+            border: 1px solid #2c3247;
+            border-radius: 20px;
+            padding: 22px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .balance-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .crypto-amount {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: monospace;
+            margin-bottom: 4px;
+            word-break: break-all;
+        }
+
+        .fiat-amount {
+            font-size: 16px;
+            color: var(--accent-color);
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .market-info {
+            font-size: 11px;
+            color: var(--text-secondary);
+            border-top: 1px solid #2c3247;
+            padding-top: 10px;
+        }
+
+        .start-mining-container {
+            margin-bottom: 20px;
+        }
+
+        .btn-start-mining {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #00e676 0%, #00b0ff 100%);
+            color: #0d0e12;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
+            transition: all 0.2s;
+        }
+
+        .btn-start-mining:disabled {
+            background: #1f2330;
+            color: #607d8b;
+            border: 1px solid #2c3247;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .stats-strip {
+            background-color: #1f2330;
+            border-radius: 14px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            font-size: 13px;
+        }
+
+        .hash-rate {
+            color: var(--text-primary);
+            font-weight: bold;
+        }
+
+        .grid-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .card-option {
+            background: #1c1f2b;
+            border: 1px solid #282f42;
+            border-radius: 18px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .card-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 14px;
+        }
+
