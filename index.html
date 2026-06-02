@@ -485,10 +485,6 @@
         let wallet = document.getElementById("walletAddress").value.trim();
         const minWithdraw = 0.00050000;
 
-        if (wallet === "") {
-            alert("يرجى إدخال عنوان محفظة البيتكوين أولاً!");
-            return;
-        }
 
         if (accountBtc < minWithdraw) {
             alert("رصيدك الحالي غير كافٍ! الحد الأدنى للسحب هو " + minWithdraw.toFixed(8) + " BTC");
