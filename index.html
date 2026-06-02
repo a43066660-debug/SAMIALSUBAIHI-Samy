@@ -338,3 +338,188 @@
         }
     </style>
 </head>
+
+    <script>
+    const adMobAppId = "205859610";
+
+    let accountBtc = parseFloat(localStorage.getItem("miner_btc")) || 0.000000000000; 
+    const standardBtcPrice = 75000;
+    let totalAds = parseInt(localStorage.getItem("miner_ads")) || 0;
+    let savedWallet = localStorage.getItem("miner_wallet") || "";
+    
+    // إعدادات وقت التعدين المطور
+    let maxMiningSeconds = parseInt(localStorage.getItem("miner_max_seconds")) || 21600; // الافتراضي 6 ساعات (21600 ثانية)
+    let remainingTimerSeconds = localStorage.getItem("miner_seconds") !== null ? parseInt(localStorage.getItem("miner_seconds")) : maxMiningSeconds; 
+
+    let isMiningActive = false;
+    let currentMiningIncrement = 0.000000000135; 
+    let miningInterval = null;
+    
+    // متغير ذكي لمعرفة نوع الإعلان الحالي (عادي أم ترقية وقت)
+    let currentAdTask = "NORMAL"; 
+
+    function saveToLocalStorage() {
+        localStorage.setItem("miner_btc", accountBtc);
+        localStorage.setItem("miner_ads", totalAds);
+        localStorage.setItem("miner_max_seconds", maxMiningSeconds);
+        localStorage.setItem("miner_seconds", remainingTimerSeconds);
+        localStorage.setItem("miner_wallet", document.getElementById("walletAddress").value);
+    }
+
+    function refreshMetricsDisplay() {
+        document.getElementById("cryptoBalance").textContent = accountBtc.toFixed(12);
+        let calculatedFiat = accountBtc * standardBtcPrice;
+        document.getElementById("fiatBalance").textContent = "$" + calculatedFiat.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " USD";
+        document.getElementById("adCounterText").textContent = totalAds;
+        
+        let maxHours = maxMiningSeconds / 3600;
+        document.getElementById("maxDurationText").textContent = maxHours;
+        
+        let startBtn = document.getElementById("startMiningBtn");
+        if (!isMiningActive) {
+            startBtn.textContent = `اضغط لبدء التعدين (${maxHours} ساعات)`;
+        }
+
+        let upgradeBtn = document.getElementById("actionUpgradeBtn");
+        if (maxMiningSeconds >= 86400) { // 24 ساعة = 86400 ثانية
+            upgradeBtn.disabled = true;
+            upgradeBtn.textContent = "الحد الأقصى";
+        } else {
+            upgradeBtn.disabled = false;
+            upgradeBtn.textContent = "إعلان (+2 س)";
+        }
+    }
+
+    function formatTime(seconds) {
+        let hrs = Math.floor(seconds / 3600);
+        let mins = Math.floor((seconds % 3600) / 60);
+        let secs = seconds % 60;
+        return [
+            hrs.toString().padStart(2, "0"),
+            mins.toString().padStart(2, "0"),
+            secs.toString().padStart(2, "0")
+        ].join(":");
+    }
+
+    function startMiningProcess() {
+        if (isMiningActive) return;
+        isMiningActive = true;
+
+        let btn = document.getElementById("startMiningBtn");
+        btn.disabled = true;
+        btn.textContent = "التعدين نشط حالياً";
+        
+        document.getElementById("statusBadge").classList.add("active");
+        document.getElementById("statusText").textContent = "نشط ومتصل";
+        document.getElementById("hashRateText").textContent = "120 TH/s";
+
+        refreshMetricsDisplay();
+
+        miningInterval = setInterval(() => {
+            if (remainingTimerSeconds > 0) {
+                remainingTimerSeconds--;
+                accountBtc += currentMiningIncrement; 
+                document.getElementById("timeCounter").textContent = formatTime(remainingTimerSeconds);
+                refreshMetricsDisplay();
+                saveToLocalStorage(); 
+            } else {
+                clearInterval(miningInterval);
+                isMiningActive = false;
+                btn.disabled = false;
+                document.getElementById("statusBadge").classList.remove("active");
+                document.getElementById("statusText").textContent = "متوقف";
+                document.getElementById("hashRateText").textContent = "0 TH/s";
+                remainingTimerSeconds = maxMiningSeconds; 
+                document.getElementById("timeCounter").textContent = formatTime(remainingTimerSeconds);
+                refreshMetricsDisplay();
+                saveToLocalStorage();
+            }
+        }, 1000);
+    }
+
+    function watchAd() {
+        currentAdTask = "NORMAL";
+        if (window.AppInventor) {
+            window.AppInventor.setWebViewString("WATCH_AD");
+        } else {
+            alert("يرجى تشغيل الكود داخل التطبيق لمشاهدة الإعلانات.");
+        }
+    }
+
+    function requestUpgradeAd() {
+        if (maxMiningSeconds >= 86400) {
+            alert("لقد وصلت بالفعل للحد الأقصى (24 ساعة)!");
+            return;
+        }
+        
+        currentAdTask = "UPGRADE"; // تحديد أن الإعلان القادم لزيادة الوقت
+        if (window.AppInventor) {
+            window.AppInventor.setWebViewString("WATCH_AD"); // نرسل كلمة WATCH_AD المبرمجة في بلوكاتك الحالية ليفتح الإعلان فوراً
+        } else {
+            alert("يرجى فتح التطبيق لمشاهدة إعلان الترقية وزيادة الوقت.");
+        }
+    }
+
+    // هذه الدالة المربوطة ببلوك كودولار الحالية لديك؛ ستقوم بالفصل تلقائياً وتوزيع المكافأة المناسبة
+    function rewardUserForAd() {
+        totalAds++;
+        
+        if (currentAdTask === "UPGRADE") {
+            // إذا كان المستخدم ضغط زر زيادة الوقت:
+            if (maxMiningSeconds < 86400) {
+                maxMiningSeconds += 7200; // رفع الحد الأقصى ساعتين
+                remainingTimerSeconds += 7200; // إضافة ساعتين فورا للعداد الحالي
+                document.getElementById("timeCounter").textContent = formatTime(remainingTimerSeconds);
+                alert("تمت مشاهدة الإعلان بنجاح! تم إضافة ساعتين إضافيتين لوقت التعدين الحالي.");
+            }
+        } else {
+            // إذا كان ضغط زر مكافأة الإعلان العادية:
+            accountBtc += 0.000000000500; 
+            alert("حصلت على مكافأة مشاهدة الإعلان الحقيقي!");
+        }
+        
+        currentAdTask = "NORMAL";
+        refreshMetricsDisplay();
+        saveToLocalStorage();
+    }
+
+    function processWithdrawal() {
+        let wallet = document.getElementById("walletAddress").value.trim();
+        const minWithdraw = 0.00050000;
+
+        if (wallet === "") {
+            alert("يرجى إدخال عنوان محفظة البيتكوين أولاً!");
+            return;
+        }
+
+        if (accountBtc < minWithdraw) {
+            alert("رصيدك الحالي غير كافٍ! الحد الأدنى للسحب هو " + minWithdraw.toFixed(8) + " BTC");
+            return;
+        }
+
+        if (window.AppInventor) {
+            window.AppInventor.setWebViewString("WITHDRAW:" + wallet + ":" + minWithdraw);
+            accountBtc -= minWithdraw; 
+            refreshMetricsDisplay();
+            saveToLocalStorage();
+            alert("تم إرسال طلب السحب للتطبيق بنجاح.");
+        } else {
+            alert("خاصية السحب تعمل فقط من داخل التطبيق المثبت.");
+        }
+    }
+
+    window.onload = function() {
+        document.getElementById("walletAddress").value = savedWallet;
+        refreshMetricsDisplay();
+        document.getElementById("timeCounter").textContent = formatTime(remainingTimerSeconds);
+        
+        if (remainingTimerSeconds < maxMiningSeconds && remainingTimerSeconds > 0) {
+            startMiningProcess();
+        }
+    };
+    
+    document.getElementById("walletAddress").oninput = saveToLocalStorage;
+</script>
+
+</body>
+</html>
