@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MultiMiner - لوحة التحكم</title>
     <style>
         :root {
@@ -21,15 +21,22 @@
             margin: 0;
             padding: 0;
             font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
+        /* كود جعل الواجهة ثابتة تماماً ومنع السحب والتمرير */
         body {
             background-color: var(--bg-color);
             color: var(--text-primary);
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: fixed;
+            touch-action: none;
             padding: 15px;
         }
 
@@ -126,7 +133,6 @@
             font-weight: 600;
             margin-bottom: 12px;
         }
-
         .market-info {
             font-size: 11px;
             color: var(--text-secondary);
@@ -206,39 +212,6 @@
             margin-bottom: 14px;
         }
 
-        .withdraw-section {
-            background: #1c1f2b;
-            border: 1px solid #282f42;
-            border-radius: 20px;
-            padding: 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .withdraw-title {
-            font-size: 14px;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .wallet-input {
-            width: 100%;
-            padding: 12px;
-            background: #0d0e12;
-            border: 1px solid #2c3247;
-            border-radius: 10px;
-            color: #ffffff;
-            font-family: monospace;
-            font-size: 13px;
-            text-align: center;
-            outline: none;
-        }
-
-        .wallet-input:focus {
-            border-color: var(--btn-purple);
-        }
-
         .btn {
             width: 100%;
             padding: 11px;
@@ -316,8 +289,8 @@
 
     <div class="grid-options">
         <div class="card-option">
-            <div class="card-icon">📺</div>
-            <div class="card-title">مشاهدة الإعلانات</div>
+            <div class="card-icon">⚡</div>
+            <div class="card-title">زيادة السرعة</div>
             <button class="btn btn-blue" id="actionAdBtn" onclick="watchAd()">مطالبة بمكافأة</button>
             <div class="meta-text">عداد المشاهدة: <span id="adCounterText">0</span></div>
         </div>
@@ -329,13 +302,6 @@
             <div class="meta-text">الحد الأقصى الحالي: <span id="maxDurationText">6</span> ساعات</div>
         </div>
     </div>
-
-    <div class="withdraw-section">
-        <div class="withdraw-title">💳 سحب الأرباح لمستودعك</div>
-        <input type="text" class="wallet-input" id="walletAddress" placeholder="أدخل عنوان محفظة Bitcoin (BTC)">
-        <button class="btn btn-purple" onclick="processWithdrawal()">تقديم طلب سحب</button>
-        <div class="meta-text" style="text-align: center;">الحد الأدنى للسحب: <span style="font-family: monospace; color:#ff9800;">0.00050000</span> BTC</div>
-    </div>
 </div>
 <script>
     const adMobAppId = "205859610";
@@ -343,17 +309,16 @@
     let accountBtc = parseFloat(localStorage.getItem("miner_btc")) || 0.000000000000; 
     const standardBtcPrice = 75000;
     let totalAds = parseInt(localStorage.getItem("miner_ads")) || 0;
-    let savedWallet = localStorage.getItem("miner_wallet") || "";
-    
+
     // إعدادات وقت التعدين المطور
-    let maxMiningSeconds = parseInt(localStorage.getItem("miner_max_seconds")) || 21600; // الافتراضي 6 ساعات (21600 ثانية)
+    let maxMiningSeconds = parseInt(localStorage.getItem("miner_max_seconds")) || 21600; 
     let remainingTimerSeconds = localStorage.getItem("miner_seconds") !== null ? parseInt(localStorage.getItem("miner_seconds")) : maxMiningSeconds; 
 
     let isMiningActive = false;
     let currentMiningIncrement = 0.000000000135; 
     let miningInterval = null;
     
-    // متغير ذكي لمعرفة نوع الإعلان الحالي (عادي أم ترقية وقت)
+    // متغير ذكي لمعرفة نوع الإعلان الحالي (ترقية وقت أم زيادة سرعة)
     let currentAdTask = "NORMAL"; 
 
     function saveToLocalStorage() {
@@ -361,7 +326,6 @@
         localStorage.setItem("miner_ads", totalAds);
         localStorage.setItem("miner_max_seconds", maxMiningSeconds);
         localStorage.setItem("miner_seconds", remainingTimerSeconds);
-        localStorage.setItem("miner_wallet", document.getElementById("walletAddress").value);
     }
 
     function refreshMetricsDisplay() {
@@ -379,7 +343,7 @@
         }
 
         let upgradeBtn = document.getElementById("actionUpgradeBtn");
-        if (maxMiningSeconds >= 86400) { // 24 ساعة = 86400 ثانية
+        if (maxMiningSeconds >= 86400) { 
             upgradeBtn.disabled = true;
             upgradeBtn.textContent = "الحد الأقصى";
         } else {
@@ -438,7 +402,7 @@
     function watchAd() {
         currentAdTask = "NORMAL";
         if (window.AppInventor) {
-            window.AppInventor.setWebViewString("WATCH_AD");
+            window.AppInventor.setWebViewString("show_rewarded");
         } else {
             alert("يرجى تشغيل الكود داخل التطبيق لمشاهدة الإعلانات.");
         }
@@ -450,30 +414,28 @@
             return;
         }
         
-        currentAdTask = "UPGRADE"; // تحديد أن الإعلان القادم لزيادة الوقت
+        currentAdTask = "UPGRADE";
         if (window.AppInventor) {
-            window.AppInventor.setWebViewString("WATCH_AD"); // نرسل كلمة WATCH_AD المبرمجة في بلوكاتك الحالية ليفتح الإعلان فوراً
+            window.AppInventor.setWebViewString("show_interstitial");
         } else {
             alert("يرجى فتح التطبيق لمشاهدة إعلان الترقية وزيادة الوقت.");
         }
     }
 
-    // هذه الدالة المربوطة ببلوك كودولار الحالية لديك؛ ستقوم بالفصل تلقائياً وتوزيع المكافأة المناسبة
+    // يتم استدعاء هذه الدالة من بلوك كودولار بعد انتهاء مشاهدة الإعلان بنجاح
     function rewardUserForAd() {
         totalAds++;
         
         if (currentAdTask === "UPGRADE") {
-            // إذا كان المستخدم ضغط زر زيادة الوقت:
             if (maxMiningSeconds < 86400) {
-                maxMiningSeconds += 7200; // رفع الحد الأقصى ساعتين
-                remainingTimerSeconds += 7200; // إضافة ساعتين فورا للعداد الحالي
+                maxMiningSeconds += 7200; 
+                remainingTimerSeconds += 7200; 
                 document.getElementById("timeCounter").textContent = formatTime(remainingTimerSeconds);
                 alert("تمت مشاهدة الإعلان بنجاح! تم إضافة ساعتين إضافيتين لوقت التعدين الحالي.");
             }
         } else {
-            // إذا كان ضغط زر مكافأة الإعلان العادية:
             accountBtc += 0.000000000500; 
-            alert("حصلت على مكافأة مشاهدة الإعلان الحقيقي!");
+            alert("حصلت على مكافأة زيادة السرعة بنجاح!");
         }
         
         currentAdTask = "NORMAL";
@@ -481,29 +443,7 @@
         saveToLocalStorage();
     }
 
-    function processWithdrawal() {
-        let wallet = document.getElementById("walletAddress").value.trim();
-        const minWithdraw = 0.00050000;
-
-
-        if (accountBtc < minWithdraw) {
-            alert("رصيدك الحالي غير كافٍ! الحد الأدنى للسحب هو " + minWithdraw.toFixed(8) + " BTC");
-            return;
-        }
-
-        if (window.AppInventor) {
-            window.AppInventor.setWebViewString("WITHDRAW:" + wallet + ":" + minWithdraw);
-            accountBtc -= minWithdraw; 
-            refreshMetricsDisplay();
-            saveToLocalStorage();
-            alert("تم إرسال طلب السحب للتطبيق بنجاح.");
-        } else {
-            alert("خاصية السحب تعمل فقط من داخل التطبيق المثبت.");
-        }
-    }
-
     window.onload = function() {
-        document.getElementById("walletAddress").value = savedWallet;
         refreshMetricsDisplay();
         document.getElementById("timeCounter").textContent = formatTime(remainingTimerSeconds);
         
@@ -511,9 +451,6 @@
             startMiningProcess();
         }
     };
-    
-    document.getElementById("walletAddress").oninput = saveToLocalStorage;
 </script>
-
 </body>
 </html>
