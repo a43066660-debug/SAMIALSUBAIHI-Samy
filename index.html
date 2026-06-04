@@ -4,12 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MultiMiner - لوحة التحكم</title>
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MultiMiner - لوحة التحكم</title>
     <style>
         :root {
             --bg-color: #0d0e12;
@@ -368,6 +362,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- 1️⃣ قسم التعدين الرئيسي -->
@@ -440,7 +435,7 @@
         </div>
     </div>
 
-    <!-- 📱 شريط التنقل السفلي الثابت للتبديل بين الصفحات -->
+    <!-- 📱 شريط التنقل السفلي الثابت المصلح والمعدل بالكامل -->
     <div class="bottom-nav">
         <div class="nav-item active-nav" onclick="switchPage( page-mining , this)">
             <span class="nav-icon">⛏️</span>
@@ -483,7 +478,19 @@
     
     let currentAdTask = "NORMAL"; 
 
-    // دالة التبديل بين الأقسام الأربعة دون إيقاف العداد
+    // دالة تقوم بإصلاح المشكلة في الأزرار تلقائياً بمجرد فتح الصفحة
+    function fixMissingQuotesInButtons() {
+        const navItems = document.querySelectorAll( .nav-item );
+        const pages = [ page-mining ,  page-shop ,  page-wallet ,  page-settings ];
+        navItems.forEach((item, index) => {
+            if(item && pages[index]) {
+                item.onclick = function() {
+                    switchPage(pages[index], this);
+                };
+            }
+        });
+    }
+
     function switchPage(pageId, navElement) {
         document.querySelectorAll( .dashboard ).forEach(page => {
             page.classList.remove( active-page );
@@ -492,8 +499,13 @@
             item.classList.remove( active-nav );
         });
         
-        document.getElementById(pageId).classList.add( active-page );
-        navElement.classList.add( active-nav );
+        const targetPage = document.getElementById(pageId);
+        if (targetPage) {
+            targetPage.classList.add( active-page );
+        }
+        if (navElement) {
+            navElement.classList.add( active-nav );
+        }
     }
 
     function openAppModal(msg) {
@@ -628,6 +640,7 @@
     }
 
     window.onload = function() {
+        fixMissingQuotesInButtons();
         refreshMetricsDisplay();
         document.getElementById("timeCounter").textContent = formatTime(remainingTimerSeconds);
         
