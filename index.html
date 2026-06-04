@@ -1,23 +1,3 @@
-    <-- 📱 شريط التنقل السفلي الثابت للتبديل بين الصفحات (نسخة مصلحة) -->
-    <div class="bottom-nav">
-        <div class="nav-item active-nav" onclick="switchPage( page-mining , this)">
-            <span class="nav-icon">⛏️</span>
-            <span>التعدين</span>
-        </div>
-        <div class="nav-item" onclick="switchPage( page-shop , this)">
-            <span class="nav-icon">🛒</span>
-            <span>المتجر</span>
-        </div>
-        <div class="nav-item" onclick="switchPage( page-wallet , this)">
-            <span class="nav-icon">💳</span>
-            <span>المحفظة</span>
-        </div>
-        <div class="nav-item" onclick="switchPage( page-settings , this)">
-            <span class="nav-icon">⚙️</span>
-            <span>الإعدادات</span>
-        </div>
-    </div>
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -45,19 +25,19 @@
             user-select: none;
         }
 
-        /* كود جعل الواجهة ثابتة تماماً ومنع السحب والتمرير */
         body {
             background-color: var(--bg-color);
             color: var(--text-primary);
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
             height: 100vh;
             width: 100vw;
             overflow: hidden;
             position: fixed;
             touch-action: none;
-            padding: 15px;
+            padding: 15px 15px 85px 15px;
         }
 
         .dashboard {
@@ -68,6 +48,30 @@
             padding: 24px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
             border: 1px solid #252936;
+            display: none;
+        }
+
+        .dashboard.active-page {
+            display: block;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .placeholder-card {
+            background: #1c1f2b;
+            border: 1px solid #282f42;
+            border-radius: 18px;
+            padding: 30px 20px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
         }
 
         .header {
@@ -153,6 +157,7 @@
             font-weight: 600;
             margin-bottom: 12px;
         }
+        
         .market-info {
             font-size: 11px;
             color: var(--text-secondary);
@@ -255,9 +260,6 @@
         .btn-orange { background-color: var(--btn-orange); }
         .btn-orange:hover { background-color: #f57c00; }
 
-        .btn-purple { background-color: var(--btn-purple); }
-        .btn-purple:hover { background-color: #7b1fa2; }
-
         .btn:disabled {
             background-color: #424242 !important;
             color: #757575;
@@ -270,6 +272,89 @@
             margin-top: 10px;
         }
 
+        .bottom-nav {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #161820;
+            width: calc(100% - 30px);
+            max-width: 450px;
+            height: 65px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border: 1px solid #252936;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 20%;
+            height: 100%;
+            transition: all 0.2s;
+            gap: 4px;
+        }
+
+        .nav-item .nav-icon {
+            font-size: 20px;
+        }
+
+        .nav-item.active-nav {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-box {
+            background: #1c1f2b;
+            color: #fff;
+            padding: 24px;
+            border-radius: 20px;
+            border: 1px solid #ff9800;
+            text-align: center;
+            max-width: 320px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+
+        .modal-box p {
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .modal-box button {
+            background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            font-size: 14px;
+        }
+
         @keyframes blink {
             0% { opacity: 0.3; }
             50% { opacity: 1; }
@@ -279,198 +364,13 @@
 </head>
 <body>
 
-<div class="dashboard">
-    <div class="header">
-        <div class="logo-section">
-            <span class="logo-icon">⚡</span>
-            <span class="logo-text">MultiMiner</span>
-        </div>
-        <div class="status-badge" id="statusBadge">
-            <div class="pulse"></div>
-            <span id="statusText">متوقف</span>
-        </div>
-    </div>
-
-    <div class="balance-box">
-        <div class="balance-label">إجمالي الرصيد المستخرج (BTC)</div>
-        <div class="crypto-amount" id="cryptoBalance">0.000000000000</div>
-        <div class="fiat-amount" id="fiatBalance">$0.00 USD</div>
-        <div class="market-info">سعر البيتكوين المرجعي المتزامن: $75,000</div>
-    </div>
-
-    <div class="start-mining-container">
-        <button class="btn-start-mining" id="startMiningBtn" onclick="startMiningProcess()">اضغط لبدء التعدين (6 ساعات)</button>
-    </div>
-
-    <div class="stats-strip">
-        <span>المؤقت: <span id="timeCounter">06:00:00</span></span>
-        <span>سرعة الهاش: <span class="hash-rate" id="hashRateText">0 TH/s</span></span>
-    </div>
-
-    <div class="grid-options">
-        <div class="card-option">
-            <div class="card-icon">⚡</div>
-            <div class="card-title">زيادة السرعة</div>
-            <button class="btn btn-blue" id="actionAdBtn" onclick="watchAd()">مطالبة بمكافأة</button>
-            <div class="meta-text">عداد المشاهدة: <span id="adCounterText">0</span></div>
-        </div>
-
-        <div class="card-option">
-            <div class="card-icon">⏳</div>
-            <div class="card-title">زيادة وقت التعدين</div>
-            <button class="btn btn-orange" id="actionUpgradeBtn" onclick="requestUpgradeAd()">إعلان (+2 س)</button>
-            <div class="meta-text">الحد الأقصى الحالي: <span id="maxDurationText">6</span> ساعات</div>
-        </div>
-    </div>
-</div>
-<script>
-    const adMobAppId = "205859610";
-
-    let accountBtc = parseFloat(localStorage.getItem("miner_btc")) || 0.000000000000; 
-    const standardBtcPrice = 75000;
-    let totalAds = parseInt(localStorage.getItem("miner_ads")) || 0;
-
-    // إعدادات وقت التعدين المطور
-    let maxMiningSeconds = parseInt(localStorage.getItem("miner_max_seconds")) || 21600; 
-    let remainingTimerSeconds = localStorage.getItem("miner_seconds") !== null ? parseInt(localStorage.getItem("miner_seconds")) : maxMiningSeconds; 
-
-    let isMiningActive = false;
-    let currentMiningIncrement = 0.000000000135; 
-    let miningInterval = null;
-    
-    // متغير ذكي لمعرفة نوع الإعلان الحالي (ترقية وقت أم زيادة سرعة)
-    let currentAdTask = "NORMAL"; 
-
-    function saveToLocalStorage() {
-        localStorage.setItem("miner_btc", accountBtc);
-        localStorage.setItem("miner_ads", totalAds);
-        localStorage.setItem("miner_max_seconds", maxMiningSeconds);
-        localStorage.setItem("miner_seconds", remainingTimerSeconds);
-    }
-
-    function refreshMetricsDisplay() {
-        document.getElementById("cryptoBalance").textContent = accountBtc.toFixed(12);
-        let calculatedFiat = accountBtc * standardBtcPrice;
-        document.getElementById("fiatBalance").textContent = "$" + calculatedFiat.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " USD";
-        document.getElementById("adCounterText").textContent = totalAds;
-        
-        let maxHours = maxMiningSeconds / 3600;
-        document.getElementById("maxDurationText").textContent = maxHours;
-        
-        let startBtn = document.getElementById("startMiningBtn");
-        if (!isMiningActive) {
-            startBtn.textContent = `اضغط لبدء التعدين (${maxHours} ساعات)`;
-        }
-
-        let upgradeBtn = document.getElementById("actionUpgradeBtn");
-        if (maxMiningSeconds >= 86400) { 
-            upgradeBtn.disabled = true;
-            upgradeBtn.textContent = "الحد الأقصى";
-        } else {
-            upgradeBtn.disabled = false;
-            upgradeBtn.textContent = "إعلان (+2 س)";
-        }
-    }
-
-    function formatTime(seconds) {
-        let hrs = Math.floor(seconds / 3600);
-        let mins = Math.floor((seconds % 3600) / 60);
-        let secs = seconds % 60;
-        return [
-            hrs.toString().padStart(2, "0"),
-            mins.toString().padStart(2, "0"),
-            secs.toString().padStart(2, "0")
-        ].join(":");
-    }
-
-    function startMiningProcess() {
-        if (isMiningActive) return;
-        isMiningActive = true;
-
-        let btn = document.getElementById("startMiningBtn");
-        btn.disabled = true;
-        btn.textContent = "التعدين نشط حالياً";
-        
-        document.getElementById("statusBadge").classList.add("active");
-        document.getElementById("statusText").textContent = "نشط ومتصل";
-        document.getElementById("hashRateText").textContent = "120 TH/s";
-
-        refreshMetricsDisplay();
-
-        miningInterval = setInterval(() => {
-            if (remainingTimerSeconds > 0) {
-                remainingTimerSeconds--;
-                accountBtc += currentMiningIncrement; 
-                document.getElementById("timeCounter").textContent = formatTime(remainingTimerSeconds);
-                refreshMetricsDisplay();
-                saveToLocalStorage(); 
-            } else {
-                clearInterval(miningInterval);
-                isMiningActive = false;
-                btn.disabled = false;
-                document.getElementById("statusBadge").classList.remove("active");
-                document.getElementById("statusText").textContent = "متوقف";
-                document.getElementById("hashRateText").textContent = "0 TH/s";
-                remainingTimerSeconds = maxMiningSeconds; 
-                document.getElementById("timeCounter").textContent = formatTime(remainingTimerSeconds);
-                refreshMetricsDisplay();
-                saveToLocalStorage();
-            }
-        }, 1000);
-    }
-
-    function watchAd() {
-        currentAdTask = "NORMAL";
-        if (window.AppInventor) {
-            window.AppInventor.setWebViewString("show_rewarded");
-        } else {
-            alert("يرجى تشغيل الكود داخل التطبيق لمشاهدة الإعلانات.");
-        }
-    }
-
-    function requestUpgradeAd() {
-        if (maxMiningSeconds >= 86400) {
-            alert("لقد وصلت بالفعل للحد الأقصى (24 ساعة)!");
-            return;
-        }
-        
-        currentAdTask = "UPGRADE";
-        if (window.AppInventor) {
-            window.AppInventor.setWebViewString("show_interstitial");
-        } else {
-            alert("يرجى فتح التطبيق لمشاهدة إعلان الترقية وزيادة الوقت.");
-        }
-    }
-
-    // يتم استدعاء هذه الدالة من بلوك كودولار بعد انتهاء مشاهدة الإعلان بنجاح
-    function rewardUserForAd() {
-        totalAds++;
-        
-        if (currentAdTask === "UPGRADE") {
-            if (maxMiningSeconds < 86400) {
-                maxMiningSeconds += 7200; 
-                remainingTimerSeconds += 7200; 
-                document.getElementById("timeCounter").textContent = formatTime(remainingTimerSeconds);
-                alert("تمت مشاهدة الإعلان بنجاح! تم إضافة ساعتين إضافيتين لوقت التعدين الحالي.");
-            }
-        } else {
-            accountBtc += 0.000000000500; 
-            alert("حصلت على مكافأة زيادة السرعة بنجاح!");
-        }
-        
-        currentAdTask = "NORMAL";
-        refreshMetricsDisplay();
-        saveToLocalStorage();
-    }
-
-    window.onload = function() {
-        refreshMetricsDisplay();
-        document.getElementById("timeCounter").textContent = formatTime(remainingTimerSeconds);
-        
-        if (remainingTimerSeconds < maxMiningSeconds && remainingTimerSeconds > 0) {
-            startMiningProcess();
-        }
-    };
-</script>
-</body>
-</html>
+    <!-- 1️⃣ قسم التعدين الرئيسي -->
+    <div id="page-mining" class="dashboard active-page">
+        <div class="header">
+            <div class="logo-section">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">MultiMiner</span>
+            </div>
+            <div class="status-badge" id="statusBadge">
+                <div class="pulse"></div>
+                <span id="statusText">متوقف</span>
