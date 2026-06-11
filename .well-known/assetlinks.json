@@ -1,0 +1,16 @@
+
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.btc.flow",
+      "sha256_cert_fingerprints": [
+        "B0:9C:1F:D5:16:D4:58:3B:5F:44:A2:76:A8:1C:89:D2:1F:B4:C2:59:71:04:F2:A3:BB:6E:9A:C3:7E:F5:44:1E"
+      ]
+    }
+  }
+]
+
