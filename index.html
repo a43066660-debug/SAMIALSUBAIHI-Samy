@@ -96,23 +96,23 @@
 </div>
 
 <script>
-    // قيم افتراضية متطابقة مع واجهتك
+    // القيم المبدئية للعداد والمؤقت
     let btc = 0.000000369640;
     let baseSpeed = 120;
     let multiplier = 1;
-    let seconds = 19176; // 05:19:36 محولة لثواني
+    let seconds = 19176; // مؤقت 05:19:36 محول بالكامل إلى ثوانٍ
     let isMining = true;
 
-    // العداد الذي يعمل كل ثانية تلقائياً
+    // محرك التشغيل التلقائي (يعمل كل ثانية لتحديث الحركة)
     setInterval(() => {
         if (!isMining) return;
 
-        // زيادة واضحة ومستمرة للعداد
-        btc += (0.00000000005 * multiplier);
+        // زيادة سريعة ومرئية للعداد كل ثانية لتنبيه المستخدم بالنشاط
+        btc += (0.000000005 * multiplier);
         document.getElementById( btcBalance ).innerText = btc.toFixed(12);
         document.getElementById( usdBalance ).innerText = "USD $" + (btc * 75000).toFixed(2);
 
-        // المؤقت التنازلي
+        // تشغيل عداد الوقت التنازلي المباشر
         if (seconds > 0) {
             seconds--;
             let h = Math.floor(seconds / 3600).toString().padStart(2,  0 );
@@ -124,6 +124,7 @@
         }
     }, 1000);
 
+    // إيقاف الحركة تلقائياً عند انتهاء الوقت
     function stopMining() {
         isMining = false;
         document.getElementById( mainStatus ).innerText = "التعدين متوقف! يرجى زيادة الوقت";
@@ -133,13 +134,13 @@
         document.getElementById( statusText ).style.backgroundColor = "rgba(231, 76, 60, 0.15)";
     }
 
-    // دالة زيادة السرعة (تستدعى من زر كوديلار السفلي الأيمن)
+    // الدالة التي يتم استدعاؤها برمجياً من زر التطبيق المخصص للسرعة
     function increaseSpeed(value) {
         multiplier = value;
         document.getElementById( hashRate ).innerText = (baseSpeed * multiplier) + " TH/s";
     }
 
-    // دالة زيادة الوقت (تستدعى من زر كوديلار السفلي الأيسر)
+    // الدالة التي يتم استدعاؤها برمجياً من زر التطبيق بعد إتمام مشاهدة الإعلان لتمديد الوقت
     function addMiningTime(hours) {
         seconds += (hours * 3600);
         isMining = true;
