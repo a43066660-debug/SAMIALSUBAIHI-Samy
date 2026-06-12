@@ -6,16 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MultiMiner Top Section</title>
     <style>
-        /* إعدادات الخلفية العامة المتناسقة مع الوضع المظلم */
         body {
             background-color: #0b0e14;
             color: #ffffff;
             font-family:  Segoe UI , Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 15px;
-            user-select: none; /* منع تحديد النصوص داخل التطبيق */
+            user-select: none;
         }
-        /* كرت الحاوية الرئيسي */
         .container {
             background-color: #121620;
             border-radius: 16px;
@@ -23,7 +21,6 @@
             border: 1px solid #1a2235;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-        /* الهيدر العلوي (الاسم والحالة) */
         .header {
             display: flex;
             justify-content: space-between;
@@ -37,46 +34,23 @@
             border-radius: 20px;
             font-size: 13px;
             font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
         .title {
             font-size: 20px;
             font-weight: bold;
             color: #f1c40f;
         }
-        /* كرت عرض الرصيد */
         .balance-box {
             text-align: center;
             background-color: #171d2c;
             border-radius: 12px;
             padding: 22px;
             margin-bottom: 18px;
-            border: 1px solid rgba(255,255,255,0.02);
         }
-        .balance-title { 
-            color: #8a99ad; 
-            font-size: 13px; 
-        }
-        .btc-val { 
-            font-size: 26px; 
-            font-weight: bold; 
-            margin: 12px 0; 
-            letter-spacing: 0.5px; 
-            color: #ffffff;
-        }
-        .usd-val { 
-            color: #2ecc71; 
-            font-weight: bold; 
-            font-size: 17px; 
-        }
-        .ref-price { 
-            color: #58667e; 
-            font-size: 11px; 
-            margin-top: 10px; 
-        }
-        /* شريط حالة التعدين */
+        .balance-title { color: #8a99ad; font-size: 13px; }
+        .btc-val { font-size: 26px; font-weight: bold; margin: 12px 0; letter-spacing: 0.5px; }
+        .usd-val { color: #2ecc71; font-weight: bold; font-size: 17px; }
+        .ref-price { color: #58667e; font-size: 11px; margin-top: 10px; }
         .mining-status {
             text-align: center;
             background-color: #171d2c;
@@ -86,9 +60,7 @@
             font-weight: bold;
             font-size: 15px;
             margin-bottom: 18px;
-            letter-spacing: 0.5px;
         }
-        /* صف البيانات (المؤقت والسرعة) */
         .info-row {
             display: flex;
             justify-content: space-between;
@@ -98,22 +70,16 @@
             padding: 14px;
             border-radius: 12px;
         }
-        .info-item span {
-            color: #ffffff;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- القسم العلوي للهيدر -->
     <div class="header">
-        <span class="status">● نشط ومتصل</span>
+        <span id="statusText" class="status">● نشط ومتصل</span>
         <span class="title">⚡ MultiMiner</span>
     </div>
 
-    <!-- قسم إجمالي الرصيد المستخرج -->
     <div class="balance-box">
         <div class="balance-title">إجمالي الرصيد المستخرج (BTC)</div>
         <div id="btcBalance" class="btc-val">0.000000369640</div>
@@ -121,35 +87,32 @@
         <div class="ref-price">سعر البيتكوين المرجعي المتزامن: $75,000</div>
     </div>
 
-    <!-- شريط التنبيه الملون -->
-    <div class="mining-status">التعدين نشط حالياً</div>
+    <div class="mining-status" id="mainStatus">التعدين نشط حالياً</div>
 
-    <!-- صف العدادات التفاعلية -->
     <div class="info-row">
-        <div class="info-item">المؤقت: <span id="timer">05:19:36</span></div>
-        <div class="info-item">سرعة الهاش: <span id="hashRate">120 TH/s</span></div>
+        <div>المؤقت: <span id="timer">05:19:36</span></div>
+        <div>سرعة الهاش: <span id="hashRate">120 TH/s</span></div>
     </div>
 </div>
 
 <script>
-    // القيم المبدئية المستخرجة من صورتك
+    // قيم افتراضية متطابقة مع واجهتك
     let btc = 0.000000369640;
-    let baseSpeed = 120; // سرعة الهاش الافتراضية
-    let currentSpeedMultiplier = 1; // مضاعف السرعة الافتراضي
-    let seconds = 19176; // مؤقت 05:19:36 محول إلى ثوانٍ كاملة
-    const btcPrice = 75000; // سعر البيتكوين المرجعي المتزامن
+    let baseSpeed = 120;
+    let multiplier = 1;
+    let seconds = 19176; // 05:19:36 محولة لثواني
+    let isMining = true;
 
-    // نظام التحديث التلقائي للعدادات (يعمل كل 1 ثانية)
+    // العداد الذي يعمل كل ثانية تلقائياً
     setInterval(() => {
-        // 1. زيادة رصيد البيتكوين تلقائياً بناءً على سرعة الهاش والمضاعف الحالي
-        let miningPower = baseSpeed * currentSpeedMultiplier;
-        btc += (miningPower * 0.0000000000001); 
-        
-        // تحديث النصوص في الواجهة
-        document.getElementById( btcBalance ).innerText = btc.toFixed(12);
-        document.getElementById( usdBalance ).innerText = "USD $" + (btc * btcPrice).toFixed(2);
+        if (!isMining) return;
 
-        // 2. تشغيل المؤقت التنازلي للوقت المتبقي
+        // زيادة واضحة ومستمرة للعداد
+        btc += (0.00000000005 * multiplier);
+        document.getElementById( btcBalance ).innerText = btc.toFixed(12);
+        document.getElementById( usdBalance ).innerText = "USD $" + (btc * 75000).toFixed(2);
+
+        // المؤقت التنازلي
         if (seconds > 0) {
             seconds--;
             let h = Math.floor(seconds / 3600).toString().padStart(2,  0 );
@@ -157,31 +120,36 @@
             let s = (seconds % 60).toString().padStart(2,  0 );
             document.getElementById( timer ).innerText = `${h}:${m}:${s}`;
         } else {
-            document.getElementById( timer ).innerText = "00:00:00";
-            document.querySelector( .mining-status ).innerText = "التعدين متوقف! يرجى زيادة الوقت";
-            document.querySelector( .mining-status ).style.color = "#e74c3c";
+            stopMining();
         }
     }, 1000);
 
-    // [دالة التحكم 1]: يستدعيها زر كوديلار "زيادة السرعة" برمجياً عبر Evaluate JS
-    function setSpeed(multiply) {
-        currentSpeedMultiplier = multiply;
-        let newHash = baseSpeed * multiply;
-        document.getElementById( hashRate ).innerText = newHash + " TH/s";
-        
-        // إرسال إشارة نصية مخصصة للـ WebViewString في كوديلار لتأكيد العملية
-        window.AppInventor.setWebViewString("speed_updated_to_" + multiply);
+    function stopMining() {
+        isMining = false;
+        document.getElementById( mainStatus ).innerText = "التعدين متوقف! يرجى زيادة الوقت";
+        document.getElementById( mainStatus ).style.color = "#e74c3c";
+        document.getElementById( statusText ).innerText = "○ متوقف";
+        document.getElementById( statusText ).style.color = "#e74c3c";
+        document.getElementById( statusText ).style.backgroundColor = "rgba(231, 76, 60, 0.15)";
     }
-    
-    // [دالة التحكم 2]: يستدعيها زر كوديلار "إعلان (+2 س)" برمجياً بعد مشاهدة الإعلان
-    function addTime() {
-        seconds += 7200; // إضافة ساعتين إضافيتين بالثواني (2 * 3600)
-        document.querySelector( .mining-status ).innerText = "التعدين نشط حالياً";
-        document.querySelector( .mining-status ).style.color = "#a29bfe";
-        
-        // إرسال إشارة نصية لتطبيق كوديلار لتحديث الأزرار الخارجية إذا لزم الأمر
-        window.AppInventor.setWebViewString("time_added_successfully");
+
+    // دالة زيادة السرعة (تستدعى من زر كوديلار السفلي الأيمن)
+    function increaseSpeed(value) {
+        multiplier = value;
+        document.getElementById( hashRate ).innerText = (baseSpeed * multiplier) + " TH/s";
+    }
+
+    // دالة زيادة الوقت (تستدعى من زر كوديلار السفلي الأيسر)
+    function addMiningTime(hours) {
+        seconds += (hours * 3600);
+        isMining = true;
+        document.getElementById( mainStatus ).innerText = "التعدين نشط حالياً";
+        document.getElementById( mainStatus ).style.color = "#a29bfe";
+        document.getElementById( statusText ).innerText = "● نشط ومتصل";
+        document.getElementById( statusText ).style.color = "#2ecc71";
+        document.getElementById( statusText ).style.backgroundColor = "rgba(46, 204, 113, 0.15)";
     }
 </script>
 </body>
 </html>
+
