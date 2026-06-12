@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -9,7 +8,7 @@
         body {
             background-color: #0b0e14;
             color: #ffffff;
-            font-family:  Segoe UI , Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 15px;
             user-select: none;
@@ -96,61 +95,53 @@
 </div>
 
 <script>
-    // القيم المبدئية للعداد والمؤقت
     let btc = 0.000000369640;
     let baseSpeed = 120;
     let multiplier = 1;
-    let seconds = 19176; // مؤقت 05:19:36 محول بالكامل إلى ثوانٍ
+    let seconds = 19176;
     let isMining = true;
 
-    // محرك التشغيل التلقائي (يعمل كل ثانية لتحديث الحركة)
     setInterval(() => {
         if (!isMining) return;
 
-        // زيادة سريعة ومرئية للعداد كل ثانية لتنبيه المستخدم بالنشاط
         btc += (0.000000005 * multiplier);
-        document.getElementById( btcBalance ).innerText = btc.toFixed(12);
-        document.getElementById( usdBalance ).innerText = "USD $" + (btc * 75000).toFixed(2);
+        document.getElementById('btcBalance').innerText = btc.toFixed(12);
+        document.getElementById('usdBalance').innerText = "USD $" + (btc * 75000).toFixed(2);
 
-        // تشغيل عداد الوقت التنازلي المباشر
         if (seconds > 0) {
             seconds--;
-            let h = Math.floor(seconds / 3600).toString().padStart(2,  0 );
-            let m = Math.floor((seconds % 3600) / 60).toString().padStart(2,  0 );
-            let s = (seconds % 60).toString().padStart(2,  0 );
-            document.getElementById( timer ).innerText = `${h}:${m}:${s}`;
+            let h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+            let m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+            let s = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('timer').innerText = `${h}:${m}:${s}`;
         } else {
             stopMining();
         }
     }, 1000);
 
-    // إيقاف الحركة تلقائياً عند انتهاء الوقت
     function stopMining() {
         isMining = false;
-        document.getElementById( mainStatus ).innerText = "التعدين متوقف! يرجى زيادة الوقت";
-        document.getElementById( mainStatus ).style.color = "#e74c3c";
-        document.getElementById( statusText ).innerText = "○ متوقف";
-        document.getElementById( statusText ).style.color = "#e74c3c";
-        document.getElementById( statusText ).style.backgroundColor = "rgba(231, 76, 60, 0.15)";
+        document.getElementById('mainStatus').innerText = "التعدين متوقف! يرجى زيادة الوقت";
+        document.getElementById('mainStatus').style.color = "#e74c3c";
+        document.getElementById('statusText').innerText = "○ متوقف";
+        document.getElementById('statusText').style.color = "#e74c3c";
+        document.getElementById('statusText').style.backgroundColor = "rgba(231, 76, 60, 0.15)";
     }
 
-    // الدالة التي يتم استدعاؤها برمجياً من زر التطبيق المخصص للسرعة
     function increaseSpeed(value) {
         multiplier = value;
-        document.getElementById( hashRate ).innerText = (baseSpeed * multiplier) + " TH/s";
+        document.getElementById('hashRate').innerText = (baseSpeed * multiplier) + " TH/s";
     }
 
-    // الدالة التي يتم استدعاؤها برمجياً من زر التطبيق بعد إتمام مشاهدة الإعلان لتمديد الوقت
     function addMiningTime(hours) {
         seconds += (hours * 3600);
         isMining = true;
-        document.getElementById( mainStatus ).innerText = "التعدين نشط حالياً";
-        document.getElementById( mainStatus ).style.color = "#a29bfe";
-        document.getElementById( statusText ).innerText = "● نشط ومتصل";
-        document.getElementById( statusText ).style.color = "#2ecc71";
-        document.getElementById( statusText ).style.backgroundColor = "rgba(46, 204, 113, 0.15)";
+        document.getElementById('mainStatus').innerText = "التعدين نشط حالياً";
+        document.getElementById('mainStatus').style.color = "#a29bfe";
+        document.getElementById('statusText').innerText = "● نشط ومتصل";
+        document.getElementById('statusText').style.color = "#2ecc71";
+        document.getElementById('statusText').style.backgroundColor = "rgba(46, 204, 113, 0.15)";
     }
 </script>
 </body>
 </html>
-
