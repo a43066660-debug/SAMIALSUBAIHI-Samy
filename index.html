@@ -142,22 +142,20 @@
         document.getElementById('statusText').style.color = "#2ecc71";
         document.getElementById('statusText').style.backgroundColor = "rgba(46, 204, 113, 0.15)";
     }
-    
+ 
+    }
 
 setInterval(() => {
-    // التحقق الآمن من اتصال تطبيق كوديلار بالمتصفح قبل قراءة النص
     if (typeof window.AppInventor !== "undefined" && typeof window.AppInventor.getWebViewString === "function") {
         let command = window.AppInventor.getWebViewString();
         if (command === "speed") {
             increaseSpeed(2);
-            window.AppInventor.setWebViewString(""); // تصفير الأمر بعد التنفيذ
+            window.AppInventor.setWebViewString(""); 
         } else if (command === "time") {
             addMiningTime(2);
-            window.AppInventor.setWebViewString(""); // تصفير الأمر بعد التنفيذ
+            window.AppInventor.setWebViewString(""); 
         }
     }
-}, 500);
-
 }, 500);
 
 </script>
