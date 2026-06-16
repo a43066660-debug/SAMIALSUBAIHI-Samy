@@ -1,147 +1,90 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MultiMiner Top Section</title>
-    <style>
-        body {
-            background-color: #0b0e14;
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 15px;
-            user-select: none;
-        }
-        .container {
-            background-color: #121620;
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid #1a2235;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-        .status {
-            background-color: rgba(46, 204, 113, 0.15);
-            color: #2ecc71;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
-        }
-        .title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #f1c40f;
-        }
-        .balance-box {
-            text-align: center;
-            background-color: #171d2c;
-            border-radius: 12px;
-            padding: 22px;
-            margin-bottom: 18px;
-        }
-        .balance-title { color: #8a99ad; font-size: 13px; }
-        .btc-val { font-size: 26px; font-weight: bold; margin: 12px 0; letter-spacing: 0.5px; }
-        .usd-val { color: #2ecc71; font-weight: bold; font-size: 17px; }
-        .ref-price { color: #58667e; font-size: 11px; margin-top: 10px; }
-        .mining-status {
-            text-align: center;
-            background-color: #171d2c;
-            padding: 14px;
-            border-radius: 12px;
-            color: #a29bfe;
-            font-weight: bold;
-            font-size: 15px;
-            margin-bottom: 18px;
-        }
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            color: #bdc3c7;
-            background-color: #171d2c;
-            padding: 14px;
-            border-radius: 12px;
-        }
-    </style>
+    <title>لوحة تحكم محاكاة التعدين</title>
+    <script src="https://jsdelivr.net"></script>
+    <script src="https://tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-900 text-gray-100 font-sans">
 
-<div class="container">
-    <div class="header">
-        <span id="statusText" class="status">● نشط ومتصل</span>
-        <span class="title">⚡ MultiMiner</span>
+    <div class="flex h-screen">
+        <!-- القائمة الجانبية -->
+        <aside class="w-64 bg-gray-800 p-6 flex flex-col justify-between">
+            <div>
+                <h2 class="text-2xl font-bold text-yellow-500 mb-8 text-center">CryptoMinerSim 🚀</h2>
+                <nav class="space-y-4">
+                    <a href="#" class="block py-2.5 px-4 rounded bg-gray-700 text-white font-semibold">الرئيسية</a>
+                    <a href="#" class="block py-2.5 px-4 rounded hover:bg-gray-700 text-gray-400 hover:text-white transition">غرفة التعدين</a>
+                    <a href="#" class="block py-2.5 px-4 rounded hover:bg-gray-700 text-gray-400 hover:text-white transition">المتجر الافتراضي</a>
+                    <a href="#" class="block py-2.5 px-4 rounded hover:bg-gray-700 text-gray-400 hover:text-white transition">المحفظة</a>
+                </nav>
+            </div>
+            <div class="text-xs text-gray-500 text-center">نسخة محاكاة تجريبية v1.0</div>
+        </aside>
+
+        <!-- المحتوى الرئيسي -->
+        <main class="flex-1 p-8 overflow-y-auto">
+            <!-- الهيدر -->
+            <header class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-semibold">لوحة التحكم العامة</h1>
+                <button class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full font-bold shadow-lg transition">
+                    ▶ بدء المحاكاة
+                </button>
+            </header>
+
+            <!-- بطاقات الإحصائيات -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-md">
+                    <p class="text-gray-400 text-sm">الرصيد الافتراضي الحالي</p>
+                    <p class="text-2xl font-bold text-yellow-500 mt-2">0.024560 BTC</p>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-md">
+                    <p class="text-gray-400 text-sm">سرعة الهاش الحالية</p>
+                    <p class="text-2xl font-bold text-blue-400 mt-2">450.5 MH/s</p>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-md">
+                    <p class="text-gray-400 text-sm">حالة الأجهزة الافتراضية</p>
+                    <p class="text-2xl font-bold text-green-400 mt-2">4 / 4 نشط</p>
+                </div>
+            </div>
+
+            <!-- الرسم البياني للأرباح -->
+            <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-md mb-8">
+                <h3 class="text-lg font-medium mb-4">نمو الأرباح الافتراضية (آخر 7 أيام)</h3>
+                <canvas id="earningsChart" class="w-full h-64"></canvas>
+            </div>
+        </main>
     </div>
 
-    <div class="balance-box">
-        <div class="balance-title">إجمالي الرصيد المستخرج (BTC)</div>
-        <div id="btcBalance" class="btc-val">0.000000369640</div>
-        <div id="usdBalance" class="usd-val">USD $0.03</div>
-        <div class="ref-price">سعر البيتكوين المرجعي المتزامن: $75,000</div>
-    </div>
-
-    <div class="mining-status" id="mainStatus">التعدين نشط حالياً</div>
-
-    <div class="info-row">
-        <div>المؤقت: <span id="timer">05:19:36</span></div>
-        <div>سرعة الهاش: <span id="hashRate">120 TH/s</span></div>
-    </div>
-</div>
-
-<script>
-    let btc = 0.000000369640;
-    let baseSpeed = 120;
-    let multiplier = 1;
-    let seconds = 19176;
-    let isMining = true;
-
-    setInterval(() => {
-        if (!isMining) return;
-
-        btc += (0.000000005 * multiplier);
-        document.getElementById('btcBalance').innerText = btc.toFixed(12);
-        document.getElementById('usdBalance').innerText = "USD $" + (btc * 75000).toFixed(2);
-
-        if (seconds > 0) {
-            seconds--;
-            let h = Math.floor(seconds / 3600).toString().padStart(2, '0');
-            let m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
-            let s = (seconds % 60).toString().padStart(2, '0');
-            document.getElementById('timer').innerText = `${h}:${m}:${s}`;
-        } else {
-            stopMining();
-        }
-    }, 1000);
-
-    function stopMining() {
-        isMining = false;
-        document.getElementById('mainStatus').innerText = "التعدين متوقف! يرجى زيادة الوقت";
-        document.getElementById('mainStatus').style.color = "#e74c3c";
-        document.getElementById('statusText').innerText = "○ متوقف";
-        document.getElementById('statusText').style.color = "#e74c3c";
-        document.getElementById('statusText').style.backgroundColor = "rgba(231, 76, 60, 0.15)";
-    }
-
-    function increaseSpeed(value) {
-        multiplier = value;
-        document.getElementById('hashRate').innerText = (baseSpeed * multiplier) + " TH/s";
-    }
-
-    function addMiningTime(hours) {
-        seconds += (hours * 3600);
-        isMining = true;
-        document.getElementById('mainStatus').innerText = "التعدين نشط حالياً";
-        document.getElementById('mainStatus').style.color = "#a29bfe";
-        document.getElementById('statusText').innerText = "● نشط ومتصل";
-        document.getElementById('statusText').style.color = "#2ecc71";
-        document.getElementById('statusText').style.backgroundColor = "rgba(46, 204, 113, 0.15)";
-    }
-</script>
+    <!-- كود تشغيل الرسم البياني -->
+    <script>
+        const ctx = document.getElementById( earningsChart ).getContext( 2d );
+        new Chart(ctx, {
+            type:  line ,
+            data: {
+                labels: [ السبت ,  الأحد ,  الإثنين ,  الثلاثاء ,  الأربعاء ,  الخميس ,  الجمعة ],
+                datasets: [{
+                    label:  الأرباح المحاكات ,
+                    data: [5, 12, 19, 25, 32, 45, 60],
+                    borderColor:  #f59e0b ,
+                    backgroundColor:  rgba(245, 158, 11, 0.1) ,
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { grid: { color:  #374151  }, ticks: { color:  #9ca3af  } },
+                    x: { grid: { color:  #374151  }, ticks: { color:  #9ca3af  } }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
