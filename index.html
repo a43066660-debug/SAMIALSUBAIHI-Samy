@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html>
 <head>
@@ -81,32 +80,32 @@
     <script>
         // دالة محاكاة إرسال الرمز
         function sendOTP() {
-            var phone = document.getElementById( number ).value;
+            var phone = document.getElementById('number').value;
             if(phone.trim() === "") {
                 alert("الرجاء إدخال رقم الهاتف أولاً");
                 return;
             }
             
             // إخفاء الخطوة الأولى وإظهار الخطوة الثانية
-            document.getElementById( step1 ).style.display =  none ;
-            document.getElementById( step2 ).style.display =  block ;
-            document.getElementById( info ).innerHTML = "تم إرسال الرمز إلى: " + phone;
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+            document.getElementById('info').innerHTML = "تم إرسال الرمز إلى: " + phone;
         }
 
         // دالة محاكاة التحقق من الرمز
         function verifyOTP() {
-            var code = document.getElementById( verificationcode ).value;
-            var success = document.getElementById( success-msg );
-            var fail = document.getElementById( fail-msg );
+            var code = document.getElementById('verificationcode').value;
+            var success = document.getElementById('success-msg');
+            var fail = document.getElementById('fail-msg');
 
             // افتراضياً: الرمز الصحيح للمحاكاة هو 1234
             if(code === "1234") {
-                success.style.display =  block ;
-                fail.style.display =  none ;
-                document.getElementById( step2 ).style.display =  none ;
+                success.style.display = 'block';
+                fail.style.display = 'none';
+                document.getElementById('step2').style.display = 'none';
             } else {
-                fail.style.display =  block ;
-                success.style.display =  none ;
+                fail.style.display = 'block';
+                success.style.display = 'none';
             }
         }
     </script>
