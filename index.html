@@ -1,90 +1,113 @@
-
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<!doctype html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم محاكاة التعدين</title>
-    <script src="https://jsdelivr.net"></script>
-    <script src="https://tailwindcss.com"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://w3schools.com">
+    <title>FB Phone No with OTP</title>
+    <style>
+        .container {
+            max-width: 300px;
+            margin: auto;
+            padding-top:40px;
+            text-align:center;
+        }
+        #number, #verificationcode {
+            width: 100%;
+            padding: 10px;
+            font-size: 20px;
+            margin-bottom: 5px;
+            outline: none;
+        }
+        #recaptcha-container {
+            margin-bottom: 5px;
+        }
+        #send, #verify {
+            width: 100%;
+            height: 40px;
+            outline: none;
+            display:none;
+        }
+        #show {
+            width: 100%;
+            height: 40px;
+            outline: none;
+        }
+        .p-conf, .n-conf {
+            width: 100%;
+            border: 2px solid green;
+            border-radius: 4px;
+            padding: 8px 10px;
+            margin: 4px 0px;
+            background-color: rgba(0, 249, 12, 0.5);
+            display: none;
+        }
+        .n-conf {
+            border-color: red;
+            background-color: rgba(255, 0, 4, 0.5);
+        }
+        /* تحسينات إضافية للمظهر */
+        .step-2 {
+            display: none;
+        }
+    </style>
 </head>
-<body class="bg-gray-900 text-gray-100 font-sans">
 
-    <div class="flex h-screen">
-        <!-- القائمة الجانبية -->
-        <aside class="w-64 bg-gray-800 p-6 flex flex-col justify-between">
-            <div>
-                <h2 class="text-2xl font-bold text-yellow-500 mb-8 text-center">CryptoMinerSim 🚀</h2>
-                <nav class="space-y-4">
-                    <a href="#" class="block py-2.5 px-4 rounded bg-gray-700 text-white font-semibold">الرئيسية</a>
-                    <a href="#" class="block py-2.5 px-4 rounded hover:bg-gray-700 text-gray-400 hover:text-white transition">غرفة التعدين</a>
-                    <a href="#" class="block py-2.5 px-4 rounded hover:bg-gray-700 text-gray-400 hover:text-white transition">المتجر الافتراضي</a>
-                    <a href="#" class="block py-2.5 px-4 rounded hover:bg-gray-700 text-gray-400 hover:text-white transition">المحفظة</a>
-                </nav>
-            </div>
-            <div class="text-xs text-gray-500 text-center">نسخة محاكاة تجريبية v1.0</div>
-        </aside>
+<body>
+    <div class="container class="w3-card-4 w3-padding w3-round"">
+        <div id="info" class="w3-margin-bottom"></div>
+        
+        <!-- الخطوة الأولى: إدخال رقم الهاتف -->
+        <div id="step1">
+            <h4 class="w3-text-teal">التحقق من رقم الهاتف</h4>
+            <input type="tel" id="number" class="w3-input w3-border w3-round" placeholder="+966500000000">
+            <div id="recaptcha-container"></div>
+            <button id="show" class="w3-button w3-teal w3-round" onclick="sendOTP()">إرسال رمز التحقق</button>
+        </div>
 
-        <!-- المحتوى الرئيسي -->
-        <main class="flex-1 p-8 overflow-y-auto">
-            <!-- الهيدر -->
-            <header class="flex justify-between items-center mb-8">
-                <h1 class="text-3xl font-semibold">لوحة التحكم العامة</h1>
-                <button class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full font-bold shadow-lg transition">
-                    ▶ بدء المحاكاة
-                </button>
-            </header>
+        <!-- الخطوة الثانية: إدخال الرمز المرسل (تظهر لاحقاً) -->
+        <div id="step2" class="step-2">
+            <h4 class="w3-text-teal">أدخل الرمز (OTP)</h4>
+            <input type="number" id="verificationcode" class="w3-input w3-border w3-round" placeholder="000000">
+            <button id="verify" class="w3-button w3-green w3-round" style="display: block;" onclick="verifyOTP()">تأكيد الرمز</button>
+        </div>
 
-            <!-- بطاقات الإحصائيات -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-md">
-                    <p class="text-gray-400 text-sm">الرصيد الافتراضي الحالي</p>
-                    <p class="text-2xl font-bold text-yellow-500 mt-2">0.024560 BTC</p>
-                </div>
-                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-md">
-                    <p class="text-gray-400 text-sm">سرعة الهاش الحالية</p>
-                    <p class="text-2xl font-bold text-blue-400 mt-2">450.5 MH/s</p>
-                </div>
-                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-md">
-                    <p class="text-gray-400 text-sm">حالة الأجهزة الافتراضية</p>
-                    <p class="text-2xl font-bold text-green-400 mt-2">4 / 4 نشط</p>
-                </div>
-            </div>
-
-            <!-- الرسم البياني للأرباح -->
-            <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-md mb-8">
-                <h3 class="text-lg font-medium mb-4">نمو الأرباح الافتراضية (آخر 7 أيام)</h3>
-                <canvas id="earningsChart" class="w-full h-64"></canvas>
-            </div>
-        </main>
+        <!-- رسائل النجاح والفشل -->
+        <div id="success-msg" class="p-conf">تم التحقق بنجاح!</div>
+        <div id="fail-msg" class="n-conf">الرمز غير صحيح، حاول مجدداً.</div>
     </div>
 
-    <!-- كود تشغيل الرسم البياني -->
     <script>
-        const ctx = document.getElementById( earningsChart ).getContext( 2d );
-        new Chart(ctx, {
-            type:  line ,
-            data: {
-                labels: [ السبت ,  الأحد ,  الإثنين ,  الثلاثاء ,  الأربعاء ,  الخميس ,  الجمعة ],
-                datasets: [{
-                    label:  الأرباح المحاكات ,
-                    data: [5, 12, 19, 25, 32, 45, 60],
-                    borderColor:  #f59e0b ,
-                    backgroundColor:  rgba(245, 158, 11, 0.1) ,
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.3
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { grid: { color:  #374151  }, ticks: { color:  #9ca3af  } },
-                    x: { grid: { color:  #374151  }, ticks: { color:  #9ca3af  } }
-                }
+        // دالة محاكاة إرسال الرمز
+        function sendOTP() {
+            var phone = document.getElementById('number').value;
+            if(phone.trim() === "") {
+                alert("الرجاء إدخال رقم الهاتف أولاً");
+                return;
             }
-        });
+            
+            // إخفاء الخطوة الأولى وإظهار الخطوة الثانية
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+            document.getElementById('info').innerHTML = "تم إرسال الرمز إلى: " + phone;
+        }
+
+        // دالة محاكاة التحقق من الرمز
+        function verifyOTP() {
+            var code = document.getElementById('verificationcode').value;
+            var success = document.getElementById('success-msg');
+            var fail = document.getElementById('fail-msg');
+
+            // افتراضياً: الرمز الصحيح للمحاكاة هو 1234
+            if(code === "1234") {
+                success.style.display = 'block';
+                fail.style.display = 'none';
+                document.getElementById('step2').style.display = 'none';
+            } else {
+                fail.style.display = 'block';
+                success.style.display = 'none';
+            }
+        }
     </script>
 </body>
 </html>
