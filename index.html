@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,7 +7,7 @@
     <title>FB Phone No with OTP</title>
     <style>
         .container {
-            max-width: 300px;
+            max-width: 350px;
             margin: auto;
             padding-top:40px;
             text-align:center;
@@ -16,21 +16,18 @@
             width: 100%;
             padding: 10px;
             font-size: 20px;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
             outline: none;
+            text-align: center;
         }
         #recaptcha-container {
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
         }
-        #send, #verify {
+        #show, #verify {
             width: 100%;
-            height: 40px;
-            outline: none;
-            display:none;
-        }
-        #show {
-            width: 100%;
-            height: 40px;
+            height: 45px;
             outline: none;
         }
         .p-conf, .n-conf {
@@ -38,75 +35,138 @@
             border: 2px solid green;
             border-radius: 4px;
             padding: 8px 10px;
-            margin: 4px 0px;
-            background-color: rgba(0, 249, 12, 0.5);
+            margin: 10px 0px;
+            background-color: rgba(0, 249, 12, 0.2);
             display: none;
+            color: green;
+            font-weight: bold;
         }
         .n-conf {
             border-color: red;
-            background-color: rgba(255, 0, 4, 0.5);
+            background-color: rgba(255, 0, 4, 0.2);
+            color: red;
         }
-        /* تحسينات إضافية للمظهر */
         .step-2 {
             display: none;
         }
     </style>
 </head>
-
+ 
 <body>
-    <div class="container class="w3-card-4 w3-padding w3-round"">
-        <div id="info" class="w3-margin-bottom"></div>
+    <div class="container w3-card-4 w3-padding w3-round w3-white">
+        <div id="info" class="w3-margin-bottom w3-text-gray"></div>
         
         <!-- الخطوة الأولى: إدخال رقم الهاتف -->
         <div id="step1">
             <h4 class="w3-text-teal">التحقق من رقم الهاتف</h4>
             <input type="tel" id="number" class="w3-input w3-border w3-round" placeholder="+966500000000">
+            
+            <!-- حاوية كود التحقق البشري التابع لـ Firebase -->
             <div id="recaptcha-container"></div>
+            
             <button id="show" class="w3-button w3-teal w3-round" onclick="sendOTP()">إرسال رمز التحقق</button>
         </div>
-
-        <!-- الخطوة الثانية: إدخال الرمز المرسل (تظهر لاحقاً) -->
+ 
+        <!-- الخطوة الثانية: إدخال الرمز المرسل -->
         <div id="step2" class="step-2">
             <h4 class="w3-text-teal">أدخل الرمز (OTP)</h4>
             <input type="number" id="verificationcode" class="w3-input w3-border w3-round" placeholder="000000">
-            <button id="verify" class="w3-button w3-green w3-round" style="display: block;" onclick="verifyOTP()">تأكيد الرمز</button>
+            <button id="verify" class="w3-button w3-green w3-round" onclick="verifyOTP()">تأكيد الرمز</button>
         </div>
-
+ 
         <!-- رسائل النجاح والفشل -->
         <div id="success-msg" class="p-conf">تم التحقق بنجاح!</div>
-        <div id="fail-msg" class="n-conf">الرمز غير صحيح، حاول مجدداً.</div>
+        <div id="fail-msg" class="n-conf">الرمز غير صحيح أو انتهت صلاحيته.</div>
     </div>
+ 
+    <!-- استدعاء مكتبات الـ SDK الخاصة بـ Firebase الإصدار الحديث (V9/V10) المتوافق مع المتصفح مباشرة -->
+    <script type="module">
+        import { initializeApp } from "https://gstatic.com";
+        import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://gstatic.com";
 
-    <script>
-        // دالة محاكاة إرسال الرمز
-        function sendOTP() {
-            var phone = document.getElementById('number').value;
-            if(phone.trim() === "") {
-                alert("الرجاء إدخال رقم الهاتف أولاً");
+        // بيانات مشروعك الحقيقية التي ظهرت في صورتك
+        const firebaseConfig = {
+            apiKey: "AIzaSyBPd0MpQY3I9NekjULv0zFVvXFw-v-xakI",
+            authDomain: "://firebaseapp.com",
+            databaseURL: "https://firebaseio.com",
+            projectId: "srsr-45951",
+            storageBucket: "://appspot.com",
+            messagingSenderId: "356276956422",
+            appId: "1:356276956422:web:b9987e15d222b420794287",
+            measurementId: "G-FZ5ED1WPXW"
+        };
+
+        // تهيئة الـ Firebase والـ Auth
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        // تغيير لغة واجهة ريكابتشا إلى العربية
+        auth.languageCode = 'ar';
+
+        let confirmationResult;
+
+        // تهيئة أداة التحقق من الأمان (Recaptcha)
+        window.onload = function() {
+            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                'size': 'normal',
+                'callback': (response) => {
+                    // تم التحقق بنجاح من أن المستخدم ليس روبوت
+                }
+            });
+            window.recaptchaVerifier.render();
+        };
+
+        // دالة إرسال الرمز الحقيقية
+        window.sendOTP = function() {
+            const phoneNumber = document.getElementById('number').value;
+            if (phoneNumber.trim() === "" || !phoneNumber.startsWith('+')) {
+                alert("الرجاء إدخال رقم الهاتف بصيغة دولية صحيحة (مثال: +966500000000)");
                 return;
             }
-            
-            // إخفاء الخطوة الأولى وإظهار الخطوة الثانية
-            document.getElementById('step1').style.display = 'none';
-            document.getElementById('step2').style.display = 'block';
-            document.getElementById('info').innerHTML = "تم إرسال الرمز إلى: " + phone;
+
+            const appVerifier = window.recaptchaVerifier;
+
+            signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+                .then((result) => {
+                    // تم إرسال الرسالة النصية SMS بنجاح
+                    window.confirmationResult = result;
+                    
+                    document.getElementById('step1').style.display = 'none';
+                    document.getElementById('step2').style.display = 'block';
+                    document.getElementById('info').innerHTML = "تم إرسال الرمز إلى: " + phoneNumber;
+                    document.getElementById('fail-msg').style.display = 'none';
+                }).catch((error) => {
+                    // حدث خطأ أثناء إرسال الرسالة
+                    alert("خطأ في إرسال الرمز: " + error.message);
+                    console.error(error);
+                });
         }
 
-        // دالة محاكاة التحقق من الرمز
-        function verifyOTP() {
-            var code = document.getElementById('verificationcode').value;
-            var success = document.getElementById('success-msg');
-            var fail = document.getElementById('fail-msg');
+        // دالة التحقق من الرمز الحقيقية
+        window.verifyOTP = function() {
+            const code = document.getElementById('verificationcode').value;
+            const successMsg = document.getElementById('success-msg');
+            const failMsg = document.getElementById('fail-msg');
 
-            // افتراضياً: الرمز الصحيح للمحاكاة هو 1234
-            if(code === "1234") {
-                success.style.display = 'block';
-                fail.style.display = 'none';
-                document.getElementById('step2').style.display = 'none';
-            } else {
-                fail.style.display = 'block';
-                success.style.display = 'none';
+            if (code.trim() === "") {
+                alert("الرجاء إدخال الرمز المكون من 6 أرقام أولاً");
+                return;
             }
+
+            window.confirmationResult.confirm(code)
+                .then((result) => {
+                    // تم تسجيل الدخول والتحقق بنجاح
+                    const user = result.user;
+                    successMsg.style.display = 'block';
+                    failMsg.style.display = 'none';
+                    document.getElementById('step2').style.display = 'none';
+                    document.getElementById('info').innerHTML = "مرحباً بك، رقم المعرف الخاص بك: " + user.uid;
+                }).catch((error) => {
+                    // الرمز المكتوب خاطئ
+                    failMsg.style.display = 'block';
+                    successMsg.style.display = 'none';
+                    console.error(error);
+                });
         }
     </script>
 </body>
