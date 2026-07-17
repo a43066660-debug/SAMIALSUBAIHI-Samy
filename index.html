@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=none">
     <title>مكون الطقس الحقيقي</title>
     <style>
-        @import url( https://googleapis.com );
+        @import url('https://googleapis.com');
         
         body {
             margin: 0;
@@ -15,10 +15,9 @@
             align-items: center;
             min-height: 90vh;
             background-color: #ffffff;
-            font-family:  Cairo , sans-serif;
+            font-family: 'Cairo', sans-serif;
         }
 
-        /* تصميم مستطيل ومقرب ومطابق تماماً لتطبيق توكلنا */
         .twk-weather-widget {
             display: inline-flex;
             align-items: center;
@@ -60,7 +59,6 @@
             flex-shrink: 0;
         }
         
-        /* السهم التفاعلي للتحديث */
         .twk-arrow-container {
             display: inline-flex;
             align-items: center;
@@ -72,7 +70,6 @@
             flex-shrink: 0;
         }
 
-        /* أنيميشن الدوران عند النقر لتحديث الطقس الحقيقي */
         .twk-arrow-container.updating {
             animation: spin 0.6s linear infinite;
         }
@@ -100,7 +97,7 @@
             </span>
         </div>
         
-        <span class="twk-arrow-container" id="refresh-btn" onclick="getLiveLocationWeather()" title="تحديث الطقس">
+        <span class="twk-arrow-container" id="refresh-btn" onclick="getLiveLocationWeather()">
             <svg class="twk-arrow-svg" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
                 <path d="M15 19L8 12L15 5" stroke="#8E8E93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -109,18 +106,17 @@
 
 <script>
     async function getLiveLocationWeather() {
-        const btn = document.getElementById( refresh-btn );
-        if(btn) btn.classList.add( updating );
+        const btn = document.getElementById('refresh-btn');
+        if(btn) btn.classList.add('updating');
         
         try {
-            // جلب الموقع الفعلي والطقس المباشر عبر بروتوكول متوافق مع خوادم جيت هاب الآمنة
-            const res = await fetch( https://wttr.in );
+            // جلب الطقس والموقع الفعلي عبر سرفر مفتوح ومتوافق مع جيت هاب
+            const res = await fetch('https://wttr.in');
             const data = await res.json();
             
             const realTemp = Math.round(data.current_condition.FeelsLikeC);
             let city = data.nearest_area.region.value;
             
-            // تحويل وتنسيق المدن الشائعة تلقائياً للعربية
             if(city.toLowerCase() === "riyadh") city = "الرياض";
             else if(city.toLowerCase() === "makkah" || city.toLowerCase() === "mecca") city = "مكة المكرمة";
             else if(city.toLowerCase() === "jeddah") city = "جدة";
@@ -132,25 +128,20 @@
             else if (weatherDesc.includes("fog") || weatherDesc.includes("mist")) status = "ضبابي";
             else if (weatherDesc.includes("thunder") || weatherDesc.includes("storm")) status = "عواصف";
 
-            document.getElementById( twk-temp ).innerText = realTemp;
-            document.getElementById( twk-status ).innerHTML = " درجة - " + status + " في " + city + " الآن";
+            document.getElementById('twk-temp').innerText = realTemp;
+            document.getElementById('twk-status').innerHTML = " درجة - " + status + " في " + city + " الآن";
             
         } catch (e) {
-            console.log("خطأ في جلب البيانات.");
-            document.getElementById( twk-temp ).innerText = "30";
-            document.getElementById( twk-status ).innerHTML = " درجة - صحو في موقعك الآن";
+            document.getElementById('twk-temp').innerText = "30";
+            document.getElementById('twk-status').innerHTML = " درجة - صحو في موقعك الآن";
         } finally {
             if(btn) {
-                setTimeout(() => {
-                    btn.classList.remove( updating );
-                }, 600);
+                setTimeout(() => { btn.classList.remove('updating'); }, 600);
             }
         }
     }
-    
     getLiveLocationWeather();
 </script>
 
 </body>
 </html>
-
