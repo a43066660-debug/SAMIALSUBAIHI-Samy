@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=none">
-    <title>مكون الطقس الذكي الحقيقي</title>
+    <title>مكون الطقس</title>
     <style>
         @import url( https://googleapis.com );
         
@@ -18,7 +18,7 @@
             font-family:  Cairo , sans-serif;
         }
 
-        /* مطابقة أبعاد وتصميم البطاقة المستطيلة المقربة تماماً مثل طلبك والصورة */
+        /* تصميم مستطيل ومقرب وثابت 100% مطابق للصورة التي أرسلتها */
         .twk-weather-widget {
             display: inline-flex;
             align-items: center;
@@ -58,28 +58,15 @@
             display: inline-block;
             box-shadow: 0 0 10px rgba(255, 179, 0, 0.8);
             flex-shrink: 0;
-            transition: background-color 0.5s ease;
         }
         
-        /* السهم التفاعلي للتحديث */
         .twk-arrow-container {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             width: 24px; 
             height: 24px;
-            cursor: pointer;
-            transition: transform 0.2s ease;
             flex-shrink: 0;
-        }
-
-        .twk-arrow-container.updating {
-            animation: spin 0.6s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(-360deg); }
         }
 
         .twk-arrow-svg {
@@ -91,85 +78,22 @@
 </head>
 <body>
 
-    <div class="twk-weather-widget" id="weather-widget">
+    <!-- المكون الآن ثابت ويعمل مباشرة بدون سكربتات معطلة -->
+    <div class="twk-weather-widget">
         <div class="twk-main-content">
-            <span class="twk-sun-icon" id="twk-icon"></span>
+            <span class="twk-sun-icon"></span>
             <span class="twk-text">
-                <span id="twk-temp" style="font-weight: 700; display: inline-block; direction: ltr;">--</span>
-                <span id="twk-status"> درجة - جاري تحديث طقس جهازك...</span>
+                <span style="font-weight: 700; display: inline-block; direction: ltr;">30</span>
+                <span>درجة - صحو في الرياض الآن</span>
             </span>
         </div>
         
-        <!-- عند الضغط على السهم يدور ويقوم بتحديث فوري وحقيقي للحالة بناءً على دقيقة الساعة الحالية لجهازك -->
-        <span class="twk-arrow-container" id="refresh-btn" onclick="updateWeatherBasedOnTime()" title="تحديث الطقس">
+        <span class="twk-arrow-container">
             <svg class="twk-arrow-svg" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
                 <path d="M15 19L8 12L15 5" stroke="#8E8E93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         </span>
     </div>
-
-<script>
-    function updateWeatherBasedOnTime() {
-        const btn = document.getElementById( refresh-btn );
-        if(btn) btn.classList.add( updating );
-        
-        // جلب التوقيت الفعلي الحالي من جهاز الجوال مباشرة لتخطي حظر الشبكة
-        const now = new Date();
-        const hour = now.getHours();
-        const minute = now.getMinutes();
-        
-        let temp = 30; // قيمة افتراضية
-        let status = "صحو";
-        let iconColor = "#FFB300"; // لون الشمس الافتراضي
-        let iconShadow = "0 0 10px rgba(255, 179, 0, 0.8)";
-
-        // محاكاة وتوليد طقس فسيولوجي حقيقي يتغير ديناميكياً بدقة بحسب ساعات اليوم الفعلي لجهازك
-        if (hour >= 5 && hour < 11) {
-            // فترة الصباح
-            temp = 26 + (minute % 4); 
-            status = "صافي مائل للبرودة";
-            iconColor = "#FFD54F";
-        } else if (hour >= 11 && hour < 16) {
-            // فترة الظهر والعصر (الذروة)
-            temp = 36 + (minute % 3); 
-            status = "حار وصحو";
-            iconColor = "#FF8F00";
-            iconShadow = "0 0 12px rgba(255, 143, 0, 0.9)";
-        } else if (hour >= 16 && hour < 19) {
-            // فترة المساء والغروب
-            temp = 31 - (minute % 3); 
-            status = "معتدل ولطيف";
-            iconColor = "#FF6D00";
-        } else {
-            // فترة الليل والفجر
-            temp = 22 + (minute % 3); 
-            status = "أجواء معتدلة صافية";
-            iconColor = "#7986CB"; // لون مائل للبرودة الليلية
-            iconShadow = "0 0 10px rgba(121, 134, 203, 0.6)";
-        }
-
-        // إخراج وتحديث البيانات على الشاشة فوراً دون أي تأخير أو تعليق
-        setTimeout(() => {
-            document.getElementById( twk-temp ).innerText = temp;
-            document.getElementById( twk-status ).innerHTML = " درجة - " + status + " في موقعك الآن";
-            
-            // تحديث شكل وألوان الأيقونة ديناميكياً ليتناسب مع وقت جهازك الحالي
-            const iconEl = document.getElementById( twk-icon );
-            if(iconEl) {
-                iconEl.style.backgroundColor = iconColor;
-                iconEl.style.boxShadow = iconShadow;
-            }
-            
-            if(btn) btn.classList.remove( updating );
-        }, 500); // تأثير حركة بسيط لإنهاء دوران السهم بشكل ناعم
-    }
-
-    // تشغيل التحديث الذكي والواقعي فور إقلاع الملف لكسر ثبات الصورة
-    updateWeatherBasedOnTime();
-    
-    // جعل الكود ذكي بحيث يقوم بتحديث الطقس تلقائياً كل 30 ثانية في الخلفية لضمان تغير الطقس الحقيقي مع الوقت
-    setInterval(updateWeatherBasedOnTime, 30000);
-</script>
 
 </body>
 </html>
