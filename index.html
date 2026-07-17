@@ -1,287 +1,61 @@
-import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+<!-- مكون الطقس بشكل وحجم تطبيق توكلنا تماماً -->
+<div style="display: flex; justify-content: center; padding: 15px; font-family:  Cairo , sans-serif;">
+    <div class="twk-weather-widget">
+        <span class="twk-sun-icon"></span>
+        <span id="twk-weather-text" class="twk-text">30 درجة - صحو في الرياض الآن</span>
+        <span class="twk-arrow">&lt;</span>
+    </div>
+</div>
 
-void main() {
-  runApp(const TawakkalnaMockApp());
-}
-
-class TawakkalnaMockApp extends StatelessWidget {
-  const TawakkalnaMockApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Tawakkalna Mock',
-      debugShowCheckedModeBanner: false,
-      locale: const Locale('ar', 'SA'),
-      theme: ThemeData(fontFamily: 'Roboto'),
-      home: const Directionality(
-        textDirection: TextDirection.rtl,
-        child: HomeScreen(),
-      ),
-    );
-  }
-}
-
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
-  
-  String _userName = 'أحمد عبدالله محمد آل سعود';
-  File? _userImage; 
-  
-  final ImagePicker _picker = ImagePicker();
-
-  Future<void> _pickImage() async {
-    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _userImage = File(pickedFile.path);
-      });
+<style>
+    @import url( https://googleapis.com );
+    .twk-weather-widget {
+        display: inline-flex;
+        align-items: center;
+        background-color: rgba(240, 243, 248, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 20px;
+        padding: 4px 14px;
+        gap: 6px;
+        user-select: none;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
-  }
+    .twk-text {
+        color: #2c2c2c;
+        font-size: 13px;
+        font-weight: 600;
+    }
+    .twk-sun-icon {
+        width: 13px;
+        height: 13px;
+        background-color: #FFB300;
+        border-radius: 50%;
+        display: inline-block;
+        box-shadow: 0 0 5px rgba(255, 179, 0, 0.8);
+    }
+    .twk-arrow {
+        color: #8E8E93;
+        font-size: 11px;
+        font-weight: bold;
+    }
+</style>
 
-  void _editNameDialog() {
-    TextEditingController nameController = TextEditingController(text: _userName);
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Directionality(
-          textDirection: TextDirection.rtl,
-          child: AlertDialog(
-            title: const Text('تعديل اسم المستخدم'),
-            content: TextField(
-              controller: nameController,
-              decoration: const InputDecoration(
-                hintText: 'أدخل الاسم الجديد هنا',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('إلغاء', style: TextStyle(color: Colors.red)),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0F5132)),
-                onPressed: () {
-                  if (nameController.text.trim().isNotEmpty) {
-                    setState(() {
-                      _userName = nameController.text.trim();
-                    });
-                  }
-                  Navigator.pop(context);
-                },
-                child: const Text('حفظ', style: TextStyle(color: Colors.white)),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+<script>
+    async function getRiyadhWeather() {
+        try {
+            const res = await fetch( https://open-meteo.com );
+            const data = await res.json();
+            const temp = Math.round(data.current.temperature_2m);
+            const code = data.current.weather_code;
+            let status = "صحو";
+            if (code > 0 && code <= 3) status = "غائم جزئياً";
+            else if (code >= 45 && code <= 48) status = "ضبابي";
+            else if (code >= 51 && code <= 67) status = "أمطار";
+            document.getElementById( twk-weather-text ).innerText = `${temp} درجة - ${status} في الرياض الآن`;
+        } catch (e) {
+            console.log("تعذر التحديث الحي للطقس");
+        }
+    }
+    getRiyadhWeather();
+</script>
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF4F6F9),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF0F5132),
-        elevation: 0,
-        title: const Text(
-          'تطبيق محاكاة توكلنا',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
-        ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'أهلاً بك، $_userName',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 5),
-            const Text(
-              'آخر تحديث: اليوم، صبّاحاً',
-              style: TextStyle(fontSize: 13, color: Colors.grey),
-            ),
-            const SizedBox(height: 20),
-
-            _buildStatusCard(),
-            const SizedBox(height: 20),
-
-            _buildDigitalWalletCard(),
-            const SizedBox(height: 20),
-
-            const Text(
-              'الخدمات العامة',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
-            ),
-            const SizedBox(height: 10),
-            _buildServicesGrid(),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
-        selectedItemColor: const Color(0xFF0F5132),
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
-          BottomNavigationBarItem(icon: Icon(Icons.wallet), label: 'محفظتي'),
-          BottomNavigationBarItem(icon: Icon(Icons.qr_code_scanner), label: 'الرمز'),
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard_customize), label: 'الخدمات'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatusCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4)),
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('الحالة الصحية', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(color: Colors.green.withOpacity(0.2), borderRadius: BorderRadius.circular(20)),
-                child: const Text('محصّن نشط', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
-              ),
-            ],
-          ),
-          const SizedBox(height: 15),
-          Container(
-            width: 130,
-            height: 130,
-            decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFF0F5132), width: 2),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Center(child: Icon(Icons.qr_code_2, size: 110, color: Colors.black87)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDigitalWalletCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF14532D), Color(0xFF0F5132)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('الهوية الوطنية الرقمية', style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.bold)),
-              Icon(Icons.badge, color: Colors.white70),
-            ],
-          ),
-          const SizedBox(height: 15),
-          
-          Row(
-            children: [
-              GestureDetector(
-                onTap: _pickImage,
-                child: Stack(
-                  children: [
-                    Container(
-                      width: 70,
-                      height: 85,
-                      decoration: BoxDecoration(
-                        color: Colors.white24,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.white38, width: 1),
-                        image: _userImage != null
-                            ? DecorationImage(image: FileImage(_userImage!), fit: BoxFit.cover)
-                            : null,
-                      ),
-                      child: _userImage == null
-                          ? const Icon(Icons.person, size: 45, color: Colors.white70)
-                          : null,
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        color: Colors.black54,
-                        padding: const EdgeInsets.symmetric(vertical: 2),
-                        child: const Icon(Icons.camera_alt, size: 12, color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 15),
-              
-              Expanded(
-                child: GestureDetector(
-                  onTap: _editNameDialog,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              _userName,
-                              style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          const Icon(Icons.edit, size: 16, color: Colors.white60),
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      const Text('اضغط هنا لتعديل الاسم', style: TextStyle(color: Colors.white54, fontSize: 11)),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          
-          const SizedBox(height: 20),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('رقم الهوية', style: TextStyle(color: Colors.white54, fontSize: 11)),
