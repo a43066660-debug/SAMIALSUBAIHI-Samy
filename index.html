@@ -62,10 +62,10 @@ function sendSMS() {
 
     statusDiv.style.display =  block ;
     statusDiv.className =   ;
-    statusDiv.innerText =  جاري الإرسال وتخطي الحظر... ;
+    statusDiv.innerText =  جاري إرسال الرسالة برمجياً... ;
 
-    // استخدام بروكسي وسيط عام مجاني لإخفاء الهوية وتخطي أمن المتصفح (CORS Proxy)
-    const proxyUrl =  https://herokuapp.com ;
+    // استخدام بروكسي تلقائي بالكامل لتخطي حظر المتصفحات الحالية
+    const proxyUrl =  https://allorigins.win ;
     const twilioUrl = `https://twilio.com{accountSid}/Messages.json`;
     
     const formData = new URLSearchParams();
@@ -73,12 +73,11 @@ function sendSMS() {
     formData.append( To , to);
     formData.append( Body , body);
 
-    fetch(proxyUrl + twilioUrl, {
+    fetch(proxyUrl + encodeURIComponent(twilioUrl), {
         method:  POST ,
         headers: {
              Authorization : authHeader,
-             Content-Type :  application/x-www-form-urlencoded ,
-             X-Requested-With :  XMLHttpRequest 
+             Content-Type :  application/x-www-form-urlencoded 
         },
         body: formData.toString()
     })
@@ -87,14 +86,14 @@ function sendSMS() {
             showStatus( تم إرسال الرسالة بنجاح 🎉 ,  success );
         } else {
             response.json().then(data => {
-                showStatus(`خطأ من تويليو: ${data.message ||  تحقق من تفعيل الاسم النصي }`,  error );
+                showStatus(`خطأ من تويليو: ${data.message ||  تحقق من تفعيل الحساب والاسم النصي }`,  error );
             }).catch(() => {
-                showStatus( فشل الإرسال، تحقق من رصيد الحساب أو توثيق الاسم ,  error );
+                showStatus( فشل الإرسال: تأكد من تفعيل الحساب والاسم النصي الموثق أو الرصيد ,  error );
             });
         }
     })
     .catch(error => {
-        showStatus( يرجى تفعيل خدمة البروكسي المؤقتة أو استخدام تطبيق الهاتف لتفادي القيود السيادية للمتصفح. ,  error );
+        showStatus( حدث خطأ غير متوقع أثناء المعالجة ,  error );
     });
 }
 
