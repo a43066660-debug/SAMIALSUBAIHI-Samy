@@ -1,150 +1,93 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=none">
-    <title>مكون الطقس الحقيقي</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>واجهة إرسال الرسائل - Twilio</title>
     <style>
-        @import url('https://googleapis.com');
-        
-        body {
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 90vh;
-            background-color: #ffffff;
-            font-family: 'Cairo', sans-serif;
-        }
-
-        .twk-weather-widget {
-            display: inline-flex;
-            align-items: center;
-            background-color: rgba(240, 243, 248, 0.75);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            border-radius: 35px; 
-            padding: 14px 28px 14px 32px; 
-            gap: 16px; 
-            user-select: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            direction: rtl;
-            width: max-content;
-            box-sizing: border-box;
-        }
-        
-        .twk-main-content {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .twk-text {
-            color: #2c2c2c;
-            font-size: 22px; 
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap;
-        }
-        
-        .twk-sun-icon {
-            width: 26px; 
-            height: 26px;
-            background-color: #FFB300;
-            border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 10px rgba(255, 179, 0, 0.8);
-            flex-shrink: 0;
-        }
-        
-        .twk-arrow-container {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 24px; 
-            height: 24px;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-            flex-shrink: 0;
-        }
-
-        .twk-arrow-container.updating {
-            animation: spin 0.6s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(-360deg); }
-        }
-
-        .twk-arrow-svg {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background-color: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        h2 { color: #333; margin-bottom: 20px; }
+        input, textarea, button { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
+        button { background-color: #28a745; color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background-color: #218838; }
+        #status { font-weight: bold; padding: 10px; border-radius: 5px; display: none; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
 
-    <div class="twk-weather-widget" id="weather-widget">
-        <div class="twk-main-content">
-            <span class="twk-sun-icon"></span>
-            <span class="twk-text">
-                <span id="twk-temp" style="font-weight: 700; display: inline-block; direction: ltr;">--</span>
-                <span id="twk-status"> درجة - جاري تحديث الطقس الحقيقي...</span>
-            </span>
-        </div>
-        
-        <span class="twk-arrow-container" id="refresh-btn" onclick="getLiveLocationWeather()">
-            <svg class="twk-arrow-svg" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
-                <path d="M15 19L8 12L15 5" stroke="#8E8E93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </span>
-    </div>
+<div class="container">
+    <h2>منظومة إرسال SMS</h2>
+    
+    <!-- خانة رقم المستلم -->
+    <input type="text" id="toMobile" placeholder="رقم المستلم بالصيغة الدولية (مثل +966...)">
+    
+    <!-- خانة نص الرسالة -->
+    <textarea id="smsBody" rows="4" placeholder="اكتب نص الرسالة هنا..."></textarea>
+    
+    <!-- زر الإرسال -->
+    <button onclick="sendSMS()">إرسال الرسالة الآن</button>
+    
+    <!-- مربع الحالة -->
+    <div id="status"></div>
+</div>
 
 <script>
-    async function getLiveLocationWeather() {
-        const btn = document.getElementById('refresh-btn');
-        if(btn) btn.classList.add('updating');
-        
-        try {
-            // جلب تفاصيل الموقع الدقيق بناءً على الـ IP الحقيقي الخاص بجهازك لتفادي الحظر الأمني
-            const locRes = await fetch('https://ipapi.co');
-            const locData = await locRes.json();
-            
-            const lat = locData.latitude || 24.6877;
-            const lon = locData.longitude || 46.7219;
-            const city = locData.city || "موقعك الحالي";
-            
-            // جلب درجات الحرارة والطقس الفعلي المطابق تماماً لإحداثيات جهازك
-            const weatherUrl = `https://open-meteo.com{lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,weather_code&timezone=auto`;
-            const res = await fetch(weatherUrl);
-            const data = await res.json();
-            
-            const realTemp = Math.round(data.current.apparent_temperature);
-            const code = data.current.weather_code;
-            
-            let status = "صحو";
-            if (code > 0 && code <= 3) status = "غائم جزئياً";
-            else if (code >= 45 && code <= 48) status = "ضبابي";
-            else if (code >= 51 && code <= 67) status = "أمطار";
-            else if (code >= 95) status = "عواصف";
-
-            document.getElementById('twk-temp').innerText = realTemp;
-            document.getElementById('twk-status').innerHTML = " درجة - " + status + " في " + city + " الآن";
-            
-        } catch (e) {
-            document.getElementById('twk-temp').innerText = "30";
-            document.getElementById('twk-status').innerHTML = " درجة - صحو في موقعك الآن";
-        } finally {
-            if(btn) {
-                setTimeout(() => { btn.classList.remove('updating'); }, 600);
-            }
-        }
+function sendSMS() {
+    const to = document.getElementById('toMobile').value;
+    const body = document.getElementById('smsBody').value;
+    const statusDiv = document.getElementById('status');
+    
+    // --- بيانات حسابك في تويليو (قم بتعبئتها هنا بدقة) ---
+    const accountSid = 'AC8d2dfa3ea5098c0f2298a93b4a155bc7'; 
+    const base64Auth = 'QUM4ZDJkZmEzZWE1MDk4YzBmMjI5N2M3OWU3OW...'; // كود الـ Basic الكامل الخاص بك هنا
+    const senderName = 'COMPANY'; // ضع الاسم النصي المسجل والموثق في حسابك هنا بدلاً من الرقم
+    
+    if(!to || !body) {
+        showStatus('يرجى ملء جميع الخانات المتاحة', 'error');
+        return;
     }
-    getLiveLocationWeather();
+
+    statusDiv.style.display = 'block';
+    statusDiv.className = '';
+    statusDiv.innerText = 'جاري الإرسال الفوري...';
+
+    const url = `https://twilio.com{accountSid}/Messages.json`;
+    
+    // إعداد البيانات التي سيتم إرسالها بالطريقة الصحيحة (Form Urlencoded)
+    const formData = new URLSearchParams();
+    formData.append('From', senderName);
+    formData.append('To', to);
+    formData.append('Body', body);
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Authorization': 'Basic ' + base64Auth,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: formData.toString()
+    })
+    .then(response => {
+        if (response.status === 201) {
+            showStatus('تم إرسال الرسالة بنجاح 🎉', 'success');
+        } else {
+            showStatus('فشل الإرسال، تحقق من البيانات أو توثيق الاسم الرقمي', 'error');
+        }
+    })
+    .catch(error => {
+        showStatus('حدث خطأ أثناء الاتصال بالشبكة', 'error');
+    });
+}
+
+function showStatus(text, type) {
+    const statusDiv = document.getElementById('status');
+    statusDiv.style.display = 'block';
+    statusDiv.className = type;
+    statusDiv.innerText = text;
+}
 </script>
 
 </body>
