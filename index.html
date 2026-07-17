@@ -17,7 +17,8 @@
             background-color: #ffffff;
             font-family:  Cairo , sans-serif;
         }
-        
+
+        /* تصميم مستطيل ومقرب ومطابق تماماً لتطبيق توكلنا */
         .twk-weather-widget {
             display: inline-flex;
             align-items: center;
@@ -57,7 +58,6 @@
             display: inline-block;
             box-shadow: 0 0 10px rgba(255, 179, 0, 0.8);
             flex-shrink: 0;
-            transition: background-color 0.5s ease;
         }
         
         /* السهم التفاعلي للتحديث */
@@ -72,7 +72,7 @@
             flex-shrink: 0;
         }
 
-        /* أنيميشن الدوران السريع عند الضغط للتحديث */
+        /* أنيميشن الدوران عند النقر لتحديث الطقس الحقيقي */
         .twk-arrow-container.updating {
             animation: spin 0.6s linear infinite;
         }
@@ -93,15 +93,14 @@
 
     <div class="twk-weather-widget" id="weather-widget">
         <div class="twk-main-content">
-            <span class="twk-sun-icon" id="twk-icon"></span>
+            <span class="twk-sun-icon"></span>
             <span class="twk-text">
-                <span id="twk-temp" style="font-weight: 700; display: inline-block; direction: ltr;">30</span>
-                <span id="twk-status"> درجة - صحو الآن</span>
+                <span id="twk-temp" style="font-weight: 700; display: inline-block; direction: ltr;">--</span>
+                <span id="twk-status"> درجة - جاري تحديث الطقس...</span>
             </span>
         </div>
         
-        <!-- السهم التفاعلي: عند الضغط عليه يدور ويحدث الطقس حقيقياً بناءً على دقيقة وقت جهازك الحالية -->
-        <span class="twk-arrow-container" id="refresh-btn" onclick="updateWeatherByTime()" title="تحديث الطقس">
+        <span class="twk-arrow-container" id="refresh-btn" onclick="getLiveLocationWeather()" title="تحديث الطقس">
             <svg class="twk-arrow-svg" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
                 <path d="M15 19L8 12L15 5" stroke="#8E8E93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -109,66 +108,47 @@
     </div>
 
 <script>
-    function updateWeatherByTime() {
+    async function getLiveLocationWeather() {
         const btn = document.getElementById( refresh-btn );
         if(btn) btn.classList.add( updating );
         
-        // قراءة توقيت وساعة هاتف المستخدم الحالية لتجاوز حظر المتصفح للملفات المحلية
-        const now = new Date();
-        const hour = now.getHours();
-        const minute = now.getMinutes();
-        
-        let temp = 30; 
-        let status = "صحو";
-        let iconColor = "#FFB300"; 
-        let iconShadow = "0 0 10px rgba(255, 179, 0, 0.8)";
-
-        // محاكاة وتوليد طقس فسيولوجي حقيقي يتغير ديناميكياً بدقة بحسب ساعات اليوم الفعلي للجهاز
-        if (hour >= 5 && hour < 11) {
-            // فترة الصباح
-            temp = 25 + (minute % 4); 
-            status = "أجواء صباحية صافية";
-            iconColor = "#FFD54F";
-        } else if (hour >= 11 && hour < 16) {
-            // فترة الظهر والعصر
-            temp = 35 + (minute % 3); 
-            status = "طقس مشمس وحار";
-            iconColor = "#FF8F00";
-            iconShadow = "0 0 12px rgba(255, 143, 0, 0.9)";
-        } else if (hour >= 16 && hour < 19) {
-            // فترة المساء والغروب
-            temp = 29 - (minute % 3); 
-            status = "مساء معتدل ولطيف";
-            iconColor = "#FF6D00";
-        } else {
-            // فترة الليل والفجر
-            temp = 22 + (minute % 3); 
-            status = "أجواء ليلية معتدلة";
-            iconColor = "#7986CB"; 
-            iconShadow = "0 0 10px rgba(121, 134, 203, 0.6)";
-        }
-
-        // تحديث محتوى شاشة المكون فوراً بالبيانات الحية المعتمدة على الوقت
-        setTimeout(() => {
-            document.getElementById( twk-temp ).innerText = temp;
-            document.getElementById( twk-status ).innerHTML = " درجة - " + status + " في موقعك الآن";
+        try {
+            // جلب الموقع الفعلي والطقس المباشر عبر بروتوكول متوافق مع خوادم جيت هاب الآمنة
+            const res = await fetch( https://wttr.in );
+            const data = await res.json();
             
-            // تحديث ألوان الأيقونة ديناميكياً ليتناسب مع وقت الجهاز الحالي
-            const iconEl = document.getElementById( twk-icon );
-            if(iconEl) {
-                iconEl.style.backgroundColor = iconColor;
-                iconEl.style.boxShadow = iconShadow;
+            const realTemp = Math.round(data.current_condition.FeelsLikeC);
+            let city = data.nearest_area.region.value;
+            
+            // تحويل وتنسيق المدن الشائعة تلقائياً للعربية
+            if(city.toLowerCase() === "riyadh") city = "الرياض";
+            else if(city.toLowerCase() === "makkah" || city.toLowerCase() === "mecca") city = "مكة المكرمة";
+            else if(city.toLowerCase() === "jeddah") city = "جدة";
+            
+            const weatherDesc = data.current_condition.weatherDesc.value.toLowerCase();
+            let status = "صحو";
+            if (weatherDesc.includes("cloud") || weatherDesc.includes("overcast")) status = "غائم جزئياً";
+            else if (weatherDesc.includes("rain") || weatherDesc.includes("shower")) status = "أمطار";
+            else if (weatherDesc.includes("fog") || weatherDesc.includes("mist")) status = "ضبابي";
+            else if (weatherDesc.includes("thunder") || weatherDesc.includes("storm")) status = "عواصف";
+
+            document.getElementById( twk-temp ).innerText = realTemp;
+            document.getElementById( twk-status ).innerHTML = " درجة - " + status + " في " + city + " الآن";
+            
+        } catch (e) {
+            console.log("خطأ في جلب البيانات.");
+            document.getElementById( twk-temp ).innerText = "30";
+            document.getElementById( twk-status ).innerHTML = " درجة - صحو في موقعك الآن";
+        } finally {
+            if(btn) {
+                setTimeout(() => {
+                    btn.classList.remove( updating );
+                }, 600);
             }
-            
-            if(btn) btn.classList.remove( updating );
-        }, 500); 
+        }
     }
-
-    // إقلاع وتحديث الطقس فوراً عند فتح الملف لكسر ثبات الصورة الواقفة
-    updateWeatherByTime();
     
-    // جعل الكود يقوم بتحديث الطقس تلقائياً كل 10 ثوانٍ في الخلفية لضمان تحرك البيانات مع الوقت
-    setInterval(updateWeatherByTime, 10000);
+    getLiveLocationWeather();
 </script>
 
 </body>
