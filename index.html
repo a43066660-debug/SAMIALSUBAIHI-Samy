@@ -1,16 +1,18 @@
 <meta charset="UTF-8">
 
-<!-- مكون الطقس بحجم توكلنا الصغير ونصوص مشفرة لضمان ظهور اللغة العربية -->
-<div style="display: flex; justify-content: center; padding: 15px; font-family: 'Cairo', sans-serif;">
-    <div class="twk-weather-widget">
+<!-- مكون الطقس بترتيب نصوص مضبوط 100% لتطبيق توكلنا -->
+<div style="display: flex; justify-content: center; padding: 15px; font-family:  Cairo , sans-serif;">
+    <div class="twk-weather-widget" dir="rtl">
         <span class="twk-sun-icon"></span>
-        <span id="twk-weather-text" class="twk-text">30 &#1583;&#1585;&#1580;&#1577; - &#1589;&#1581;&#1608; &#1601;&#1610; &#1575;&#1604;&#1585;&#1610;&#1575;&#1590; &#1575;&#1604;&#1570;&#1606;</span>
+        <span id="twk-weather-text" class="twk-text" style="unicode-bidi: bidi-override; direction: rtl;">
+            <span style="direction: ltr; display: inline-block;">30</span> &#1583;&#1585;&#1580;&#1577; - &#1589;&#1581;&#1608; &#1601;&#1610; &#1575;&#1604;&#1585;&#1610;&#1575;&#1590; &#1575;&#1604;&#1570;&#1606;
+        </span>
         <span class="twk-arrow">&lt;</span>
     </div>
 </div>
 
 <style>
-    @import url('https://googleapis.com');
+    @import url( https://googleapis.com );
     
     .twk-weather-widget {
         display: inline-flex;
@@ -49,27 +51,26 @@
 <script>
     async function getRiyadhWeather() {
         try {
-            const res = await fetch('https://open-meteo.com');
+            const res = await fetch( https://open-meteo.com );
             const data = await res.json();
             const temp = Math.round(data.current.temperature_2m);
             const code = data.current.weather_code;
             
-            // نصوص بديلة مشفرة لضمان استقرار اللغة العربية بالمتصفح
             let status = "&#1589;&#1581;&#1608;"; // صحو
-            if (code > 0 && code <= 3) status = "&#1594;&#1575;&#1574;&#1605; &#1580;&#1586;&#1574;&#1610;&#1575;&#1611;"; // غائم جزئيا
-            else if (code >= 45 && code <= 48) status = "&#1590;&#1576;&#1575;&#1576;&#1610;"; // ضبابي
-            else if (code >= 51 && code <= 67) status = "&#1571;&#1605;&#1591;&#1575;&#1585;"; // أمطار
+            if (code > 0 && code <= 3) status = "&#1594;&#1575;&#1574;&#1605; &#1580;&#1586;&#1574;&#1610;&#1575;&#1611;"; 
+            else if (code >= 45 && code <= 48) status = "&#1590;&#1576;&#1575;&#1576;&#1610;"; 
+            else if (code >= 51 && code <= 67) status = "&#1571;&#1605;&#1591;&#1575;&#1585;"; 
             
-            // دمج الحروف المرمزة برمجياً لمنع التقطع
             const wordDeg = "&#1583;&#1585;&#1580;&#1577;";
             const wordIn = "&#1601;&#1610; &#1575;&#1604;&#1585;&#1610;&#1575;&#1590; &#1575;&#1604;&#1570;&#1606;";
             
-            // إنشاء النص النهائي الآمن داخل الحاوية
-            const container = document.getElementById('twk-weather-text');
-            container.innerHTML = temp + " " + wordDeg + " - " + status + " " + wordIn;
+            // ترتيب برمي صحيح يجبر الرقم على البقاء في اليمين أول الجملة
+            const container = document.getElementById( twk-weather-text );
+            container.innerHTML =  <span style="direction: ltr; display: inline-block;">  + temp +  </span>   + wordDeg +   -   + status +     + wordIn;
         } catch (e) {
             console.log("Error loading weather");
         }
     }
     getRiyadhWeather();
 </script>
+
