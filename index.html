@@ -19,10 +19,10 @@
 <body>
 
 <div class="container">
-    <h2>منظومة إرسال SMS</h2>
+    <h2>منظومة إرسال SMS باسم نصي</h2>
     
     <!-- خانة رقم المستلم -->
-    <input type="text" id="toMobile" placeholder="رقم المستلم بالصيغة الدولية (مثل 00966...)">
+    <input type="text" id="toMobile" placeholder="رقم المستلم بالصيغة الدولية (مثل 00967...)">
     
     <!-- خانة نص الرسالة -->
     <textarea id="smsBody" rows="4" placeholder="اكتب نص الرسالة هنا..."></textarea>
@@ -40,10 +40,10 @@ function sendSMS() {
     const body = document.getElementById( smsBody ).value.trim();
     const statusDiv = document.getElementById( status );
     
-    // --- بيانات حسابك الثابتة ---
+    // --- بيانات حسابك الثابتة والمصححة ---
     const accountSid =  AC8d2dfa3ea5098c0f2298a93b4a155bc7 ; 
-    let rawAuth =  QUM4ZDJkZmEzZWE1MDk4YzBmMjI5N2M3OWU3OWFiYTg6ODVmZmIxNzEyNTc3YzIxN2E0ZDcyYWU0NDRjMjM0OWI= ; 
-    const senderName =  SAMIALSUBAIHI ; 
+    const rawAuth =  QUM4ZDJkZmEzZWE1MDk4YzBmMjI5N2M3OWU3OWFiYTg6ODVmZmIxNzEyNTc3YzIxN2E0ZDcyYWU0NDRjMjM0OWI= ; 
+    const senderName =  SAMIALSUBAIHI ; // تأكد أن الاسم موثق رسمياً في حسابك المدفوع
 
     if(!toInput || !body) {
         showStatus( يرجى ملء جميع الخانات المتاحة ,  error );
@@ -60,20 +60,17 @@ function sendSMS() {
         authHeader =  Basic   + authHeader;
     }
 
-    statusDiv.style.display =  block ;
-    statusDiv.className =   ;
-    statusDiv.innerText =  جاري إرسال الرسالة برمجياً... ;
+    showStatus( جاري إرسال الرسالة عبر الخادم الآمن... ,   );
 
-    // استخدام بروكسي تلقائي بالكامل لتخطي حظر المتصفحات الحالية
-    const proxyUrl =  https://allorigins.win ;
-    const twilioUrl = `https://twilio.com{accountSid}/Messages.json`;
+    // استخدام خادم وسيط قوي ومباشر لتخطي قيود حظر المتصفح تماماً
+    const proxyUrl =  https://corsproxy.io?  + encodeURIComponent(`https://twilio.com{accountSid}/Messages.json`);
     
     const formData = new URLSearchParams();
     formData.append( From , senderName);
     formData.append( To , to);
     formData.append( Body , body);
 
-    fetch(proxyUrl + encodeURIComponent(twilioUrl), {
+    fetch(proxyUrl, {
         method:  POST ,
         headers: {
              Authorization : authHeader,
@@ -82,18 +79,18 @@ function sendSMS() {
         body: formData.toString()
     })
     .then(response => {
-        if (response.status === 201) {
+        if (response.ok || response.status === 201) {
             showStatus( تم إرسال الرسالة بنجاح 🎉 ,  success );
         } else {
             response.json().then(data => {
-                showStatus(`خطأ من تويليو: ${data.message ||  تحقق من تفعيل الحساب والاسم النصي }`,  error );
+                showStatus(`خطأ من تويليو: ${data.message ||  تحقق من تفعيل الاسم النصي وحالة الحساب }`,  error );
             }).catch(() => {
-                showStatus( فشل الإرسال: تأكد من تفعيل الحساب والاسم النصي الموثق أو الرصيد ,  error );
+                showStatus( فشل الإرسال: تأكد من تفعيل الحساب والاسم النصي أو توفر الرصيد ,  error );
             });
         }
     })
     .catch(error => {
-        showStatus( حدث خطأ غير متوقع أثناء المعالجة ,  error );
+        showStatus( حدث خطأ أثناء معالجة الطلب، تأكد من اتصالك بالإنترنت ,  error );
     });
 }
 
