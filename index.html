@@ -36,75 +36,71 @@
 
 <script>
 function sendSMS() {
-    const toInput = document.getElementById('toMobile').value.trim();
-    const body = document.getElementById('smsBody').value.trim();
-    const statusDiv = document.getElementById('status');
+    const toInput = document.getElementById( toMobile ).value.trim();
+    const body = document.getElementById( smsBody ).value.trim();
+    const statusDiv = document.getElementById( status );
     
-    // --- بيانات حسابك في تويليو (تأكد من تعديلها بدقة) ---
-    const accountSid = 'AC8d2dfa3ea5098c0f2298a93b4a155bc7'; 
-    
-    // ضع الكود المشفر الطويل هنا مباشرة (سواء كان يحتوي على كلمة Basic أو بدونها)
-    let rawAuth = 'QUM4ZDJkZmEzZWE1MDk4YzBmMjI5N2M3OWU3OWFiYTg6ODVmZmIxNzEyNTc3YzIxN2E0ZDcyYWU0NDRjMjM0OWI='; 
-    
-    // ضع الاسم النصي المسجل والموثق في حسابك هنا بدلاً من الرقم
-    const senderName = 'SAMIALSUBAIHI'; 
+    // --- بيانات حسابك الثابتة ---
+    const accountSid =  AC8d2dfa3ea5098c0f2298a93b4a155bc7 ; 
+    let rawAuth =  QUM4ZDJkZmEzZWE1MDk4YzBmMjI5N2M3OWU3OWFiYTg6ODVmZmIxNzEyNTc3YzIxN2E0ZDcyYWU0NDRjMjM0OWI= ; 
+    const senderName =  SAMIALSUBAIHI ; 
 
     if(!toInput || !body) {
-        showStatus('يرجى ملء جميع الخانات المتاحة', 'error');
+        showStatus( يرجى ملء جميع الخانات المتاحة ,  error );
         return;
     }
 
-    // تصحيح كتابة رقم الهاتف برمجياً لتعديل الـ 00 إلى علامة + لتقبله الشبكة
     let to = toInput;
-    if (to.startsWith('00')) {
-        to = '+' + to.substring(2);
+    if (to.startsWith( 00 )) {
+        to =  +  + to.substring(2);
     }
 
-    // تنظيف كود التوثيق لضمان عدم تكرار كلمة Basic
     let authHeader = rawAuth.trim();
-    if (!authHeader.toLowerCase().startsWith('basic ')) {
-        authHeader = 'Basic ' + authHeader;
+    if (!authHeader.toLowerCase().startsWith( basic  )) {
+        authHeader =  Basic   + authHeader;
     }
 
-    statusDiv.style.display = 'block';
-    statusDiv.className = '';
-    statusDiv.innerText = 'جاري الإرسال الفوري...';
+    statusDiv.style.display =  block ;
+    statusDiv.className =   ;
+    statusDiv.innerText =  جاري الإرسال وتخطي الحظر... ;
 
-    const url = `https://twilio.com{accountSid}/Messages.json`;
+    // استخدام بروكسي وسيط عام مجاني لإخفاء الهوية وتخطي أمن المتصفح (CORS Proxy)
+    const proxyUrl =  https://herokuapp.com ;
+    const twilioUrl = `https://twilio.com{accountSid}/Messages.json`;
     
     const formData = new URLSearchParams();
-    formData.append('From', senderName);
-    formData.append('To', to);
-    formData.append('Body', body);
+    formData.append( From , senderName);
+    formData.append( To , to);
+    formData.append( Body , body);
 
-    fetch(url, {
-        method: 'POST',
+    fetch(proxyUrl + twilioUrl, {
+        method:  POST ,
         headers: {
-            'Authorization': authHeader,
-            'Content-Type': 'application/x-www-form-urlencoded'
+             Authorization : authHeader,
+             Content-Type :  application/x-www-form-urlencoded ,
+             X-Requested-With :  XMLHttpRequest 
         },
         body: formData.toString()
     })
     .then(response => {
         if (response.status === 201) {
-            showStatus('تم إرسال الرسالة بنجاح 🎉', 'success');
+            showStatus( تم إرسال الرسالة بنجاح 🎉 ,  success );
         } else {
             response.json().then(data => {
-                showStatus(`فشل الإرسال: ${data.message || 'تحقق من توثيق الحساب'}`, 'error');
+                showStatus(`خطأ من تويليو: ${data.message ||  تحقق من تفعيل الاسم النصي }`,  error );
             }).catch(() => {
-                showStatus('فشل الإرسال، تحقق من بيانات التوثيق والاسم النصي', 'error');
+                showStatus( فشل الإرسال، تحقق من رصيد الحساب أو توثيق الاسم ,  error );
             });
         }
     })
     .catch(error => {
-        // إذا ظهر هذا الخطأ، فهو بسبب حظر حماية المتصفح (CORS) للروابط المحلية الخرجبة
-        showStatus('خطأ أمني (CORS): يجب رفع الملف على استضافة GitHub Pages ليعمل', 'error');
+        showStatus( يرجى تفعيل خدمة البروكسي المؤقتة أو استخدام تطبيق الهاتف لتفادي القيود السيادية للمتصفح. ,  error );
     });
 }
 
 function showStatus(text, type) {
-    const statusDiv = document.getElementById('status');
-    statusDiv.style.display = 'block';
+    const statusDiv = document.getElementById( status );
+    statusDiv.style.display =  block ;
     statusDiv.className = type;
     statusDiv.innerText = text;
 }
@@ -112,3 +108,4 @@ function showStatus(text, type) {
 
 </body>
 </html>
+
