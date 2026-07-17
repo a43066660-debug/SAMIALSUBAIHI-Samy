@@ -1,13 +1,22 @@
 <meta charset="UTF-8">
 
-<!-- مكون الطقس بترتيب نصوص مضبوط 100% لتطبيق توكلنا -->
-<div style="display: flex; justify-content: center; padding: 15px; font-family:  Cairo , sans-serif;">
-    <div class="twk-weather-widget" dir="rtl">
+<!-- مكون الطقس المطور بالدرجة الحقيقية الفسيولوجية وسهم توكلنا المعدل -->
+<div style="display: flex; justify-content: center; padding: 15px; font-family:  Cairo , sans-serif;" dir="rtl">
+    <div class="twk-weather-widget">
         <span class="twk-sun-icon"></span>
-        <span id="twk-weather-text" class="twk-text" style="unicode-bidi: bidi-override; direction: rtl;">
-            <span style="direction: ltr; display: inline-block;">30</span> &#1583;&#1585;&#1580;&#1577; - &#1589;&#1581;&#1608; &#1601;&#1610; &#1575;&#1604;&#1585;&#1610;&#1575;&#1590; &#1575;&#1604;&#1570;&#1606;
+        
+        <!-- نص الطقس والمدينة بتنسيق ثابت حمايتي من الانعكاس -->
+        <span class="twk-text">
+            <span id="twk-temp" style="font-weight: 600; display: inline-block; direction: ltr;">30</span>
+            <span id="twk-status"> &#1583;&#1585;&#1580;&#1577; - &#1589;&#1581;&#1608; &#1601;&#1610; &#1575;&#1604;&#1585;&#1610;&#1575;&#1590; &#1575;&#1604;&#1570;&#1606;</span>
         </span>
-        <span class="twk-arrow">&lt;</span>
+        
+        <!-- السهم المطور المطابق لتطبيق توكلنا -->
+        <span class="twk-arrow-container">
+            <svg class="twk-arrow-svg" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
+                <path d="M15 19L8 12L15 5" stroke="#8E8E93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </span>
     </div>
 </div>
 
@@ -20,7 +29,7 @@
         background-color: rgba(240, 243, 248, 0.75);
         border: 1px solid rgba(255, 255, 255, 0.6);
         border-radius: 20px;
-        padding: 4px 14px;
+        padding: 4px 12px 4px 14px; /* موازنة المسافات بسبب السهم الجديد */
         gap: 6px;
         user-select: none;
         box-shadow: 0 1px 3px rgba(0,0,0,0.02);
@@ -30,6 +39,9 @@
         color: #2c2c2c;
         font-size: 13px;
         font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
     }
     
     .twk-sun-icon {
@@ -41,36 +53,59 @@
         box-shadow: 0 0 5px rgba(255, 179, 0, 0.8);
     }
     
-    .twk-arrow {
-        color: #8E8E93;
-        font-size: 11px;
-        font-weight: bold;
+    /* تنسيق السهم الانسيابي الجديد */
+    .twk-arrow-container {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 14px;
+        height: 14px;
+    }
+
+    .twk-arrow-svg {
+        width: 100%;
+        height: 100%;
+        display: block;
     }
 </style>
 
 <script>
-    async function getRiyadhWeather() {
+    async function getLiveLocationWeather() {
         try {
-            const res = await fetch( https://open-meteo.com );
+            // جلب الإحداثيات التلقائية بناءً على عنوان الـ IP الفعلي الحالي للمستخدم لضمان دقة المدينة
+            const locRes = await fetch( https://ipapi.co );
+            const locData = await locRes.json();
+            
+            const lat = locData.latitude || 24.6877; // الرياض كقيمة افتراضية احتياطية
+            const lon = locData.longitude || 46.7219;
+            const city = locData.city || "&#1575;&#1604;&#1585;&#1610;&#1575;&#1590;"; // الرياض باليونيكود
+            
+            // طلب بيانات الطقس الحالية والدرجة المحسوسة الحقيقية (Apparent Temperature)
+            const weatherUrl = `https://open-meteo.com{lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,weather_code&timezone=auto`;
+            const res = await fetch(weatherUrl);
             const data = await res.json();
-            const temp = Math.round(data.current.temperature_2m);
+            
+            // استخدام درجة الحرارة المحسوسة الحقيقية التي يشعر بها الإنسان فعلياً
+            const realTemp = Math.round(data.current.apparent_temperature);
             const code = data.current.weather_code;
             
+            // تحديد الحالة الجوية باللغة العربية المشفرة
             let status = "&#1589;&#1581;&#1608;"; // صحو
             if (code > 0 && code <= 3) status = "&#1594;&#1575;&#1574;&#1605; &#1580;&#1586;&#1574;&#1610;&#1575;&#1611;"; 
             else if (code >= 45 && code <= 48) status = "&#1590;&#1576;&#1575;&#1576;&#1610;"; 
             else if (code >= 51 && code <= 67) status = "&#1571;&#1605;&#1591;&#1575;&#1585;"; 
+            else if (code >= 95) status = "&#1593;&#1608;&#1575;&#1589;&#1601;";
             
             const wordDeg = "&#1583;&#1585;&#1580;&#1577;";
-            const wordIn = "&#1601;&#1610; &#1575;&#1604;&#1585;&#1610;&#1575;&#1590; &#1575;&#1604;&#1570;&#1606;";
+            const wordNow = "&#1575;&#1604;&#1570;&#1606;";
             
-            // ترتيب برمي صحيح يجبر الرقم على البقاء في اليمين أول الجملة
-            const container = document.getElementById( twk-weather-text );
-            container.innerHTML =  <span style="direction: ltr; display: inline-block;">  + temp +  </span>   + wordDeg +   -   + status +     + wordIn;
+            // تحديث واجهة المكون بالدرجة والمدينة الحقيقية الحالية للمستخدم
+            document.getElementById( twk-temp ).innerText = realTemp;
+            document.getElementById( twk-status ).innerHTML = " " + wordDeg + " - " + status + " &#1601;&#1610; " + city + " " + wordNow;
         } catch (e) {
-            console.log("Error loading weather");
+            console.log("Error loading dynamic location weather, fallback applied.");
         }
     }
-    getRiyadhWeather();
+    getLiveLocationWeather();
 </script>
 
