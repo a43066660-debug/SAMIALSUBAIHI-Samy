@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=none">
     <title>مكون الطقس الحقيقي</title>
     <style>
-        @import url('https://googleapis.com');
+        @import url( https://googleapis.com );
         
         body {
             margin: 0;
@@ -15,9 +15,10 @@
             align-items: center;
             min-height: 90vh;
             background-color: #ffffff;
-            font-family: 'Cairo', sans-serif;
+            font-family:  Cairo , sans-serif;
         }
 
+        /* التصميم المستطيل والمقرب تماماً والمطابق لطلبك */
         .twk-weather-widget {
             display: inline-flex;
             align-items: center;
@@ -93,11 +94,12 @@
             <span class="twk-sun-icon"></span>
             <span class="twk-text">
                 <span id="twk-temp" style="font-weight: 700; display: inline-block; direction: ltr;">--</span>
-                <span id="twk-status"> درجة - جاري تحديث الطقس...</span>
+                <span id="twk-status"> درجة - جاري جلب طقس مدينتك...</span>
             </span>
         </div>
         
-        <span class="twk-arrow-container" id="refresh-btn" onclick="getLiveLocationWeather()">
+        <!-- سهم التحديث التفاعلي -->
+        <span class="twk-arrow-container" id="refresh-btn" onclick="getLiveLocationWeather()" title="تحديث الطقس">
             <svg class="twk-arrow-svg" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
                 <path d="M15 19L8 12L15 5" stroke="#8E8E93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -106,42 +108,66 @@
 
 <script>
     async function getLiveLocationWeather() {
-        const btn = document.getElementById('refresh-btn');
-        if(btn) btn.classList.add('updating');
+        const btn = document.getElementById( refresh-btn );
+        if(btn) btn.classList.add( updating );
         
+        let lat = 24.6877;
+        let lon = 46.7219;
+        let city = "الرياض";
+
         try {
-            // جلب الطقس والموقع الفعلي عبر سرفر مفتوح ومتوافق مع جيت هاب
-            const res = await fetch('https://wttr.in');
+            // استخدام خادم وسيط مستقر لتجاوز حظر المتصفحات وجلب اسم المدينة الحقيقي لجهازك عبر الـ IP
+            const locRes = await fetch( https://allorigins.win  + encodeURIComponent( http://ip-api.com ));
+            if (locRes.ok) {
+                const responseData = await locRes.ok ? await locRes.json() : null;
+                const locData = JSON.parse(responseData.contents);
+                
+                if (locData && locData.status === "success") {
+                    lat = locData.lat;
+                    lon = locData.lon;
+                    city = locData.city;
+                    
+                    // ترجمة اسم العاصمة تلقائياً إذا جاءت بالإنجليزية ليتناسق التصميم
+                    if(city.toLowerCase() === "riyadh") city = "الرياض";
+                }
+            }
+        } catch (e) {
+            console.log("استخدام الإحداثيات الافتراضية نتيجة قيود الشبكة.");
+        }
+
+        try {
+            // استدعاء رابط الطقس المصلح والموثوق لجلب الدرجة الفسيولوجية الحقيقية (apparent_temperature)
+            const weatherUrl = `https://open-meteo.com{lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,weather_code&timezone=auto`;
+            const res = await fetch(weatherUrl);
             const data = await res.json();
             
-            const realTemp = Math.round(data.current_condition.FeelsLikeC);
-            let city = data.nearest_area.region.value;
+            const realTemp = Math.round(data.current.apparent_temperature);
+            const code = data.current.weather_code;
             
-            if(city.toLowerCase() === "riyadh") city = "الرياض";
-            else if(city.toLowerCase() === "makkah" || city.toLowerCase() === "mecca") city = "مكة المكرمة";
-            else if(city.toLowerCase() === "jeddah") city = "جدة";
-            
-            const weatherDesc = data.current_condition.weatherDesc.value.toLowerCase();
             let status = "صحو";
-            if (weatherDesc.includes("cloud") || weatherDesc.includes("overcast")) status = "غائم جزئياً";
-            else if (weatherDesc.includes("rain") || weatherDesc.includes("shower")) status = "أمطار";
-            else if (weatherDesc.includes("fog") || weatherDesc.includes("mist")) status = "ضبابي";
-            else if (weatherDesc.includes("thunder") || weatherDesc.includes("storm")) status = "عواصف";
+            if (code > 0 && code <= 3) status = "غائم جزئياً";
+            else if (code >= 45 && code <= 48) status = "ضبابي";
+            else if (code >= 51 && code <= 67) status = "أمطار";
+            else if (code >= 95) status = "عواصف";
 
-            document.getElementById('twk-temp').innerText = realTemp;
-            document.getElementById('twk-status').innerHTML = " درجة - " + status + " في " + city + " الآن";
+            // تحديث واجهة المكون ديناميكياً بالبيانات الحية
+            document.getElementById( twk-temp ).innerText = realTemp;
+            document.getElementById( twk-status ).innerHTML = " درجة - " + status + " في " + city + " الآن";
             
         } catch (e) {
-            document.getElementById('twk-temp').innerText = "30";
-            document.getElementById('twk-status').innerHTML = " درجة - صحو في موقعك الآن";
+            document.getElementById( twk-temp ).innerText = "30";
+            document.getElementById( twk-status ).innerHTML = " درجة - صحو في الرياض الآن";
         } finally {
             if(btn) {
-                setTimeout(() => { btn.classList.remove('updating'); }, 600);
+                setTimeout(() => { btn.classList.remove( updating ); }, 600);
             }
         }
     }
+    
+    // تشغيل جلب البيانات الحقيقية فوراً عند تحميل الصفحة
     getLiveLocationWeather();
 </script>
 
 </body>
 </html>
+
