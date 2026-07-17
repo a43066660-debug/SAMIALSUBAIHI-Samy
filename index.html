@@ -11,9 +11,9 @@
         input, textarea, button { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
         button { background-color: #28a745; color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
         button:hover { background-color: #218838; }
-        #status { font-weight: bold; padding: 10px; border-radius: 5px; display: none; }
-        .success { background-color: #d4edda; color: #155724; }
-        .error { background-color: #f8d7da; color: #721c24; }
+        #status { font-weight: bold; padding: 10px; border-radius: 5px; display: none; margin-top: 10px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
     </style>
 </head>
 <body>
@@ -22,7 +22,7 @@
     <h2>منظومة إرسال SMS</h2>
     
     <!-- خانة رقم المستلم -->
-    <input type="text" id="toMobile" placeholder="رقم المستلم بالصيغة الدولية (مثل +966...)">
+    <input type="text" id="toMobile" placeholder="رقم المستلم بالصيغة الدولية (مثل 00966...)">
     
     <!-- خانة نص الرسالة -->
     <textarea id="smsBody" rows="4" placeholder="اكتب نص الرسالة هنا..."></textarea>
@@ -36,18 +36,34 @@
 
 <script>
 function sendSMS() {
-    const to = document.getElementById('toMobile').value;
-    const body = document.getElementById('smsBody').value;
+    const toInput = document.getElementById('toMobile').value.trim();
+    const body = document.getElementById('smsBody').value.trim();
     const statusDiv = document.getElementById('status');
     
-    // --- بيانات حسابك في تويليو (قم بتعبئتها هنا بدقة) ---
+    // --- بيانات حسابك في تويليو (تأكد من تعديلها بدقة) ---
     const accountSid = 'AC8d2dfa3ea5098c0f2298a93b4a155bc7'; 
-    const base64Auth = 'QUM4ZDJkZmEzZWE1MDk4YzBmMjI5N2M3OWU3OW...'; // كود الـ Basic الكامل الخاص بك هنا
-    const senderName = 'COMPANY'; // ضع الاسم النصي المسجل والموثق في حسابك هنا بدلاً من الرقم
     
-    if(!to || !body) {
+    // ضع الكود المشفر الطويل هنا مباشرة (سواء كان يحتوي على كلمة Basic أو بدونها)
+    let rawAuth = 'QUM4ZDJkZmEzZWE1MDk4YzBmMjI5N2M3OWU3OWFiYTg6ODVmZmIxNzEyNTc3YzIxN2E0ZDcyYWU0NDRjMjM0OWI='; 
+    
+    // ضع الاسم النصي المسجل والموثق في حسابك هنا بدلاً من الرقم
+    const senderName = 'SAMIALSUBAIHI'; 
+
+    if(!toInput || !body) {
         showStatus('يرجى ملء جميع الخانات المتاحة', 'error');
         return;
+    }
+
+    // تصحيح كتابة رقم الهاتف برمجياً لتعديل الـ 00 إلى علامة + لتقبله الشبكة
+    let to = toInput;
+    if (to.startsWith('00')) {
+        to = '+' + to.substring(2);
+    }
+
+    // تنظيف كود التوثيق لضمان عدم تكرار كلمة Basic
+    let authHeader = rawAuth.trim();
+    if (!authHeader.toLowerCase().startsWith('basic ')) {
+        authHeader = 'Basic ' + authHeader;
     }
 
     statusDiv.style.display = 'block';
@@ -56,7 +72,6 @@ function sendSMS() {
 
     const url = `https://twilio.com{accountSid}/Messages.json`;
     
-    // إعداد البيانات التي سيتم إرسالها بالطريقة الصحيحة (Form Urlencoded)
     const formData = new URLSearchParams();
     formData.append('From', senderName);
     formData.append('To', to);
@@ -65,7 +80,7 @@ function sendSMS() {
     fetch(url, {
         method: 'POST',
         headers: {
-            'Authorization': 'Basic ' + base64Auth,
+            'Authorization': authHeader,
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: formData.toString()
@@ -74,11 +89,16 @@ function sendSMS() {
         if (response.status === 201) {
             showStatus('تم إرسال الرسالة بنجاح 🎉', 'success');
         } else {
-            showStatus('فشل الإرسال، تحقق من البيانات أو توثيق الاسم الرقمي', 'error');
+            response.json().then(data => {
+                showStatus(`فشل الإرسال: ${data.message || 'تحقق من توثيق الحساب'}`, 'error');
+            }).catch(() => {
+                showStatus('فشل الإرسال، تحقق من بيانات التوثيق والاسم النصي', 'error');
+            });
         }
     })
     .catch(error => {
-        showStatus('حدث خطأ أثناء الاتصال بالشبكة', 'error');
+        // إذا ظهر هذا الخطأ، فهو بسبب حظر حماية المتصفح (CORS) للروابط المحلية الخرجبة
+        showStatus('خطأ أمني (CORS): يجب رفع الملف على استضافة GitHub Pages ليعمل', 'error');
     });
 }
 
