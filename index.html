@@ -1,5 +1,99 @@
+<meta charset="UTF-8">
+
+<!-- مكون الطقس المطور بالدرجة الحقيقية الفسيولوجية وسهم توكلنا المعدل -->
+<div style="display: flex; justify-content: center; padding: 15px; font-family:  Cairo , sans-serif;" dir="rtl">
+    <!-- تم إضافة id للمكون لتسهيل التحكم البرمجي وتكبير الحجم العام للتقريب -->
+    <div class="twk-weather-widget" id="weather-widget">
+        <span class="twk-sun-icon"></span>
+        
+        <!-- نص الطقس والمدينة بتنسيق ثابت حمايتي من الانعكاس -->
+        <span class="twk-text">
+            <span id="twk-temp" style="font-weight: 600; display: inline-block; direction: ltr;">30</span>
+            <span id="twk-status"> درجة - صحو في الرياض الآن</span>
+        </span>
+        
+        <!-- السهم المطور المطابق لتطبيق توكلنا - تم تحويله لزر تحديث مع إضافة وظيفة التحديث onclick -->
+        <span class="twk-arrow-container" id="refresh-btn" onclick="getLiveLocationWeather()" title="تحديث الطقس">
+            <svg class="twk-arrow-svg" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
+                <path d="M15 19L8 12L15 5" stroke="#8E8E93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </span>
+    </div>
+</div>
+
+<style>
+    @import url( https://googleapis.com );
+    
+    .twk-weather-widget {
+        display: inline-flex;
+        align-items: center;
+        background-color: rgba(240, 243, 248, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 25px; /* تم تكبير الانحناء ليتناسب مع التقريب */
+        padding: 6px 16px 6px 18px; /* زيادة الحشو لتقريب المكون وتكبيره */
+        gap: 8px; /* زيادة المسافة الفاصلة */
+        user-select: none;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+    }
+    
+    .twk-text {
+        color: #2c2c2c;
+        font-size: 16px; /* تم تكبير الخط من 13px إلى 16px لتقريب الصورة */
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .twk-sun-icon {
+        width: 16px; /* تكبير حجم الأيقونة لتتناسب مع أبعاد الخط الجديد */
+        height: 16px;
+        background-color: #FFB300;
+        border-radius: 50%;
+        display: inline-block;
+        box-shadow: 0 0 6px rgba(255, 179, 0, 0.8);
+    }
+    
+    /* تنسيق السهم وتحويله لزر تفاعلي */
+    .twk-arrow-container {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px; /* تكبير حجم السهم للتقريب */
+        height: 18px;
+        cursor: pointer; /* جعل المؤشر شكل اليد عند التمرير فوق السهم */
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    /* تأثير بصري خفيف عند تمرير الماوس فوق السهم */
+    .twk-arrow-container:hover {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+
+    /* تأثير الدوران أثناء جلب البيانات للتحديث */
+    .twk-arrow-container.updating {
+        animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(-360deg); }
+    }
+
+    .twk-arrow-svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+</style>
+
 <script>
     async function getLiveLocationWeather() {
+        const btn = document.getElementById( refresh-btn );
+        // تشغيل تأثير الدوران البصري عند الضغط
+        if(btn) btn.classList.add( updating );
+        
         try {
             // جلب الإحداثيات التلقائية بناءً على عنوان الـ IP الفعلي الحالي للمستخدم لضمان دقة المدينة
             const locRes = await fetch( https://ipapi.co );
@@ -9,7 +103,7 @@
             const lon = locData.longitude || 46.7219;
             const city = locData.city || "الرياض"; 
             
-            // طلب بيانات الطقس الحالية والدرجة المحسوسة الحقيقية من الخادم الصحيح
+            // طلب بيانات الطقس الحالية والدرجة المحسوسة الحقيقية (Apparent Temperature)
             const weatherUrl = `https://open-meteo.com{lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,weather_code&timezone=auto`;
             const res = await fetch(weatherUrl);
             const data = await res.json();
@@ -28,13 +122,22 @@
             const wordDeg = "درجة";
             const wordNow = "الآن";
             
-            // تحديث واجهة المكون بالدرجة والمدينة الحقيقية الحالية للمستخدم مع إصلاح علامات الاقتباس للمعرفات
+            // تحديث واجهة المكون بالدرجة والمدينة الحقيقية الحالية للمستخدم
             document.getElementById( twk-temp ).innerText = realTemp;
             document.getElementById( twk-status ).innerHTML = " " + wordDeg + " - " + status + " في " + city + " " + wordNow;
         } catch (e) {
             console.log("Error loading dynamic location weather, fallback applied.", e);
+        } finally {
+            // إيقاف تأثير الدوران بعد اكتمال جلب البيانات (سواء نجحت أو فشلت)
+            if(btn) {
+                setTimeout(() => {
+                    btn.classList.remove( updating );
+                }, 500); // مهلة زمنية بسيطة لإنهاء الدوران بشكل ناعم
+            }
         }
     }
+    
+    // تشغيل الدالة تلقائياً لأول مرة عند تحميل الصفحة
     getLiveLocationWeather();
 </script>
 
