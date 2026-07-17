@@ -1,108 +1,146 @@
-<meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <!-- هذا السطر ضروري جداً لتقريب الصورة وتكبير المكون تلقائياً على شاشات الجوال -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكون الطقس</title>
+    <style>
+        @import url( https://googleapis.com );
+        
+        /* جعل الصفحة مرنة لتتوسط البطاقة الشاشة وتظهر بشكل مستطيل مقرب */
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            background-color: #ffffff;
+            font-family:  Cairo , sans-serif;
+        }
 
-<!-- مكون الطقس المطور بالدرجة الحقيقية الفسيولوجية وسهم توكلنا المعدل -->
-<div style="display: flex; justify-content: center; padding: 15px; font-family:  Cairo , sans-serif;" dir="rtl">
-    <!-- تم إضافة id وتكبير أبعاد المكون لتقريبه وضمان ظهوره فوراً -->
+        .twk-weather-widget {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(240, 243, 248, 0.9);
+            border: 1.5px solid rgba(0, 0, 0, 0.05);
+            border-radius: 30px; /* زيادة الانحناء ليناسب التقريب الجديد */
+            padding: 12px 24px 12px 28px; /* زيادة المساحة الداخلية بشكل ملحوظ ليكون مستطيل واضح */
+            gap: 12px; /* زيادة المسافات بين العناصر */
+            user-select: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            direction: rtl;
+            width: max-content;
+            max-width: 90%;
+        }
+        
+        .twk-text {
+            color: #2c2c2c;
+            font-size: 20px; /* تكبير الخط من 16px إلى 20px لتقريب الصورة وجعلها واضحة جداً */
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+        
+        .twk-sun-icon {
+            width: 22px; /* تكبير أيقونة الشمس لتتناسب مع التقريب والخط الجديد */
+            height: 22px;
+            background-color: #FFB300;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px rgba(255, 179, 0, 0.8);
+        }
+        
+        /* تنسيق السهم وتحويله لزر تفاعلي كبير وواضح للتحديث */
+        .twk-arrow-container {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px; /* تكبير حجم السهم للتقريب */
+            height: 24px;
+            cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .twk-arrow-container:hover {
+            opacity: 0.7;
+            transform: scale(1.15);
+        }
+
+        /* أنيميشن حركة الدوران للسهم أثناء تحديث وجلب البيانات */
+        .twk-arrow-container.updating {
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
+        }
+
+        .twk-arrow-svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
     <div class="twk-weather-widget" id="weather-widget">
         <span class="twk-sun-icon"></span>
         
-        <!-- نص الطقس والمدينة بتنسيق ثابت حمايتي من الانعكاس -->
         <span class="twk-text">
-            <span id="twk-temp" style="font-weight: 600; display: inline-block; direction: ltr;">30</span>
+            <span id="twk-temp" style="font-weight: 700; display: inline-block; direction: ltr;">30</span>
             <span id="twk-status"> درجة - صحو في الرياض الآن</span>
         </span>
         
-        <!-- السهم المطور المطابق لتطبيق توكلنا - يعمل كزر تحديث فوري عند الضغط عليه -->
+        <!-- السهم المطور - عند الضغط عليه يقوم بالتحديث المباشر فوراً وبشكل حقيقي -->
         <span class="twk-arrow-container" id="refresh-btn" onclick="getLiveLocationWeather()" title="تحديث الطقس">
             <svg class="twk-arrow-svg" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
                 <path d="M15 19L8 12L15 5" stroke="#8E8E93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         </span>
     </div>
-</div>
-
-<style>
-    @import url( https://googleapis.com );
-    
-    .twk-weather-widget {
-        display: inline-flex;
-        align-items: center;
-        background-color: rgba(240, 243, 248, 0.75);
-        border: 1px solid rgba(255, 255, 255, 0.6);
-        border-radius: 25px; /* تم زيادة الانحناء ليتناسب مع التقريب */
-        padding: 6px 16px 6px 18px; /* زيادة المساحة الداخلية لتقريب وتكبير الواجهة */
-        gap: 8px;
-        user-select: none;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.04);
-    }
-    
-    .twk-text {
-        color: #2c2c2c;
-        font-size: 16px; /* تم تكبير حجم الخط من 13px إلى 16px لتقريب المكون */
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-    }
-    
-    .twk-sun-icon {
-        width: 16px; /* تكبير حجم الأيقونة */
-        height: 16px;
-        background-color: #FFB300;
-        border-radius: 50%;
-        display: inline-block;
-        box-shadow: 0 0 6px rgba(255, 179, 0, 0.8);
-    }
-    
-    /* تنسيق السهم ليصبح زر تفاعلي لتحديث الطقس */
-    .twk-arrow-container {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 18px; /* تكبير حجم السهم للتقريب */
-        height: 18px;
-        cursor: pointer;
-        transition: transform 0.2s ease, opacity 0.2s ease;
-    }
-
-    .twk-arrow-container:hover {
-        opacity: 0.7;
-        transform: scale(1.1);
-    }
-
-    /* أنيميشن حركة الدوران للسهم أثناء جلب البيانات */
-    .twk-arrow-container.updating {
-        animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(-360deg); }
-    }
-
-    .twk-arrow-svg {
-        width: 100%;
-        height: 100%;
-        display: block;
-    }
-</style>
 
 <script>
     async function getLiveLocationWeather() {
         const btn = document.getElementById( refresh-btn );
         if(btn) btn.classList.add( updating );
         
+        // قيم افتراضية آمنة (الرياض) في حال فشل الاتصال بالشبكة
+        let lat = 24.6877;
+        let lon = 46.7219;
+        let city = "الرياض";
+
         try {
-            // جلب الإحداثيات والمدينة التلقائية بناءً على الـ IP الحالي للمستخدم
-            const locRes = await fetch( https://ipapi.co/json/ );
-            const locData = await locRes.json();
-            
-            // في حال وجود مشكلة في الـ API يتم الاحتفاظ ببيانات الرياض كبديل ذكي لمنع الاختفاء
-            const lat = locData.latitude || 24.6877; 
-            const lon = locData.longitude || 46.7219;
-            const city = locData.city || "الرياض"; 
-            
-            // طلب بيانات الطقس والدرجة الفسيولوجية المحسوسة فعلياً
+            // المحاولة الأولى: جلب المدينة والإحداثيات عبر الخدمة الأولى الموثوقة
+            const locRes = await fetch( https://ipapi.co );
+            if (locRes.ok) {
+                const locData = await locRes.json();
+                lat = locData.latitude || lat;
+                lon = locData.longitude || lon;
+                city = locData.city || city;
+            }
+        } catch (e) {
+            // المحاولة الثانية الاحتياطية في حال تعطل الخدمة الأولى على شبكات الجوال
+            try {
+                const backupLoc = await fetch( https://ipwho.is );
+                const backupData = await backupLoc.json();
+                if(backupData.success) {
+                    lat = backupData.latitude;
+                    lon = backupData.longitude;
+                    city = backupData.city;
+                }
+            } catch(err) {
+                console.log("Using default location coordinates.");
+            }
+        }
+
+        try {
+            // طلب بيانات الطقس والدرجة الفسيولوجية المحسوسة فعلياً بناءً على الإحداثيات الحقيقية المجلوبة
             const weatherUrl = `https://open-meteo.com{lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,weather_code&timezone=auto`;
             const res = await fetch(weatherUrl);
             const data = await res.json();
@@ -110,7 +148,7 @@
             const realTemp = Math.round(data.current.apparent_temperature);
             const code = data.current.weather_code;
             
-            // ترجمة الحالات الجوية
+            // تحويل شفرات الطقس إلى حالات باللغة العربية
             let status = "صحو"; 
             if (code > 0 && code <= 3) status = "غائم جزئياً"; 
             else if (code >= 45 && code <= 48) status = "ضبابي"; 
@@ -120,21 +158,24 @@
             const wordDeg = "درجة";
             const wordNow = "الآن";
             
-            // تحديث محتوى النصوص داخل المكون بالبيانات الحقيقية
+            // تحديث واجهة المكون ديناميكياً بالبيانات الحقيقية الفورية
             document.getElementById( twk-temp ).innerText = realTemp;
             document.getElementById( twk-status ).innerHTML = " " + wordDeg + " - " + status + " في " + city + " " + wordNow;
         } catch (e) {
-            console.log("Error loading weather data. Fallback remains visible.", e);
+            console.log("Error loading weather data from API.", e);
         } finally {
             if(btn) {
                 setTimeout(() => {
                     btn.classList.remove( updating );
-                }, 500);
+                }, 600);
             }
         }
     }
     
-    // استدعاء دالة التحديث فور تحميل الصفحة
+    // تشغيل الدالة فور تحميل الصفحة لجلب الطقس الحقيقي مباشرة
     getLiveLocationWeather();
 </script>
+
+</body>
+</html>
 
