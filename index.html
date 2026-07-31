@@ -77,21 +77,21 @@
 
 <script>
     // مفتاح Mapbox الخاص بك
-    mapboxgl.accessToken = 'pk.eyJ1Ijoic2EzMTMzNDUiLCJhIjoiY21zOWRneTllMDk3YzJ5cXpsYzg0c2lsbyJ9.my3-razBHXcjL7Ee1QF0tA';
+    mapboxgl.accessToken =  pk.eyJ1Ijoic2EzMTMzNDUiLCJhIjoiY21zOWRneTllMDk3YzJ5cXpsYzg0c2lsbyJ9.my3-razBHXcjL7Ee1QF0tA ;
     
     // إحداثيات مكة المكرمة الافتراضية المأخوذة من الصورة المعروضة
     let currentCoords = [39.8262, 21.4225]; 
 
     const map = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v12', 
+        container:  map ,
+        style:  mapbox://styles/mapbox/streets-v12 , 
         center: currentCoords, 
         zoom: 15,
         attributionControl: false // إخفاء نصوص حقوق الملكية المزدحمة لشكل أنظف
     });
 
     // إضافة دبوس الخريطة الأحمر الشهير (Marker)
-    const marker = new mapboxgl.Marker({ color: '#ea4335', draggable: true })
+    const marker = new mapboxgl.Marker({ color:  #ea4335 , draggable: true })
         .setLngLat(currentCoords)
         .addTo(map);
 
@@ -104,13 +104,13 @@
     }
 
     // 1. التحكم عن طريق سحب الدبوس الأحمر باليد وتغيير الموقع
-    marker.on('dragend', () => {
+    marker.on( dragend , () => {
         const lngLat = marker.getLngLat();
         updateLocation(lngLat.lng.toFixed(6), lngLat.lat.toFixed(6));
     });
 
     // 2. التحكم عن طريق النقر المباشر على أي مكان في الخريطة لتنقل الدبوس تلقائياً
-    map.on('click', (e) => {
+    map.on( click , (e) => {
         const lng = e.lngLat.lng;
         const lat = e.lngLat.lat;
         marker.setLngLat([lng, lat]);
@@ -122,10 +122,11 @@
         map.flyTo({ center: [lng, lat], zoom: 15 });
         marker.setLngLat([lng, lat]);
         if(addressText) {
-            document.getElementById('addressLabel').innerText = addressText;
+            document.getElementById( addressLabel ).innerText = addressText;
         }
     }
 </script>
 
 </body>
 </html>
+
