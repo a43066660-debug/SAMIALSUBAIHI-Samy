@@ -2,7 +2,7 @@
 <html lang="ar">
 <head>
     <meta charset="utf-8">
-    <title>Google Style Map Card</title>
+    <title>Google Styled Map Card</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
     <link href="https://mapbox.com" rel="stylesheet">
     <script src="https://mapbox.com"></script>
@@ -11,63 +11,69 @@
             margin: 0; 
             padding: 12px; 
             font-family: system-ui, -apple-system, sans-serif;
-            background-color: #f8f9fa;
+            background-color: #ffffff;
         }
-        /* تصميم الكارد الدائري المطابق للصورة */
+        /* تصميم الكارد الدائري المطابق تماماً للصورة المعروضة */
         .map-card {
             width: 100%;
             max-width: 500px;
             background: white;
-            border-radius: 16px;
+            border-radius: 24px; /* حواف دائرية ناعمة ومطابقة للطلب */
             overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            border: 1px solid #e0e0e0;
             margin: 0 auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
-        /* نافذة الخريطة وأبعادها العرضية */
+        /* نافذة الخريطة المخصصة بالخلفية المطلوبة */
         #map { 
             width: 100%; 
-            height: 140px; 
+            height: 125px; 
             position: relative;
+            background-image: url( https://squarespace-cdn.com );
+            background-size: cover;
+            background-position: center;
         }
-        /* تفاصيل العنوان أسفل الخريطة */
+        /* تفاصيل العنوان أسفل الخريطة المصغرة */
         .details-container {
-            padding: 16px;
+            padding: 20px 16px;
             direction: rtl;
             text-align: right;
             position: relative;
         }
         .title {
-            font-size: 18px;
-            font-weight: bold;
+            font-size: 19px;
+            font-weight: 700;
             color: #202124;
             margin: 0 0 6px 0;
         }
         .address-text {
             font-size: 14px;
             color: #5f6368;
-            line-height: 1.5;
+            line-height: 1.6;
             margin: 0;
-            padding-left: 30px;
+            padding-left: 35px;
+            font-weight: 400;
         }
-        /* السهم الجانبي الصغير */
+        /* السهم الجانبي المخصص للتنقل */
         .arrow-icon {
             position: absolute;
-            left: 16px;
-            top: 50%;
+            left: 20px;
+            top: 52%;
             transform: translateY(-50%);
             color: #1a73e8;
-            font-size: 20px;
-            font-weight: bold;
+            font-size: 24px;
+            font-weight: 300;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
 <div class="map-card">
-    <!-- جزء الخريطة المصغرة -->
+    <!-- حيز الخريطة المدمجة -->
     <div id="map"></div>
     
-    <!-- جزء تفاصيل العنوان المعروض -->
+    <!-- حيز نصوص العناوين المستلمة -->
     <div class="details-container">
         <div class="title">العنوان</div>
         <p class="address-text" id="addressLabel">حي الزهراء، 2877، شارع 148، MCNA6263، 6263، الزهراء الوسطى، مكة المكرمة</p>
@@ -76,10 +82,10 @@
 </div>
 
 <script>
-    // مفتاح Mapbox الخاص بك
+    // تفعيل مفتاح Mapbox لضمان عمل محرك التحكم بالدبوس والسحب
     mapboxgl.accessToken =  pk.eyJ1Ijoic2EzMTMzNDUiLCJhIjoiY21zOWRneTllMDk3YzJ5cXpsYzg0c2lsbyJ9.my3-razBHXcjL7Ee1QF0tA ;
     
-    // إحداثيات مكة المكرمة الافتراضية المأخوذة من الصورة المعروضة
+    // إحداثيات مكة المكرمة الافتراضية المطابقة للصورة
     let currentCoords = [39.8262, 21.4225]; 
 
     const map = new mapboxgl.Map({
@@ -87,42 +93,39 @@
         style:  mapbox://styles/mapbox/streets-v12 , 
         center: currentCoords, 
         zoom: 15,
-        attributionControl: false // إخفاء نصوص حقوق الملكية المزدحمة لشكل أنظف
+        attributionControl: false
     });
 
-    // إضافة دبوس الخريطة الأحمر الشهير (Marker)
+    // إضافة الدبوس الأحمر الشهير وجعله قابلاً للسحب التام (Draggable) لتغيير الموقع
     const marker = new mapboxgl.Marker({ color:  #ea4335 , draggable: true })
         .setLngLat(currentCoords)
         .addTo(map);
 
-    // دالة لتحديث الموقع وتمرير البيانات البرمجية إلى Kodular عند تغيير الإحداثيات
-    function updateLocation(lng, lat) {
-        // إرسال النص إلى Kodular عبر السلسلة النصية للـ WebViewer
+    // إرسال الإحداثيات الجديدة مباشرة إلى Kodular لتخزينها
+    function sendDataToKodular(lng, lat) {
         if (window.AppInventor) {
             window.AppInventor.setWebViewString(lat + "," + lng);
         }
     }
 
-    // 1. التحكم عن طريق سحب الدبوس الأحمر باليد وتغيير الموقع
+    // 1. التحكم عند سحب الدبوس باليد
     marker.on( dragend , () => {
         const lngLat = marker.getLngLat();
-        updateLocation(lngLat.lng.toFixed(6), lngLat.lat.toFixed(6));
+        sendDataToKodular(lngLat.lng.toFixed(6), lngLat.lat.toFixed(6));
     });
 
-    // 2. التحكم عن طريق النقر المباشر على أي مكان في الخريطة لتنقل الدبوس تلقائياً
+    // 2. التحكم عند الضغط على أي نقطة في مساحة الكارد لتغيير الموقع فوراً
     map.on( click , (e) => {
         const lng = e.lngLat.lng;
         const lat = e.lngLat.lat;
         marker.setLngLat([lng, lat]);
-        updateLocation(lng.toFixed(6), lat.toFixed(6));
+        sendDataToKodular(lng.toFixed(6), lat.toFixed(6));
     });
 
-    // 3. دالة برمجية لاستدعائها من داخل كتل Kodular لتغيير الموقع الخارجي تلقائياً
-    function changeMapPosition(lat, lng, addressText) {
-        map.flyTo({ center: [lng, lat], zoom: 15 });
-        marker.setLngLat([lng, lat]);
-        if(addressText) {
-            document.getElementById( addressLabel ).innerText = addressText;
+    // 3. دالة مخصصة لاستقبال العنوان الجديد من داخل كتل Kodular وتحديث النص تلقائياً
+    function updateAddressFromApp(newAddress) {
+        if(newAddress) {
+            document.getElementById( addressLabel ).innerText = newAddress;
         }
     }
 </script>
