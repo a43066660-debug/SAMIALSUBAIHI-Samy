@@ -1,107 +1,130 @@
-
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>واجهة إرسال الرسائل - Twilio</title>
+    <meta charset="utf-8">
+    <title>Google Style Map Card</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://mapbox.com" rel="stylesheet">
+    <script src="https://mapbox.com"></script>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { background-color: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        h2 { color: #333; margin-bottom: 20px; }
-        input, textarea, button { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
-        button { background-color: #28a745; color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:hover { background-color: #218838; }
-        #status { font-weight: bold; padding: 10px; border-radius: 5px; display: none; margin-top: 10px; }
-        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        body { 
+            margin: 0; 
+            padding: 12px; 
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: #f8f9fa;
+        }
+        /* تصميم الكارد الدائري المطابق للصورة */
+        .map-card {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            margin: 0 auto;
+        }
+        /* نافذة الخريطة وأبعادها العرضية */
+        #map { 
+            width: 100%; 
+            height: 140px; 
+            position: relative;
+        }
+        /* تفاصيل العنوان أسفل الخريطة */
+        .details-container {
+            padding: 16px;
+            direction: rtl;
+            text-align: right;
+            position: relative;
+        }
+        .title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #202124;
+            margin: 0 0 6px 0;
+        }
+        .address-text {
+            font-size: 14px;
+            color: #5f6368;
+            line-height: 1.5;
+            margin: 0;
+            padding-left: 30px;
+        }
+        /* السهم الجانبي الصغير */
+        .arrow-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #1a73e8;
+            font-size: 20px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>منظومة إرسال SMS باسم نصي</h2>
+<div class="map-card">
+    <!-- جزء الخريطة المصغرة -->
+    <div id="map"></div>
     
-    <!-- خانة رقم المستلم -->
-    <input type="text" id="toMobile" placeholder="رقم المستلم بالصيغة الدولية (مثل 00967...)">
-    
-    <!-- خانة نص الرسالة -->
-    <textarea id="smsBody" rows="4" placeholder="اكتب نص الرسالة هنا..."></textarea>
-    
-    <!-- زر الإرسال -->
-    <button onclick="sendSMS()">إرسال الرسالة الآن</button>
-    
-    <!-- مربع الحالة -->
-    <div id="status"></div>
+    <!-- جزء تفاصيل العنوان المعروض -->
+    <div class="details-container">
+        <div class="title">العنوان</div>
+        <p class="address-text" id="addressLabel">حي الزهراء، 2877، شارع 148، MCNA6263، 6263، الزهراء الوسطى، مكة المكرمة</p>
+        <div class="arrow-icon">‹</div>
+    </div>
 </div>
 
 <script>
-function sendSMS() {
-    // تصحيح معرفات العناصر بإضافة علامات التنصيص
-    const toInput = document.getElementById( toMobile ).value.trim();
-    const body = document.getElementById( smsBody ).value.trim();
+    // مفتاح Mapbox الخاص بك
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic2EzMTMzNDUiLCJhIjoiY21zOWRneTllMDk3YzJ5cXpsYzg0c2lsbyJ9.my3-razBHXcjL7Ee1QF0tA';
     
-    // تصحيح القيم النصية لبيانات حسابك المتطابقة تماماً مع قيمك السابقة
-    const accountSid = "AC8d2dfa3ea5098c0f2298a93b4a155bc7"; 
-    const rawAuth = "QUM4ZDJkZmEzZWE1MDk4YzBmMjI5N2M3OWU3OWFiYTg6ODVmZmIxNzEyNTc3YzIxN2E0ZDcyYWU0NDRjMjM0OWI="; 
-    const senderName = "SAMIALSUBAIHI"; 
+    // إحداثيات مكة المكرمة الافتراضية المأخوذة من الصورة المعروضة
+    let currentCoords = [39.8262, 21.4225]; 
 
-    if(!toInput || !body) {
-        showStatus("يرجى ملء جميع الخانات المتاحة", "error");
-        return;
-    }
-
-    let to = toInput;
-    if (to.startsWith("00")) {
-        to = "+" + to.substring(2);
-    }
-
-    let authHeader = rawAuth.trim();
-    if (!authHeader.toLowerCase().startsWith("basic ")) {
-        authHeader = "Basic " + authHeader;
-    }
-
-    showStatus("جاري إرسال الرسالة عبر الخادم الآمن...", "");
-
-    // تصحيح رابط Twilio الأساسي وضمان دمجه برمجياً بشكل سليم لتخطي الـ CORS
-    const twilioUrl = `https://twilio.com{accountSid}/Messages.json`;
-    const proxyUrl = "https://corsproxy.io?" + encodeURIComponent(twilioUrl);
-    
-    const formData = new URLSearchParams();
-    formData.append("From", senderName);
-    formData.append("To", to);
-    formData.append("Body", body);
-
-    fetch(proxyUrl, {
-        method: "POST",
-        headers: {
-             "Authorization" : authHeader,
-             "Content-Type" : "application/x-www-form-urlencoded"
-        },
-        body: formData.toString()
-    })
-    .then(response => {
-        if (response.ok || response.status === 201) {
-            showStatus("تم إرسال الرسالة بنجاح 🎉", "success");
-        } else {
-            response.json().then(data => {
-                showStatus(`خطأ من تويليو: ${data.message || "تحقق من تفعيل الاسم النصي وحالة الرصيد"}`, "error");
-            }).catch(() => {
-                showStatus("فشل الإرسال: تأكد من تفعيل الحساب والاسم النصي أو توفر الرصيد", "error");
-            });
-        }
-    })
-    .catch(error => {
-        showStatus("حدث خطأ أثناء معالجة الطلب، تأكد من اتصالك بالإنترنت", "error");
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v12', 
+        center: currentCoords, 
+        zoom: 15,
+        attributionControl: false // إخفاء نصوص حقوق الملكية المزدحمة لشكل أنظف
     });
-}
 
-function showStatus(text, type) {
-    const statusDiv = document.getElementById( status );
-    statusDiv.style.display = "block";
-    statusDiv.className = type;
-    statusDiv.innerText = text;
-}
+    // إضافة دبوس الخريطة الأحمر الشهير (Marker)
+    const marker = new mapboxgl.Marker({ color: '#ea4335', draggable: true })
+        .setLngLat(currentCoords)
+        .addTo(map);
+
+    // دالة لتحديث الموقع وتمرير البيانات البرمجية إلى Kodular عند تغيير الإحداثيات
+    function updateLocation(lng, lat) {
+        // إرسال النص إلى Kodular عبر السلسلة النصية للـ WebViewer
+        if (window.AppInventor) {
+            window.AppInventor.setWebViewString(lat + "," + lng);
+        }
+    }
+
+    // 1. التحكم عن طريق سحب الدبوس الأحمر باليد وتغيير الموقع
+    marker.on('dragend', () => {
+        const lngLat = marker.getLngLat();
+        updateLocation(lngLat.lng.toFixed(6), lngLat.lat.toFixed(6));
+    });
+
+    // 2. التحكم عن طريق النقر المباشر على أي مكان في الخريطة لتنقل الدبوس تلقائياً
+    map.on('click', (e) => {
+        const lng = e.lngLat.lng;
+        const lat = e.lngLat.lat;
+        marker.setLngLat([lng, lat]);
+        updateLocation(lng.toFixed(6), lat.toFixed(6));
+    });
+
+    // 3. دالة برمجية لاستدعائها من داخل كتل Kodular لتغيير الموقع الخارجي تلقائياً
+    function changeMapPosition(lat, lng, addressText) {
+        map.flyTo({ center: [lng, lat], zoom: 15 });
+        marker.setLngLat([lng, lat]);
+        if(addressText) {
+            document.getElementById('addressLabel').innerText = addressText;
+        }
+    }
 </script>
 
 </body>
