@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>OpenStreet Map Card</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-    <!-- استدعاء مكتبة الخرائط المجانية المفتوحة -->
+    <!-- استدعاء مكتبة الخرائط المجانية المفتوحة بشكل صحيح -->
     <link rel="stylesheet" href="https://unpkg.com" />
     <script src="https://unpkg.com"></script>
     <style>
@@ -37,7 +37,7 @@
 
     L.tileLayer( https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png ).addTo(map);
 
-    // إضافة الدبوس الأحمر وجعله قابلاً للسحب التام لتغيير الموقع
+    // إضافة الدبوس وجعله قابلاً للسحب التام لتغيير الموقع
     const marker = L.marker(defaultCoords, { draggable: true }).addTo(map);
 
     function sendDataToKodular(lat, lng) {
