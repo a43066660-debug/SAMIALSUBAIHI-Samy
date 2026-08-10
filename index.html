@@ -1,64 +1,250 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="utf-8">
-    <title>OpenStreet Map Card</title>
-    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-    <!-- استدعاء مكتبة الخرائط المجانية المفتوحة بشكل صحيح -->
-    <link rel="stylesheet" href="https://unpkg.com" />
-    <script src="https://unpkg.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خدمة القبلة - محاكاة توكلنا</title>
     <style>
-        body { margin: 0; padding: 12px; font-family: system-ui, sans-serif; background-color: #ffffff; }
-        .map-card { width: 100%; max-width: 500px; background: white; border-radius: 24px; overflow: hidden; border: 1px solid #e0e0e0; margin: 0 auto; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-        #map { width: 100%; height: 125px; position: relative; }
-        .details-container { padding: 20px 16px; direction: rtl; text-align: right; position: relative; }
-        .title { font-size: 19px; font-weight: 700; color: #202124; margin: 0 0 6px 0; }
-        .address-text { font-size: 14px; color: #5f6368; line-height: 1.6; margin: 0; padding-left: 35px; }
-        .arrow-icon { position: absolute; left: 20px; top: 52%; transform: translateY(-50%); color: #1a73e8; font-size: 24px; cursor: pointer; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f7f9fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .app-container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        .header {
+            width: 100%;
+            text-align: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #edf2f7;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 20px;
+            color: #1a202c;
+            font-weight: 600;
+        }
+        /* البوصلة الدائرية الشبيهة بتوكلنا */
+        .compass-wrapper {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            border: 4px dashed #e2e8f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: border-color 0.3s ease;
+        }
+        /* يتغير اللون للأخضر عند مطابقة القبلة تماماً */
+        .compass-wrapper.aligned {
+            border-color: #28a745;
+            animation: pulse 1.5s infinite;
+        }
+        .compass-disk {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.1s ease-out;
+        }
+        /* سهم التوجيه */
+        .qibla-arrow {
+            position: absolute;
+            top: -10px;
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 30px solid #0056b3; /* لون السهم الافتراضي */
+            transition: border-bottom-color 0.3s ease;
+        }
+        .compass-wrapper.aligned .qibla-arrow {
+            border-bottom-color: #28a745; /* يتحول للأخضر عند ضبط الاتجاه */
+        }
+        /* مجسم الكعبة المشرفة في المنتصف */
+        .kaaba-center {
+            width: 80px;
+            height: 80px;
+            background-color: #1a1a1a;
+            border-radius: 12px;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            z-index: 2;
+        }
+        .kaaba-center::before {
+            content:   ;
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background-color: #d4af37; /* الحزام الذهبي */
+        }
+        .status-card {
+            margin-top: 50px;
+            background: #f8fafc;
+            padding: 15px 25px;
+            border-radius: 16px;
+            text-align: center;
+            width: 90%;
+            border: 1px solid #e2e8f0;
+        }
+        .status-text {
+            font-size: 15px;
+            color: #4a5568;
+            font-weight: 500;
+        }
+        .btn-action {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: auto;
+            margin-bottom: 30px;
+            width: 90%;
+            box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2);
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(40, 167, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
     </style>
 </head>
 <body>
 
-<div class="map-card">
-    <div id="map"></div>
-    <div class="details-container">
-        <div class="title">العنوان</div>
-        <p class="address-text" id="addressLabel">اضغط على الخريطة أو حرك الدبوس لتحديد الموقع</p>
-        <div class="arrow-icon">‹</div>
+<div class="app-container">
+    <div class="header">
+        <h1>اتجاه القبلة</h1>
     </div>
+
+    <!-- حلقة البوصلة -->
+    <div class="compass-wrapper" id="compassWrapper">
+        <div class="compass-disk" id="compassDisk">
+            <div class="qibla-arrow"></div>
+        </div>
+        <!-- الكعبة ثابتة في المركز والسهم يدور حولها بناءً على اتجاه الهاتف -->
+        <div class="kaaba-center"></div>
+    </div>
+
+    <div class="status-card">
+        <p class="status-text" id="statusLabel">الرجاء تمكين تحديد الموقع الجغرافي للبدء</p>
+    </div>
+
+    <button class="btn-action" id="activateBtn">ابدأ التوجيه</button>
 </div>
 
 <script>
-    // إحداثيات افتراضية
-    let defaultCoords = [15.3547, 44.2074]; 
+    const KAABA_LAT = 21.4225;
+    const KAABA_LNG = 39.8262;
 
-    // إنشاء الخريطة المجانية فوراً وبدون أي توكن أو مفتاح
-    const map = L.map( map , { attributionControl: false }).setView(defaultCoords, 13);
+    let userLat = null;
+    let userLng = null;
+    let targetQiblaAngle = 0;
 
-    L.tileLayer( https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png ).addTo(map);
+    const compassDisk = document.getElementById( compassDisk );
+    const compassWrapper = document.getElementById( compassWrapper );
+    const statusLabel = document.getElementById( statusLabel );
+    const activateBtn = document.getElementById( activateBtn );
 
-    // إضافة الدبوس وجعله قابلاً للسحب التام لتغيير الموقع
-    const marker = L.marker(defaultCoords, { draggable: true }).addTo(map);
+    activateBtn.addEventListener( click , requestPermissions);
 
-    function sendDataToKodular(lat, lng) {
-        if (window.AppInventor) {
-            window.AppInventor.setWebViewString(lat + "," + lng);
+    function requestPermissions() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                userLat = position.coords.latitude;
+                userLng = position.coords.longitude;
+                
+                targetQiblaAngle = calculateQibla(userLat, userLng);
+                statusLabel.innerText = "تم تحديد موقعك. حرك الهاتف ببطء نحو السهم.";
+                
+                initOrientation();
+            }, () => {
+                statusLabel.innerText = "يتطلب التطبيق تفعيل الـ GPS لتحديد الاتجاه بدقة.";
+            });
         }
     }
 
-    // 1. التحكم عند سحب الدبوس باليد
-    marker.on( dragend , function (e) {
-        const position = marker.getLatLng();
-        sendDataToKodular(position.lat.toFixed(6), position.lng.toFixed(6));
-    });
+    function calculateQibla(lat, lng) {
+        const dLon = (KAABA_LNG - lng) * Math.PI / 180;
+        const lat1 = lat * Math.PI / 180;
+        const lat2 = KAABA_LAT * Math.PI / 180;
 
-    // 2. التحكم عند الضغط على أي نقطة في الخريطة
-    map.on( click , function (e) {
-        const lat = e.latlng.lat;
-        const lng = e.latlng.lng;
-        marker.setLatLng([lat, lng]);
-        sendDataToKodular(lat.toFixed(6), lng.toFixed(6));
-    });
+        const y = Math.sin(dLon);
+        const x = Math.cos(lat1) * Math.tan(lat2) - Math.sin(lat1) * Math.cos(dLon);
+        return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+    }
+
+    function initOrientation() {
+        if (window.DeviceOrientationEvent) {
+            if (typeof DeviceOrientationEvent.requestPermission ===  function ) {
+                DeviceOrientationEvent.requestPermission().then(state => {
+                    if (state ===  granted ) {
+                        window.addEventListener( deviceorientation , handleRotate);
+                    }
+                });
+            } else {
+                window.addEventListener( deviceorientationabsolute , handleRotate);
+                window.addEventListener( deviceorientation , handleRotate);
+            }
+            activateBtn.style.display =  none ;
+        } else {
+            statusLabel.innerText = "المستشعرات الداخلية غير مدعومة على هذا الجهاز.";
+        }
+    }
+
+    function handleRotate(event) {
+        let heading = event.webkitCompassHeading || event.alpha;
+        if (event.absolute && event.alpha !== null) {
+            heading = 360 - event.alpha;
+        }
+
+        if (heading !== undefined && heading !== null) {
+            // حساب زاوية الدوران النسبية للسهم
+            let currentRotation = (targetQiblaAngle - heading + 360) % 360;
+            compassDisk.style.transform = `rotate(${currentRotation}deg)`;
+
+            // مطابقة محاكاة "توكلنا": عندما يقترب السهم من الصفر تماماً (الاتجاه الصحيح)
+            // يتغير المؤشر إلى اللون الأخضر ويصدر نبضاً مرئياً
+            if (currentRotation <= 4 || currentRotation >= 356) {
+                compassWrapper.classList.add( aligned );
+                statusLabel.innerText = "أنت باتجاه القبلة الصحيح الآن";
+                statusLabel.style.color = "#28a745";
+                
+                // تفعيل ميزة الاهتزاز الخفيف في الهواتف الذكية الحقيقية
+                if (navigator.vibrate) navigator.vibrate(50);
+            } else {
+                compassWrapper.classList.remove( aligned );
+                statusLabel.innerText = "حرك الهاتف لتوجيه السهم للأعلى";
+                statusLabel.style.color = "#4a5568";
+            }
+        }
+    }
 </script>
 
 </body>
