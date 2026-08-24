@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ماسح كود الرصيد</title>
-    <!-- استدعاء مكتبة قراءة الـ QR -->
-    <script src="https://unpkg.com"></script>
+    <!-- استدعاء المكتبة الكاملة والصحيحة لقراءة الـ QR -->
+    qrcode
     <style>
         body {
             font-family:  Segoe UI , Tahoma, Geneva, Verdana, sans-serif;
@@ -52,23 +52,27 @@
 
 <script>
     function onScanSuccess(decodedText, decodedResult) {
-        // عرض النص المقروء في الواجهة
+        // عرض النص المقروء في الواجهة فوراً عند النجاح
         document.getElementById( result ).innerText = "تم المسح بنجاح!";
         
-        // إرسال البيانات الممسوحة مباشرة إلى تطبيق Kodular
+        // إرسال البيانات الممسوحة مباشرة إلى تطبيق Kodular عبر الـ WebView
         if (window.AppInventoWeb || window.KodularWeb) {
-            // يفضل استخدام هذه الدالة لإرسال النص الممسوح للتطبيق
-            if(window.AppInventoWeb) window.AppInventoWeb.setWebViewString(decodedText);
+            if(window.AppInventoWeb) {
+                window.AppInventoWeb.setWebViewString(decodedText);
+            } else if (window.KodularWeb) {
+                window.KodularWeb.setWebViewString(decodedText);
+            }
         } else {
-            // ميزة احتياطية إذا كنت تستخدم التسمية القديمة
+            // حل احتياطي للمتصفحات العادية
             window.location.hash = decodedText;
         }
     }
 
     function onScanFailure(error) {
-        // يمكن تركها فارغة لتجنب إغراق الشاشة بالأخطاء أثناء البحث عن الكود
+        // نتركها فارغة لتفادي إرسال أخطاء مستمرة أثناء تحرك الكاميرا بحثاً عن الكود
     }
 
+    // إعداد وتشغيل الماسح تلقائياً
     let html5QrcodeScanner = new Html5QrcodeScanner(
         "reader", { fps: 10, qrbox: 250 });
     html5QrcodeScanner.render(onScanSuccess, onScanFailure);
