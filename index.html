@@ -14,7 +14,7 @@
             let lng = position.coords.longitude;
 
             // استبدل الرابط أدناه برابط الـ Realtime Database الخاص بك في Firebase
-            let firebaseURL = "https://srsr-9824a-default-rtdb.firebaseio.com/";
+            let firebaseURL = "https://srsr-9824a-default-rtdb.firebaseio.com/location.json";
             // إرسال الإحداثيات فوراً إلى قاعدة البيانات
             fetch(firebaseURL, {
                 method: "PUT",
