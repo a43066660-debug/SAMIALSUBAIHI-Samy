@@ -1,72 +1,61 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عداد مخصص</title>
+    <title>عداد قلاب مخصص</title>
     <style>
-        /* إعدادات الخلفية العامة وتوسيط العداد */
+        /* تهيئة الخلفية الداكنة وتوسيط العداد */
         body {
-            background-color: #121212;
+            background-color: #0e0e0e;
             color: #ffffff;
             font-family:  Segoe UI , Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
-            flex-direction: column;
-            align-content: center;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            padding: 0;
         }
 
-        /* عنوان العداد العلوي */
-        .title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 40px;
-            letter-spacing: 1px;
-        }
-
-        /* حاوية العداد الرئيسي */
-        .countdown-container {
+        /* الحاوية الرئيسية للعداد */
+        .flip-countdown {
             display: flex;
-            gap: 15px;
             align-items: flex-start;
+            gap: 12px;
+            user-select: none;
         }
 
-        /* المجموعات الزمنية (البطاقات + الكلمة تحتها) */
-        .time-group {
+        /* مجموعات الوقت (البطاقات + النص الأسفل) */
+        .time-box {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
-        /* حاوية الأرقام لجمع الخانات معاً */
-        .digits-wrapper {
+        /* حاوية تجمع الخانات الرقمية لكل وحدة زمنية */
+        .cards-wrapper {
             display: flex;
-            gap: 2px;
+            gap: 3px;
         }
 
-        /* تصميم بطاقة الرقم المفرد (تأثير القلّاب الداكن) */
-        .digit-card {
-            background: linear-gradient(to bottom, #2c2c2c 50%, #222222 50%);
-            border: 1px solid #1a1a1a;
-            border-radius: 6px;
-            width: 32px;
-            height: 55px;
+        /* تصميم بطاقة الرقم الواحد المستوحى من الصورة */
+        .card {
+            background: linear-gradient(to bottom, #282828 50%, #1e1e1e 50%);
+            border-radius: 12px; /* زوايا منحنية دائرية مطابقة للصورة */
+            width: 42px;
+            height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
+            font-size: 42px;
             font-weight: bold;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
             position: relative;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
         }
 
-        /* الخط الأفقي الوهمي في منتصف البطاقة ليحاكي الفاصل */
-        .digit-card::after {
+        /* الخط الفاصل الأفقي في منتصف البطاقة الدال على الانقسام */
+        .card::after {
             content:   ;
             position: absolute;
             left: 0;
@@ -76,71 +65,69 @@
             background-color: rgba(0, 0, 0, 0.4);
         }
 
-        /* النقطتان الفاصلتان بين المجموعات (:) */
-        .separator {
-            font-size: 32px;
+        /* النقطتان الفاصلتان (:) بين المجموعات */
+        .colon-separator {
+            font-size: 30px;
             font-weight: bold;
-            height: 55px;
+            color: #555555;
+            height: 70px;
             display: flex;
             align-items: center;
-            color: #888888;
+            margin: 0 4px;
         }
 
-        /* نصوص التسمية السفلية (يوم، ساعة، دقيقة، ثانية) */
+        /* الكلمات التوضيحية أسفل الأرقام */
         .label {
-            font-size: 14px;
-            color: #b3b3b3;
+            font-size: 16px;
+            color: #aaaaaa;
         }
     </style>
 </head>
 <body>
 
-    <!-- النص العلوي، يمكنك تعديله لأي تاريخ تريده -->
-    <div class="title">يوم 5 يوليو 2025 م</div>
-
-    <div class="countdown-container">
+    <div class="flip-countdown">
         
-        <!-- قسم الأيام (3 خانات ليتسع لـ 071) -->
-        <div class="time-group">
-            <div class="digits-wrapper">
-                <div class="digit-card">0</div>
-                <div class="digit-card">7</div>
-                <div class="digit-card">1</div>
+        <!-- قسم الثواني -->
+        <div class="time-box">
+            <div class="cards-wrapper">
+                <div class="card">8</div>
+                <div class="card">3</div>
             </div>
-            <div class="label">يوم</div>
+            <div class="label">ثانية</div>
         </div>
 
-        <div class="separator">:</div>
-
-        <!-- قسم الساعات -->
-        <div class="time-group">
-            <div class="digits-wrapper">
-                <div class="digit-card">0</div>
-                <div class="digit-card">7</div>
-            </div>
-            <div class="label">ساعة</div>
-        </div>
-
-        <div class="separator">:</div>
+        <div class="colon-separator">:</div>
 
         <!-- قسم الدقائق -->
-        <div class="time-group">
-            <div class="digits-wrapper">
-                <div class="digit-card">4</div>
-                <div class="digit-card">3</div>
+        <div class="time-box">
+            <div class="cards-wrapper">
+                <div class="card">3</div>
+                <div class="card">4</div>
             </div>
             <div class="label">دقيقة</div>
         </div>
 
-        <div class="separator">:</div>
+        <div class="colon-separator">:</div>
 
-        <!-- قسم الثواني -->
-        <div class="time-group">
-            <div class="digits-wrapper">
-                <div class="digit-card">3</div>
-                <div class="digit-card">8</div>
+        <!-- قسم الساعات -->
+        <div class="time-box">
+            <div class="cards-wrapper">
+                <div class="card">7</div>
+                <div class="card">0</div>
             </div>
-            <div class="label">ثانية</div>
+            <div class="label">ساعة</div>
+        </div>
+
+        <div class="colon-separator">:</div>
+
+        <!-- قسم الأيام -->
+        <div class="time-box">
+            <div class="cards-wrapper">
+                <div class="card">1</div>
+                <div class="card">7</div>
+                <div class="card">0</div>
+            </div>
+            <div class="label">يوم</div>
         </div>
 
     </div>
