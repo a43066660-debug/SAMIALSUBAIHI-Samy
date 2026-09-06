@@ -3,69 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عداد قلاب مخصص</title>
+    <title>عداد قلاب مخصص للتطبيق</title>
     <style>
-        /* إلغاء التوسيط الرأسي من الـ body لجعل الشريط يثبت في الأعلى */
-        body {
-            background-color: #ffffff; /* تم تغيير خلفية الصفحة للأبيض لكي ترى الشريط بوضوح */
+        /* تهيئة الخلفية لتطابق أبعاد الحاوية الجديدة تماماً (100px وبدون هوامش) */
+        html, body {
+            background-color: #0e0e0e; /* نفس لون العداد الأسود */
             margin: 0;
             padding: 0;
-            font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        /* حاوية الشريط المخصصة: بارتفاع 150px فقط وعرض الشاشة بالكامل */
-        .flip-countdown-banner {
             width: 100%;
-            height: 150px; /* الارتفاع المطلوب للشريط */
-            background-color: #0e0e0e; /* لون الشريط الأسود فقط */
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-sizing: border-box;
+            font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* ظل خفيف أسفل الشريط */
+            box-sizing: border-box;
         }
 
-        /* الحاوية الداخلية للعداد */
+        /* الحاوية الرئيسية للعداد - متناسقة مع عرض 80% للشاشة */
         .flip-countdown {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 4px; /* تقليل الفراغات ليناسب الارتفاع الصغير والعرض */
             user-select: none;
             width: 100%;
-            padding: 0 10px;
+            padding: 0 4px;
             box-sizing: border-box;
         }
 
-        /* مجموعات الوقت (البطاقات + النص الأسفل) */
+        /* مجموعات الوقت */
         .time-box {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
 
         /* حاوية تجمع الخانات الرقمية لكل وحدة زمنية */
         .cards-wrapper {
             display: flex;
-            gap: 2px;
+            gap: 1.5px;
         }
 
-        /* تصميم بطاقة الرقم الواحد */
+        /* تصغير تصميم بطاقة الرقم الواحد ليتناسب مع ارتفاع 100 بكسل */
         .card {
             background: linear-gradient(to bottom, #282828 50%, #1e1e1e 50%);
-            border-radius: 8px; 
-            width: 32px; 
-            height: 54px; 
+            border-radius: 5px; /* تقليل الانحناء ليتناسق مع الحجم الجديد */
+            width: 22px; /* تم تصغير العرض ليناسب عرض الـ 80% */
+            height: 38px; /* تم تقليص الارتفاع ليناسب إجمالي الـ 100 بكسل للحاوية */
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 30px; 
+            font-size: 20px; /* تصغير حجم الخط ليتناسق مع الكرت */
             font-weight: bold;
             color: #ffffff;
             position: relative;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
         }
 
         /* الخط الفاصل الأفقي في منتصف البطاقة */
@@ -79,77 +73,72 @@
             background-color: rgba(0, 0, 0, 0.4);
         }
 
-        /* النقطتان الفاصلتان (:) */
+        /* النقطتان الفاصلتان (:) بين المجموعات */
         .colon-separator {
-            font-size: 24px;
+            font-size: 16px;
             font-weight: bold;
             color: #555555;
-            height: 54px;
+            height: 38px;
             display: flex;
             align-items: center;
-            margin: 0 2px;
+            margin: 0 1px;
         }
 
         /* الكلمات التوضيحية أسفل الأرقام */
         .label {
-            font-size: 12px; 
+            font-size: 10px; /* تصغير الكلمات لتبدو واضحة ومرتبة بالأسفل */
             color: #aaaaaa;
         }
     </style>
 </head>
 <body>
 
-    <!-- شريط العداد (بارتفاع 150px فقط وعرض كامل الشاشة) -->
-    <div class="flip-countdown-banner">
-        <div class="flip-countdown">
-            
-            <!-- قسم الأيام -->
-            <div class="time-box">
-                <div class="cards-wrapper">
-                    <div class="card">1</div>
-                    <div class="card">7</div>
-                    <div class="card">0</div>
-                </div>
-                <div class="label">يوم</div>
+    <div class="flip-countdown">
+        
+        <!-- قسم الأيام -->
+        <div class="time-box">
+            <div class="cards-wrapper">
+                <div class="card">1</div>
+                <div class="card">7</div>
+                <div class="card">0</div>
             </div>
-
-            <div class="colon-separator">:</div>
-
-            <!-- قسم الساعات -->
-            <div class="time-box">
-                <div class="cards-wrapper">
-                    <div class="card">0</div>
-                    <div class="card">7</div>
-                </div>
-                <div class="label">ساعة</div>
-            </div>
-
-            <div class="colon-separator">:</div>
-
-            <!-- قسم الدقائق -->
-            <div class="time-box">
-                <div class="cards-wrapper">
-                    <div class="card">3</div>
-                    <div class="card">4</div>
-                </div>
-                <div class="label">دقيقة</div>
-            </div>
-
-            <div class="colon-separator">:</div>
-
-            <!-- قسم الثواني -->
-            <div class="time-box">
-                <div class="cards-wrapper">
-                    <div class="card">8</div>
-                    <div class="card">3</div>
-                </div>
-                <div class="label">ثانية</div>
-            </div>
-
+            <div class="label">يوم</div>
         </div>
-    </div>
 
-    <!-- المساحة بالأسفل هنا أصبحت فارغة وبيضاء وجاهزة لملفات موقعك الأخرى -->
+        <div class="colon-separator">:</div>
+
+        <!-- قسم الساعات -->
+        <div class="time-box">
+            <div class="cards-wrapper">
+                <div class="card">0</div>
+                <div class="card">7</div>
+            </div>
+            <div class="label">ساعة</div>
+        </div>
+
+        <div class="colon-separator">:</div>
+
+        <!-- قسم الدقائق -->
+        <div class="time-box">
+            <div class="cards-wrapper">
+                <div class="card">3</div>
+                <div class="card">4</div>
+            </div>
+            <div class="label">دقيقة</div>
+        </div>
+
+        <div class="colon-separator">:</div>
+
+        <!-- قسم الثواني -->
+        <div class="time-box">
+            <div class="cards-wrapper">
+                <div class="card">8</div>
+                <div class="card">3</div>
+            </div>
+            <div class="label">ثانية</div>
+        </div>
+
+    </div>
 
 </body>
 </html>
