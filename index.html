@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>عداد قلاب مخصص للتطبيق</title>
     <style>
-        /* تهيئة الخلفية لتطابق أبعاد الحاوية الجديدة تماماً (100px وبدون هوامش) */
+        /* تهيئة الخلفية لتطابق أبعاد الحاوية تماماً في Kodular وبدون هوامش */
         html, body {
-            background-color: #0e0e0e; /* نفس لون العداد الأسود */
+            background-color: #0e0e0e; /* لون العداد الأسود */
             margin: 0;
             padding: 0;
             width: 100%;
@@ -20,12 +20,12 @@
             box-sizing: border-box;
         }
 
-        /* الحاوية الرئيسية للعداد - متناسقة مع عرض 80% للشاشة */
+        /* الحاوية الرئيسية للعداد */
         .flip-countdown {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 4px; /* تقليل الفراغات ليناسب الارتفاع الصغير والعرض */
+            gap: 4px; 
             user-select: none;
             width: 100%;
             padding: 0 4px;
@@ -46,16 +46,16 @@
             gap: 1.5px;
         }
 
-        /* تصغير تصميم بطاقة الرقم الواحد ليتناسب مع ارتفاع 100 بكسل */
+        /* تصميم بطاقة الرقم الواحد المتطابقة مع حجم 100px */
         .card {
             background: linear-gradient(to bottom, #282828 50%, #1e1e1e 50%);
-            border-radius: 5px; /* تقليل الانحناء ليتناسق مع الحجم الجديد */
-            width: 22px; /* تم تصغير العرض ليناسب عرض الـ 80% */
-            height: 38px; /* تم تقليص الارتفاع ليناسب إجمالي الـ 100 بكسل للحاوية */
+            border-radius: 5px; 
+            width: 22px; 
+            height: 38px; 
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px; /* تصغير حجم الخط ليتناسق مع الكرت */
+            font-size: 20px; 
             font-weight: bold;
             color: #ffffff;
             position: relative;
@@ -86,7 +86,7 @@
 
         /* الكلمات التوضيحية أسفل الأرقام */
         .label {
-            font-size: 10px; /* تصغير الكلمات لتبدو واضحة ومرتبة بالأسفل */
+            font-size: 10px; 
             color: #aaaaaa;
         }
     </style>
@@ -97,9 +97,9 @@
         
         <!-- قسم الأيام -->
         <div class="time-box">
-            <div class="cards-wrapper">
-                <div class="card">1</div>
-                <div class="card">7</div>
+            <div class="cards-wrapper" id="days-box">
+                <div class="card">0</div>
+                <div class="card">0</div>
                 <div class="card">0</div>
             </div>
             <div class="label">يوم</div>
@@ -109,9 +109,9 @@
 
         <!-- قسم الساعات -->
         <div class="time-box">
-            <div class="cards-wrapper">
+            <div class="cards-wrapper" id="hours-box">
                 <div class="card">0</div>
-                <div class="card">7</div>
+                <div class="card">0</div>
             </div>
             <div class="label">ساعة</div>
         </div>
@@ -120,9 +120,9 @@
 
         <!-- قسم الدقائق -->
         <div class="time-box">
-            <div class="cards-wrapper">
-                <div class="card">3</div>
-                <div class="card">4</div>
+            <div class="cards-wrapper" id="minutes-box">
+                <div class="card">0</div>
+                <div class="card">0</div>
             </div>
             <div class="label">دقيقة</div>
         </div>
@@ -131,14 +131,64 @@
 
         <!-- قسم الثواني -->
         <div class="time-box">
-            <div class="cards-wrapper">
-                <div class="card">8</div>
-                <div class="card">3</div>
+            <div class="cards-wrapper" id="seconds-box">
+                <div class="card">0</div>
+                <div class="card">0</div>
             </div>
             <div class="label">ثانية</div>
         </div>
 
     </div>
+
+    <script>
+        // قم بتعيين تاريخ ووقت انتهاء العداد التنازلي هنا (السنة، الشهر "يبدأ من 0"، اليوم، الساعة، الدقيقة، الثانية)
+        // حالياً تم ضبطه بشكل افتراضي لينتهي بعد 170 يوماً من تاريخ اليوم ليتطابق مع واجهتك الحالية
+        const targetDate = new Date();
+        targetDate.setDate(targetDate.getDate() + 170); 
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const difference = targetDate - now;
+
+            if (difference < 0) {
+                document.querySelector( .flip-countdown ).innerHTML = "<div style= color:#ffffff; font-size:16px; font-weight:bold; >انتهى الوقت!</div>";
+                clearInterval(intervalId);
+                return;
+            }
+
+            // حسابات الوقت
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+            // تحويل الأرقام إلى نصوص وتنسيق الخانات (أيام بـ 3 خانات والبقية بخانتين)
+            const daysStr = String(days).padStart(3,  0 );
+            const hoursStr = String(hours).padStart(2,  0 );
+            const minutesStr = String(minutes).padStart(2,  0 );
+            const secondsStr = String(seconds).padStart(2,  0 );
+
+            // دالة لتحديث الكروت داخل حاوية معينة
+            function updateBoxCards(elementId, timeString) {
+                const container = document.getElementById(elementId);
+                let cardsHtml =   ;
+                for (let char of timeString) {
+                    cardsHtml += `<div class="card">${char}</div>`;
+                }
+                container.innerHTML = cardsHtml;
+            }
+
+            // تحديث الواجهة لكل وحدة زمنية
+            updateBoxCards( days-box , daysStr);
+            updateBoxCards( hours-box , hoursStr);
+            updateBoxCards( minutes-box , minutesStr);
+            updateBoxCards( seconds-box , secondsStr);
+        }
+
+        // تشغيل العداد وتحديثه في نفس اللحظة وتكراره كل ثانية
+        updateCountdown();
+        const intervalId = setInterval(updateCountdown, 1000);
+    </script>
 
 </body>
 </html>
