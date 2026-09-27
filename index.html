@@ -1,6 +1,1334 @@
-<p class="codepen" data-height="" data-pen-title="Untitled" data-preview="" data-version="2" data-default-tab="html,result" data-slug-hash="PwpjeVQ" data-user="SAMI-M-ALSUBAIHI" style="height: 300px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;">
-  <span>See the Pen <a href="https://codepen.io/editor/SAMI-M-ALSUBAIHI/pen/01a0e4c3-5220-70c4-8892-9ad6c2a8ee86">
-  Untitled</a> by SAMI M ALSUBAIHI (<a href="https://codepen.io/SAMI-M-ALSUBAIHI">@SAMI-M-ALSUBAIHI</a>)
-  on <a href="https://codepen.io">CodePen</a>.</span>
-</p>
-<script async src="https://public.codepenassets.com/embed/index.js"></script>
+<xml xmlns="http://www.w3.org/1999/xhtml">
+  <block type="component_event" id="CL8n9q;8YwLnw[}M~#Y!" x="-3850" y="-10930">
+    <mutation component_type="Image" is_generic="false" instance_name="الساعه_والوضع" event_name="Click"></mutation>
+    <field name="COMPONENT_SELECTOR">الساعه_والوضع</field>
+    <statement name="DO">
+      <block type="controls_if" id="we4jraxPaS;x)}KSjv#=">
+        <mutation else="1"></mutation>
+        <value name="IF0">
+          <block type="logic_compare" id="4]Jx;P]$g!3N5Pbeg.Ma">
+            <field name="OP">EQ</field>
+            <value name="A">
+              <block type="lexical_variable_get" id="re)4U7S!fwn0B2#SAa9v">
+                <field name="VAR">global Light_State</field>
+              </block>
+            </value>
+            <value name="B">
+              <block type="logic_false" id="dRF!wW.;%=L#;H9usdQv">
+                <field name="BOOL">TRUE</field>
+              </block>
+            </value>
+          </block>
+        </value>
+        <statement name="DO0">
+          <block type="lexical_variable_set" id="zk)m]Q)yLWYY:O!ds(|,">
+            <field name="VAR">global Light_State</field>
+            <value name="VALUE">
+              <block type="logic_boolean" id="dVjy5Swa;kR~7ZxK`wa^">
+                <field name="BOOL">FALSE</field>
+              </block>
+            </value>
+            <next>
+              <block type="component_method" id="7_aK7*st=Wcnz(U6jMxx">
+                <mutation component_type="TinyDB" method_name="StoreValue" is_generic="false" instance_name="Tiny_DB1"></mutation>
+                <field name="COMPONENT_SELECTOR">Tiny_DB1</field>
+                <value name="ARG0">
+                  <block type="text" id="R6Yv;k-zG5dY:(1A~Rs[">
+                    <field name="TEXT">theme</field>
+                  </block>
+                </value>
+                <value name="ARG1">
+                  <block type="logic_boolean" id="(.p@w5JCC6~/]_rd/.-~">
+                    <field name="BOOL">FALSE</field>
+                  </block>
+                </value>
+                <next>
+                  <block type="procedures_callnoreturn" id="${($!I%.7;f$Dk_].b9^" inline="false">
+                    <mutation name="Ac_dark"></mutation>
+                    <field name="PROCNAME">Ac_dark</field>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </statement>
+        <statement name="ELSE">
+          <block type="lexical_variable_set" id="XEW(lgS-$Iq^gYDO`3Tt">
+            <field name="VAR">global Light_State</field>
+            <value name="VALUE">
+              <block type="logic_boolean" id="S4^C.I#b@{m2t_GaP{RX">
+                <field name="BOOL">TRUE</field>
+              </block>
+            </value>
+            <next>
+              <block type="component_method" id="c5N]:2!A+nHiy@A8y8.)">
+                <mutation component_type="TinyDB" method_name="StoreValue" is_generic="false" instance_name="Tiny_DB1"></mutation>
+                <field name="COMPONENT_SELECTOR">Tiny_DB1</field>
+                <value name="ARG0">
+                  <block type="text" id="[4e_YBJaVUH~;q7xKc8B">
+                    <field name="TEXT">theme</field>
+                  </block>
+                </value>
+                <value name="ARG1">
+                  <block type="logic_boolean" id="}VPl##Z?{yb!#UK6}$TB">
+                    <field name="BOOL">TRUE</field>
+                  </block>
+                </value>
+                <next>
+                  <block type="procedures_callnoreturn" id="kE`DktNqqf1b1Gg+B+J." inline="false">
+                    <mutation name="Ac_dark"></mutation>
+                    <field name="PROCNAME">Ac_dark</field>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </statement>
+      </block>
+    </statement>
+  </block>
+  <block type="component_event" id="w$zOfIz],j_d,YEgey.D" x="-5030" y="-10310">
+    <mutation component_type="Form" is_generic="false" instance_name="Screen_1_" event_name="Initialize"></mutation>
+    <field name="COMPONENT_SELECTOR">Screen_1_</field>
+    <statement name="DO">
+      <block type="procedures_callnoreturn" id="n=`_:cvu(WY6)f)Zw|I1" inline="false">
+        <mutation name="مقاسات_الهويه"></mutation>
+        <field name="PROCNAME">مقاسات_الهويه</field>
+        <next>
+          <block type="procedures_callnoreturn" id="*.H$Rmdv!1|mjvelU^3p" inline="false">
+            <mutation name="حاويه_1"></mutation>
+            <field name="PROCNAME">حاويه_1</field>
+            <next>
+              <block type="controls_if" id="qPz^fmU*+f6bw(B:zHb_" collapsed="true">
+                <mutation elseif="3"></mutation>
+                <value name="IF0">
+                  <block type="logic_compare" id="-2$08AGXr#Qd4x^zH$m{">
+                    <field name="OP">EQ</field>
+                    <value name="A">
+                      <block type="component_component_block" id="e2et-0x18k4N6{kDqfkK">
+                        <mutation component_type="VerticalScrollArrangement" instance_name="C_1"></mutation>
+                        <field name="COMPONENT_SELECTOR">C_1</field>
+                      </block>
+                    </value>
+                    <value name="B">
+                      <block type="text" id="L*Yo3OcCY)7]9lc(UV?N">
+                        <field name="TEXT">حاوية_بياناتي</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+                <statement name="DO0">
+                  <block type="procedures_callnoreturn" id="lfl[VZ:V8qEv_h^)_sXx" inline="false">
+                    <mutation name="لون_زر_بياناتي"></mutation>
+                    <field name="PROCNAME">لون_زر_بياناتي</field>
+                    <next>
+                      <block type="component_set_get" id="R#Wx8@CT@6J?%m=|BF?k">
+                        <mutation component_type="VerticalArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="الرائيسية_1"></mutation>
+                        <field name="COMPONENT_SELECTOR">الرائيسية_1</field>
+                        <field name="PROP">Visible</field>
+                        <value name="VALUE">
+                          <block type="logic_boolean" id=":cs1_?o0;4pwFpTk|v{S">
+                            <field name="BOOL">TRUE</field>
+                          </block>
+                        </value>
+                        <next>
+                          <block type="component_set_get" id="A`Enc7vb%J#ZqFjmLMmg">
+                            <mutation component_type="HorizontalArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="شريط_وسط"></mutation>
+                            <field name="COMPONENT_SELECTOR">شريط_وسط</field>
+                            <field name="PROP">Visible</field>
+                            <value name="VALUE">
+                              <block type="logic_boolean" id="QMO[xWD2M(Z~^2mxtG*7">
+                                <field name="BOOL">TRUE</field>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="component_set_get" id="9XSV2h7JL:uaq`Q:90QF">
+                                <mutation component_type="VerticalScrollArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="C_1"></mutation>
+                                <field name="COMPONENT_SELECTOR">C_1</field>
+                                <field name="PROP">Visible</field>
+                                <value name="VALUE">
+                                  <block type="logic_false" id="HnRx-8WGFIWz^7Cz4j37">
+                                    <field name="BOOL">TRUE</field>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="component_set_get" id="pPY,6=MrL76U2QgDsmJ[">
+                                    <mutation component_type="VerticalScrollArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="C_3"></mutation>
+                                    <field name="COMPONENT_SELECTOR">C_3</field>
+                                    <field name="PROP">Visible</field>
+                                    <value name="VALUE">
+                                      <block type="logic_false" id="iGI-BxW(2ihKUD]rG;1W">
+                                        <field name="BOOL">FALSE</field>
+                                      </block>
+                                    </value>
+                                    <next>
+                                      <block type="component_set_get" id="/Gl0@^td]nMI1^0h|xNP">
+                                        <mutation component_type="VerticalScrollArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="C_4"></mutation>
+                                        <field name="COMPONENT_SELECTOR">C_4</field>
+                                        <field name="PROP">Visible</field>
+                                        <value name="VALUE">
+                                          <block type="logic_false" id="J!s?-{%~PKLC/34Zo)u$">
+                                            <field name="BOOL">FALSE</field>
+                                          </block>
+                                        </value>
+                                        <next>
+                                          <block type="component_set_get" id="s_zs$0sO0%)rW~C3)2?9">
+                                            <mutation component_type="VerticalScrollArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="C_2"></mutation>
+                                            <field name="COMPONENT_SELECTOR">C_2</field>
+                                            <field name="PROP">Visible</field>
+                                            <value name="VALUE">
+                                              <block type="logic_boolean" id="Ye.gU86s-gQ)GC#AC]Yb">
+                                                <field name="BOOL">FALSE</field>
+                                              </block>
+                                            </value>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </statement>
+                <value name="IF1">
+                  <block type="logic_compare" id="n/C?X1c.7)):LklZ1Z}Y">
+                    <field name="OP">EQ</field>
+                    <value name="A">
+                      <block type="component_component_block" id="jW]~;sq]^91H+(8=!d7R">
+                        <mutation component_type="VerticalScrollArrangement" instance_name="C_2"></mutation>
+                        <field name="COMPONENT_SELECTOR">C_2</field>
+                      </block>
+                    </value>
+                    <value name="B">
+                      <block type="text" id="9L/0(M}71?:1keBtuvLU" collapsed="true">
+                        <field name="TEXT">حاوية_بطاقاتي</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+                <statement name="DO1">
+                  <block type="procedures_callnoreturn" id="[NZ0RltVMq52+vM,LsA{" inline="false">
+                    <mutation name="لون_زر_بطاقاتي"></mutation>
+                    <field name="PROCNAME">لون_زر_بطاقاتي</field>
+                    <next>
+                      <block type="component_set_get" id="@{pXIV]d=f#1DHHsI$(m">
+                        <mutation component_type="VerticalArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="الرائيسية_1"></mutation>
+                        <field name="COMPONENT_SELECTOR">الرائيسية_1</field>
+                        <field name="PROP">Visible</field>
+                        <value name="VALUE">
+                          <block type="logic_boolean" id="3R.Y,p9[)uA9,:1@,H^^">
+                            <field name="BOOL">TRUE</field>
+                          </block>
+                        </value>
+                        <next>
+                          <block type="component_set_get" id="0i=LGD!q~:~W{q9HjjD9">
+                            <mutation component_type="HorizontalArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="شريط_وسط"></mutation>
+                            <field name="COMPONENT_SELECTOR">شريط_وسط</field>
+                            <field name="PROP">Visible</field>
+                            <value name="VALUE">
+                              <block type="logic_boolean" id="j%f:tY(_h0g|FC?]f~n0">
+                                <field name="BOOL">TRUE</field>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="component_set_get" id="f0:?*5*#2}-#N[Ov0bCc">
+                                <mutation component_type="VerticalScrollArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="C_2"></mutation>
+                                <field name="COMPONENT_SELECTOR">C_2</field>
+                                <field name="PROP">Visible</field>
+                                <value name="VALUE">
+                                  <block type="logic_boolean" id="?[C~.WTW`#x^[8*anen0">
+                                    <field name="BOOL">TRUE</field>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="component_set_get" id="U0dZd*JrN+A0R|=g8kGz">
+                                    <mutation component_type="VerticalScrollArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="C_1"></mutation>
+                                    <field name="COMPONENT_SELECTOR">C_1</field>
+                                    <field name="PROP">Visible</field>
+                                    <value name="VALUE">
+                                      <block type="logic_false" id="x!WeVmV;GwH:l3H[nVc|">
+                                        <field name="BOOL">FALSE</field>
+                                      </block>
+                                    </value>
+                                    <next>
+                                      <block type="component_set_get" id=",GdwcyOOPZJX[(I760=T">
+                                        <mutation component_type="VerticalScrollArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="C_3"></mutation>
+                                        <field name="COMPONENT_SELECTOR">C_3</field>
+                                        <field name="PROP">Visible</field>
+                                        <value name="VALUE">
+                                          <block type="logic_false" id="vpA5WxGE(~c4fXIATvJ(">
+                                            <field name="BOOL">FALSE</field>
+                                          </block>
+                                        </value>
+                                        <next>
+                                          <block type="component_set_get" id="1/Ic4pM?h?Wu:P-/dGIC">
+                                            <mutation component_type="VerticalScrollArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="C_4"></mutation>
+                                            <field name="COMPONENT_SELECTOR">C_4</field>
+                                            <field name="PROP">Visible</field>
+                                            <value name="VALUE">
+                                              <block type="logic_false" id="KU!LPnO;`%FUZQ*x,JF^">
+                                                <field name="BOOL">FALSE</field>
+                                              </block>
+                                            </value>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </statement>
+                <value name="IF2">
+                  <block type="logic_compare" id=")lD;{2?.k#%d((Zh$~.8">
+                    <field name="OP">EQ</field>
+                    <value name="A">
+                      <block type="component_component_block" id="rN-D:zua2a~$o.|F4JlS">
+                        <mutation component_type="VerticalScrollArrangement" instance_name="C_3"></mutation>
+                        <field name="COMPONENT_SELECTOR">C_3</field>
+                      </block>
+                    </value>
+                    <value name="B">
+                      <block type="text" id="nJ2u{/|u8N9uIb_}xW{?">
+                        <field name="TEXT">حاوية_مستنداتي</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+                <statement name="DO2">
+                  <block type="procedures_callnoreturn" id=".p_)BOVa=T~at^7RLulx" inline="false">
+                    <mutation name="لون_زر_مستنداتي"></mutation>
+                    <field name="PROCNAME">لون_زر_مستنداتي</field>
+                    <next>
+                      <block type="component_set_get" id="ZDsvOcr8o8814%oqU_7P">
+                        <mutation component_type="VerticalArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="الرائيسية_1"></mutation>
+                        <field name="COMPONENT_SELECTOR">الرائيسية_1</field>
+                        <field name="PROP">Visible</field>
+                        <value name="VALUE">
+                          <block type="logic_boolean" id="sELI(9d.01SmlzDJBOK7">
+                            <field name="BOOL">TRUE</field>
+                          </block>
+                        </value>
+                        <next>
+                          <block type="component_set_get" id=",zq)5XSpK1gv-Zs!M-R+">
+                            <mutation component_type="HorizontalArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="شريط_وسط"></mutation>
+                            <field name="COMPONENT_SELECTOR">شريط_وسط</field>
+                            <field name="PROP">Visible</field>
+                            <value name="VALUE">
+                              <block type="logic_boolean" id=")R2o7;HoB)fh4Xgc{[+,">
+                                <field name="BOOL">TRUE</field>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="component_set_get" id="k}eMh=fPtcPi0{N!B+al">
+                                <mutation component_type="VerticalScrollArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="C_3"></mutation>
+                                <field name="COMPONENT_SELECTOR">C_3</field>
+                                <field name="PROP">Visible</field>
+                                <value name="VALUE">
+                                  <block type="logic_false" id="~X#-a_$cT}qEYEoB.5||">
+                                    <field name="BOOL">TRUE</field>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="component_set_get" id="yboC5=?NN~zmQpm7_-;k">
+                                    <mutation component_type="VerticalScrollArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="C_4"></mutation>
+                                    <field name="COMPONENT_SELECTOR">C_4</field>
+                                    <field name="PROP">Visible</field>
+                                    <value name="VALUE">
+                                      <block type="logic_false" id="vD:_H(_1zLSWz$-fe;~P">
+                                        <field name="BOOL">FALSE</field>
+                                      </block>
+                                    </value>
+                                    <next>
+                                      <block type="component_set_get" id=":mm-,piy+Gy)xuW[8:yN">
+                                        <mutation component_type="VerticalScrollArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="C_2"></mutation>
+                                        <field name="COMPONENT_SELECTOR">C_2</field>
+                                        <field name="PROP">Visible</field>
+                                        <value name="VALUE">
+                                          <block type="logic_boolean" id="J96DUYfJ!}c]uV!vd1mV">
+                                            <field name="BOOL">FALSE</field>
+                                          </block>
+                                        </value>
+                                        <next>
+                                          <block type="component_set_get" id="A3yQsqlXZB5=^5$/{#v4">
+                                            <mutation component_type="VerticalScrollArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="C_1"></mutation>
+                                            <field name="COMPONENT_SELECTOR">C_1</field>
+                                            <field name="PROP">Visible</field>
+                                            <value name="VALUE">
+                                              <block type="logic_false" id="NLB9n=#BwKM[~juW6[U(">
+                                                <field name="BOOL">FALSE</field>
+                                              </block>
+                                            </value>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </statement>
+                <value name="IF3">
+                  <block type="logic_compare" id="oh]KU?Lgv{k,8*Mn[-/Z">
+                    <field name="OP">EQ</field>
+                    <value name="A">
+                      <block type="component_component_block" id="^d)gi*9z03GE5s9J{aJ9">
+                        <mutation component_type="VerticalScrollArrangement" instance_name="C_4"></mutation>
+                        <field name="COMPONENT_SELECTOR">C_4</field>
+                      </block>
+                    </value>
+                    <value name="B">
+                      <block type="text" id="v4Vi~6[Dm.^@EdE+?Xb?">
+                        <field name="TEXT">حاوية_مستنداتي</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+                <statement name="DO3">
+                  <block type="procedures_callnoreturn" id="GKSloy}4,qIyu|}T=rGd" inline="false">
+                    <mutation name="لون_زر_سيرتي"></mutation>
+                    <field name="PROCNAME">لون_زر_سيرتي</field>
+                    <next>
+                      <block type="component_set_get" id="ouL9n1qM7WGpLst-vmD/">
+                        <mutation component_type="VerticalArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="الرائيسية_1"></mutation>
+                        <field name="COMPONENT_SELECTOR">الرائيسية_1</field>
+                        <field name="PROP">Visible</field>
+                        <value name="VALUE">
+                          <block type="logic_boolean" id="rOxVgQ:ML3ETeS#^u)O+">
+                            <field name="BOOL">TRUE</field>
+                          </block>
+                        </value>
+                        <next>
+                          <block type="component_set_get" id="kR=[{uKSfq}ARy)=lQL^">
+                            <mutation component_type="HorizontalArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="شريط_وسط"></mutation>
+                            <field name="COMPONENT_SELECTOR">شريط_وسط</field>
+                            <field name="PROP">Visible</field>
+                            <value name="VALUE">
+                              <block type="logic_boolean" id="UKnsWaWnLZ/?T)7^jc%y">
+                                <field name="BOOL">TRUE</field>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="component_set_get" id="76}rIdd/s#gKLu9tWUR@">
+                                <mutation component_type="VerticalScrollArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="C_4"></mutation>
+                                <field name="COMPONENT_SELECTOR">C_4</field>
+                                <field name="PROP">Visible</field>
+                                <value name="VALUE">
+                                  <block type="logic_false" id="*;~O_Ds2+Vezv,H)#5}i">
+                                    <field name="BOOL">TRUE</field>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="component_set_get" id="TbtsomE#fA:2W.ep|j(|">
+                                    <mutation component_type="VerticalScrollArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="C_2"></mutation>
+                                    <field name="COMPONENT_SELECTOR">C_2</field>
+                                    <field name="PROP">Visible</field>
+                                    <value name="VALUE">
+                                      <block type="logic_boolean" id="qvQLQh/2KV1~|a]x_R+C">
+                                        <field name="BOOL">FALSE</field>
+                                      </block>
+                                    </value>
+                                    <next>
+                                      <block type="component_set_get" id="/%+yIYp2~CP2H83%43_O">
+                                        <mutation component_type="VerticalScrollArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="C_1"></mutation>
+                                        <field name="COMPONENT_SELECTOR">C_1</field>
+                                        <field name="PROP">Visible</field>
+                                        <value name="VALUE">
+                                          <block type="logic_false" id="3E9g~iQ2~E,mC`C`(CV]">
+                                            <field name="BOOL">FALSE</field>
+                                          </block>
+                                        </value>
+                                        <next>
+                                          <block type="component_set_get" id="eMggxgnqDe,}VaVx^#39">
+                                            <mutation component_type="VerticalScrollArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="C_3"></mutation>
+                                            <field name="COMPONENT_SELECTOR">C_3</field>
+                                            <field name="PROP">Visible</field>
+                                            <value name="VALUE">
+                                              <block type="logic_false" id="5zNA;jI{_w[#-aF_/+t]">
+                                                <field name="BOOL">FALSE</field>
+                                              </block>
+                                            </value>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </statement>
+                <next>
+                  <block type="procedures_callnoreturn" id="$z/^89{dsTmUmL)$bp[V" inline="false">
+                    <mutation name="حاويات_منبثقة"></mutation>
+                    <field name="PROCNAME">حاويات_منبثقة</field>
+                    <next>
+                      <block type="component_method" id="5`4tta;7sL|.,qg:JWU+" collapsed="true">
+                        <mutation component_type="CustomWebView" method_name="GoToUrl" is_generic="false" instance_name="CustomWebView1"></mutation>
+                        <field name="COMPONENT_SELECTOR">CustomWebView1</field>
+                        <value name="ARG0">
+                          <block type="component_method" id="%Gt7h#YZPZC.-[?1)1s-">
+                            <mutation component_type="TinyDB" method_name="GetValue" is_generic="false" instance_name="Tiny_DB1"></mutation>
+                            <field name="COMPONENT_SELECTOR">Tiny_DB1</field>
+                            <value name="ARG0">
+                              <block type="text" id="j5`,.xJi6$~!6r7iQLvr" collapsed="true">
+                                <field name="TEXT">last_pages2</field>
+                              </block>
+                            </value>
+                            <value name="ARG1">
+                              <block type="text" id="(-wJnE}:=Kkn2Izzs-Fh">
+                                <field name="TEXT">https://sdaia.gov.sa/ar/default.aspx</field>
+                              </block>
+                            </value>
+                          </block>
+                        </value>
+                        <next>
+                          <block type="controls_if" id="2;_s.T|$-u/lJL5BTUB9" collapsed="true">
+                            <mutation else="1"></mutation>
+                            <value name="IF0">
+                              <block type="logic_compare" id="^o)yzfox.1vqhQBkF^e=">
+                                <field name="OP">EQ</field>
+                                <value name="A">
+                                  <block type="component_method" id="J):jLyY.30I4Ky_vJ/Ov">
+                                    <mutation component_type="TinyDB" method_name="GetValue" is_generic="false" instance_name="Tiny_DB1"></mutation>
+                                    <field name="COMPONENT_SELECTOR">Tiny_DB1</field>
+                                    <value name="ARG0">
+                                      <block type="text" id="aoR0xEI*a7xu`w}_kotI">
+                                        <field name="TEXT">Carsss</field>
+                                      </block>
+                                    </value>
+                                    <value name="ARG1">
+                                      <block type="text" id="W%IR:E5)(I9#?//O`}9g" collapsed="true">
+                                        <field name="TEXT">star_outline</field>
+                                      </block>
+                                    </value>
+                                  </block>
+                                </value>
+                                <value name="B">
+                                  <block type="text" id="L-`?k!.C5k*5kDnCw_)B" collapsed="true">
+                                    <field name="TEXT">grade</field>
+                                  </block>
+                                </value>
+                              </block>
+                            </value>
+                            <statement name="DO0">
+                              <block type="component_set_get" id="[NGEx8ba^ZkX3zH%yk=o">
+                                <mutation component_type="HorizontalArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="مفضليه_الهويه"></mutation>
+                                <field name="COMPONENT_SELECTOR">مفضليه_الهويه</field>
+                                <field name="PROP">Visible</field>
+                                <value name="VALUE">
+                                  <block type="logic_boolean" id="Kz@sZv=%4FQSJcxzd;qc">
+                                    <field name="BOOL">TRUE</field>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="component_set_get" id="t!Y6@=ax?f8IVFnTV/`V">
+                                    <mutation component_type="Image" set_or_get="set" property_name="Picture" is_generic="false" instance_name="منضلية_الهويه"></mutation>
+                                    <field name="COMPONENT_SELECTOR">منضلية_الهويه</field>
+                                    <field name="PROP">Picture</field>
+                                    <value name="VALUE">
+                                      <block type="component_method" id="p~o9z;r}SpWD,hw0yg.`">
+                                        <mutation component_type="TinyDB" method_name="GetValue" is_generic="false" instance_name="Tiny_DB1"></mutation>
+                                        <field name="COMPONENT_SELECTOR">Tiny_DB1</field>
+                                        <value name="ARG0">
+                                          <block type="text" id="%n]Zs*P}TLH^t,JKR#~!">
+                                            <field name="TEXT">hoiaa1</field>
+                                          </block>
+                                        </value>
+                                        <value name="ARG1">
+                                          <block type="text" id="?QE-M=9^Hrs%9/#W,s9,">
+                                            <field name="TEXT"></field>
+                                          </block>
+                                        </value>
+                                      </block>
+                                    </value>
+                                  </block>
+                                </next>
+                              </block>
+                            </statement>
+                            <statement name="ELSE">
+                              <block type="component_set_get" id="8x~UT+.F_pT3a#op`lmw">
+                                <mutation component_type="HorizontalArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="مفضليه_الهويه"></mutation>
+                                <field name="COMPONENT_SELECTOR">مفضليه_الهويه</field>
+                                <field name="PROP">Visible</field>
+                                <value name="VALUE">
+                                  <block type="logic_boolean" id="(LyN%$2b^uYuuM3eU(|)">
+                                    <field name="BOOL">FALSE</field>
+                                  </block>
+                                </value>
+                              </block>
+                            </statement>
+                            <next>
+                              <block type="component_set_get" id="WOWxuf^,X9i11zU(Vnfy" collapsed="true">
+                                <mutation component_type="VerticalArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="معك_في_كل_مدينة"></mutation>
+                                <field name="COMPONENT_SELECTOR">معك_في_كل_مدينة</field>
+                                <field name="PROP">Visible</field>
+                                <value name="VALUE">
+                                  <block type="logic_false" id="#^;RDX~(!=[F}lA$1=cZ">
+                                    <field name="BOOL">TRUE</field>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="controls_if" id="PML;zEJ!RPv:p}rK3;T?" collapsed="true">
+                                    <mutation else="1"></mutation>
+                                    <value name="IF0">
+                                      <block type="logic_compare" id="mnJU4OZNN`n#w$!F;;Sq">
+                                        <field name="OP">EQ</field>
+                                        <value name="A">
+                                          <block type="component_method" id="=#8spt.Llqt6Hv+TT$O0">
+                                            <mutation component_type="TinyDB" method_name="GetValue" is_generic="false" instance_name="Tiny_DB1"></mutation>
+                                            <field name="COMPONENT_SELECTOR">Tiny_DB1</field>
+                                            <value name="ARG0">
+                                              <block type="text" id="2lE!iyNOAIyj$c`R1f#2" collapsed="true">
+                                                <field name="TEXT">Carsss</field>
+                                              </block>
+                                            </value>
+                                            <value name="ARG1">
+                                              <block type="text" id="6kPKmS-H{!*ZCGo#e5~I" collapsed="true">
+                                                <field name="TEXT">star_outline</field>
+                                              </block>
+                                            </value>
+                                          </block>
+                                        </value>
+                                        <value name="B">
+                                          <block type="text" id="tLGkejm~V.,7~|9NiY33" collapsed="true">
+                                            <field name="TEXT">grade</field>
+                                          </block>
+                                        </value>
+                                      </block>
+                                    </value>
+                                    <statement name="DO0">
+                                      <block type="component_set_get" id="U^fc9T.Px(l}EHuw8rK$">
+                                        <mutation component_type="Button" set_or_get="set" property_name="Text" is_generic="false" instance_name="المفضلة"></mutation>
+                                        <field name="COMPONENT_SELECTOR">المفضلة</field>
+                                        <field name="PROP">Text</field>
+                                        <value name="VALUE">
+                                          <block type="text" id="p[$Xm~^ly5j/CP72,+FF">
+                                            <field name="TEXT">grade</field>
+                                          </block>
+                                        </value>
+                                        <next>
+                                          <block type="component_set_get" id="NV$9{#ro)Wau*+#v$Y%}">
+                                            <mutation component_type="Button" set_or_get="set" property_name="TextColor" is_generic="false" instance_name="المفضلة"></mutation>
+                                            <field name="COMPONENT_SELECTOR">المفضلة</field>
+                                            <field name="PROP">TextColor</field>
+                                            <value name="VALUE">
+                                              <block type="color_yellow" id="R0mT,JVD/Vd#!blvJ@Xw">
+                                                <field name="COLOR">#ffcc33</field>
+                                              </block>
+                                            </value>
+                                            <next>
+                                              <block type="component_method" id="=4__f*)P/w]Qg#b`?btn" collapsed="true">
+                                                <mutation component_type="TinyDB" method_name="StoreValue" is_generic="false" instance_name="Tiny_DB1"></mutation>
+                                                <field name="COMPONENT_SELECTOR">Tiny_DB1</field>
+                                                <value name="ARG0">
+                                                  <block type="text" id="fFcm/r-2A!+pGYrl!zu7">
+                                                    <field name="TEXT">hoiaa1</field>
+                                                  </block>
+                                                </value>
+                                                <value name="ARG1">
+                                                  <block type="component_set_get" id="03dW5o^_#%K)bJ{5ZY,%">
+                                                    <mutation component_type="VerticalArrangement" set_or_get="get" property_name="Image" is_generic="false" instance_name="حاويه_الهوية"></mutation>
+                                                    <field name="COMPONENT_SELECTOR">حاويه_الهوية</field>
+                                                    <field name="PROP">Image</field>
+                                                  </block>
+                                                </value>
+                                              </block>
+                                            </next>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </statement>
+                                    <statement name="ELSE">
+                                      <block type="component_set_get" id="DSW35VVRS?djnCZHgtD1">
+                                        <mutation component_type="Button" set_or_get="set" property_name="Text" is_generic="false" instance_name="المفضلة"></mutation>
+                                        <field name="COMPONENT_SELECTOR">المفضلة</field>
+                                        <field name="PROP">Text</field>
+                                        <value name="VALUE">
+                                          <block type="text" id="9MU#,1uF-iRRW!XxYh5f">
+                                            <field name="TEXT">star_outline</field>
+                                          </block>
+                                        </value>
+                                        <next>
+                                          <block type="component_set_get" id="kCqGi{*6wscU8WtuI~5?">
+                                            <mutation component_type="Button" set_or_get="set" property_name="TextColor" is_generic="false" instance_name="المفضلة"></mutation>
+                                            <field name="COMPONENT_SELECTOR">المفضلة</field>
+                                            <field name="PROP">TextColor</field>
+                                            <value name="VALUE">
+                                              <block type="color_yellow" id="|n{*i*=/OYs0Gm!D:RJ;">
+                                                <field name="COLOR">#999999</field>
+                                              </block>
+                                            </value>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </statement>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+  </block>
+  <block type="component_event" id="m]78zWpRkuyg`Vz3Dn9~" x="-2850" y="-9670">
+    <mutation component_type="Button" is_generic="false" instance_name="المفضلة" event_name="Click"></mutation>
+    <field name="COMPONENT_SELECTOR">المفضلة</field>
+    <statement name="DO">
+      <block type="controls_if" id="by*Y6qY$E4k*H^qg3zdn" collapsed="true">
+        <mutation else="1"></mutation>
+        <value name="IF0">
+          <block type="logic_compare" id="R?ycdbPuy1Yi/}r#ilCa">
+            <field name="OP">EQ</field>
+            <value name="A">
+              <block type="component_set_get" id="Bf?QlE6vMGvFw~/Z`h`r">
+                <mutation component_type="Button" set_or_get="get" property_name="Text" is_generic="false" instance_name="المفضلة"></mutation>
+                <field name="COMPONENT_SELECTOR">المفضلة</field>
+                <field name="PROP">Text</field>
+              </block>
+            </value>
+            <value name="B">
+              <block type="text" id="j.pYTD2fr4tQUA+XQ:yu">
+                <field name="TEXT">star_outline</field>
+              </block>
+            </value>
+          </block>
+        </value>
+        <statement name="DO0">
+          <block type="component_set_get" id="#FUWtjZv^!J%2PZAKA/)">
+            <mutation component_type="Button" set_or_get="set" property_name="Text" is_generic="false" instance_name="المفضلة"></mutation>
+            <field name="COMPONENT_SELECTOR">المفضلة</field>
+            <field name="PROP">Text</field>
+            <value name="VALUE">
+              <block type="text" id="S{i[]3iX@eNFq)!?*wO7">
+                <field name="TEXT">grade</field>
+              </block>
+            </value>
+            <next>
+              <block type="component_set_get" id="dLx`u;Zzq}HKNhP1q%9L">
+                <mutation component_type="Button" set_or_get="set" property_name="TextColor" is_generic="false" instance_name="المفضلة"></mutation>
+                <field name="COMPONENT_SELECTOR">المفضلة</field>
+                <field name="PROP">TextColor</field>
+                <value name="VALUE">
+                  <block type="color_yellow" id="]T!fFn6/o~/QL*v)%-]=">
+                    <field name="COLOR">#ffcc33</field>
+                  </block>
+                </value>
+                <next>
+                  <block type="component_method" id="o2~.M@_$1i5tGIpX?V^y">
+                    <mutation component_type="TinyDB" method_name="StoreValue" is_generic="false" instance_name="Tiny_DB1"></mutation>
+                    <field name="COMPONENT_SELECTOR">Tiny_DB1</field>
+                    <value name="ARG0">
+                      <block type="text" id="k_CoSj7*I]C$JX+B8O#-">
+                        <field name="TEXT">Carsss</field>
+                      </block>
+                    </value>
+                    <value name="ARG1">
+                      <block type="text" id="EZ$RyL#KGBCmn}37C~-u">
+                        <field name="TEXT">grade</field>
+                      </block>
+                    </value>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </statement>
+        <statement name="ELSE">
+          <block type="component_set_get" id="}z9L~HOHq-J?~{1%oxZ]">
+            <mutation component_type="Button" set_or_get="set" property_name="Text" is_generic="false" instance_name="المفضلة"></mutation>
+            <field name="COMPONENT_SELECTOR">المفضلة</field>
+            <field name="PROP">Text</field>
+            <value name="VALUE">
+              <block type="text" id="AgP(*2iuu?rn7Fe~@V-b">
+                <field name="TEXT">star_outline</field>
+              </block>
+            </value>
+            <next>
+              <block type="component_set_get" id="G=jxJ5{sSVD%Djv%b+H9">
+                <mutation component_type="Button" set_or_get="set" property_name="TextColor" is_generic="false" instance_name="المفضلة"></mutation>
+                <field name="COMPONENT_SELECTOR">المفضلة</field>
+                <field name="PROP">TextColor</field>
+                <value name="VALUE">
+                  <block type="color_yellow" id="0S_0CB#$,JyJTtcm31xw">
+                    <field name="COLOR">#999999</field>
+                  </block>
+                </value>
+                <next>
+                  <block type="component_method" id="Gk;xSY3,kfzj*kKsfTZ-">
+                    <mutation component_type="TinyDB" method_name="StoreValue" is_generic="false" instance_name="Tiny_DB1"></mutation>
+                    <field name="COMPONENT_SELECTOR">Tiny_DB1</field>
+                    <value name="ARG0">
+                      <block type="text" id="t#2bYBRRPb/IL|~9dZ))">
+                        <field name="TEXT">Carsss</field>
+                      </block>
+                    </value>
+                    <value name="ARG1">
+                      <block type="text" id="+yL%MZObEwhs^u=Z{IP4" collapsed="true">
+                        <field name="TEXT">star_outline</field>
+                      </block>
+                    </value>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </statement>
+      </block>
+    </statement>
+  </block>
+  <block type="component_event" id="oj+ETtj*-,WYoYH,xKAU" x="-2893" y="-9509">
+    <mutation component_type="HorizontalArrangement" is_generic="false" instance_name="حاويه_صوره_شخصيه_1" event_name="Click"></mutation>
+    <field name="COMPONENT_SELECTOR">حاويه_صوره_شخصيه_1</field>
+    <statement name="DO">
+      <block type="component_set_get" id="UU@qYDR#;m.*_bx1_bj}">
+        <mutation component_type="HorizontalArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="حاويه_حجب_الصوره"></mutation>
+        <field name="COMPONENT_SELECTOR">حاويه_حجب_الصوره</field>
+        <field name="PROP">Visible</field>
+        <value name="VALUE">
+          <block type="logic_boolean" id="[b$tdo?#,:hx;1)O=^V|">
+            <field name="BOOL">TRUE</field>
+          </block>
+        </value>
+      </block>
+    </statement>
+  </block>
+  <block type="component_event" id="jgbivNT9(L-CaBBQdr*G" x="-2850" y="-9430">
+    <mutation component_type="HorizontalArrangement" is_generic="false" instance_name="حاويه_حجب_الصوره" event_name="Click"></mutation>
+    <field name="COMPONENT_SELECTOR">حاويه_حجب_الصوره</field>
+    <statement name="DO">
+      <block type="component_set_get" id="18,bXa$_,I[Iv(wXp@M`">
+        <mutation component_type="HorizontalArrangement" set_or_get="set" property_name="Visible" is_generic="false" instance_name="حاويه_حجب_الصوره"></mutation>
+        <field name="COMPONENT_SELECTOR">حاويه_حجب_الصوره</field>
+        <field name="PROP">Visible</field>
+        <value name="VALUE">
+          <block type="logic_boolean" id="lCbS9US-}+KrRE5V7NKc">
+            <field name="BOOL">FALSE</field>
+          </block>
+        </value>
+      </block>
+    </statement>
+  </block>
+  <block type="component_event" id="JJ^_0BTqF!z=qV.vA+c," x="-2870" y="-9350">
+    <mutation component_type="Clock" is_generic="false" instance_name="Clock1" event_name="Timer"></mutation>
+    <field name="COMPONENT_SELECTOR">Clock1</field>
+    <statement name="DO">
+      <block type="component_set_get" id="y`=WgR`g-.7g@{lI2)K$" collapsed="true">
+        <mutation component_type="Label" set_or_get="set" property_name="Text" is_generic="false" instance_name="تاريخ"></mutation>
+        <field name="COMPONENT_SELECTOR">تاريخ</field>
+        <field name="PROP">Text</field>
+        <value name="VALUE">
+          <block type="component_method" id="myJY,I(xo;?KgK`F%8V;">
+            <mutation component_type="Clock" method_name="FormatDateTime" is_generic="false" instance_name="Clock1"></mutation>
+            <field name="COMPONENT_SELECTOR">Clock1</field>
+            <value name="ARG0">
+              <block type="component_method" id="Vb-0MzMuQe_`R648qgE8">
+                <mutation component_type="Clock" method_name="Now" is_generic="false" instance_name="Clock1"></mutation>
+                <field name="COMPONENT_SELECTOR">Clock1</field>
+              </block>
+            </value>
+            <value name="ARG1">
+              <block type="text" id=";IN_{yBG2YY1gc^IV+*j" collapsed="true">
+                <field name="TEXT">yyyy-MM-dd</field>
+              </block>
+            </value>
+          </block>
+        </value>
+        <next>
+          <block type="component_set_get" id="2hE|5(3hqyifPNwtWloR" collapsed="true">
+            <mutation component_type="Label" set_or_get="set" property_name="Text" is_generic="false" instance_name="وقت"></mutation>
+            <field name="COMPONENT_SELECTOR">وقت</field>
+            <field name="PROP">Text</field>
+            <value name="VALUE">
+              <block type="component_method" id="oMWt}[rAfqzYp8C2~Xhc">
+                <mutation component_type="Clock" method_name="FormatDate" is_generic="false" instance_name="Clock1"></mutation>
+                <field name="COMPONENT_SELECTOR">Clock1</field>
+                <value name="ARG0">
+                  <block type="component_method" id="uo6j`%tv/9:g11-_YXXr">
+                    <mutation component_type="Clock" method_name="Now" is_generic="false" instance_name="Clock1"></mutation>
+                    <field name="COMPONENT_SELECTOR">Clock1</field>
+                  </block>
+                </value>
+                <value name="ARG1">
+                  <block type="text" id="5}gRcDBtz2TW(YIg_p.5">
+                    <field name="TEXT">HH:mm:ss</field>
+                  </block>
+                </value>
+              </block>
+            </value>
+          </block>
+        </next>
+      </block>
+    </statement>
+  </block>
+  <block type="procedures_defnoreturn" id="Ewo)71s.B9F$NX7*#/SU" collapsed="true" x="-2850" y="-9250">
+    <field name="NAME">مقاسات_الهويه</field>
+    <statement name="STACK">
+      <block type="component_set_get" id=".[GtR=~jjXc|n-1o#=nu">
+        <mutation component_type="SpaceView" set_or_get="set" property_name="HeightPercent" is_generic="false" instance_name="فاصله_1_H"></mutation>
+        <field name="COMPONENT_SELECTOR">فاصله_1_H</field>
+        <field name="PROP">HeightPercent</field>
+        <value name="VALUE">
+          <block type="math_number" id="(TnQ`.=E8.:G06KdX_Fg">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <next>
+          <block type="component_set_get" id="51guh}QO:PQ6~@B_+^mx">
+            <mutation component_type="SpaceView" set_or_get="set" property_name="HeightPercent" is_generic="false" instance_name="فاصله_13_w"></mutation>
+            <field name="COMPONENT_SELECTOR">فاصله_13_w</field>
+            <field name="PROP">HeightPercent</field>
+            <value name="VALUE">
+              <block type="math_number" id="l{0xsp,SHM{Iuh|4x=VF">
+                <field name="NUM">13</field>
+              </block>
+            </value>
+            <next>
+              <block type="component_set_get" id="k(H!$4kWT;Y$MPM%g6!{">
+                <mutation component_type="SpaceView" set_or_get="set" property_name="WidthPercent" is_generic="false" instance_name="فاصلة_w_2"></mutation>
+                <field name="COMPONENT_SELECTOR">فاصلة_w_2</field>
+                <field name="PROP">WidthPercent</field>
+                <value name="VALUE">
+                  <block type="math_number" id="(s{V*~U-?AB$tG(yQ+2$">
+                    <field name="NUM">2</field>
+                  </block>
+                </value>
+                <next>
+                  <block type="component_set_get" id=")k{m]2uW=_@`zPKkaUG^">
+                    <mutation component_type="SpaceView" set_or_get="set" property_name="WidthPercent" is_generic="false" instance_name="فاصله_w5"></mutation>
+                    <field name="COMPONENT_SELECTOR">فاصله_w5</field>
+                    <field name="PROP">WidthPercent</field>
+                    <value name="VALUE">
+                      <block type="math_number" id="??7Xh9RUkKeI~V(v$b:-">
+                        <field name="NUM">5</field>
+                      </block>
+                    </value>
+                    <next>
+                      <block type="component_set_get" id="Ob*|XI|ejZO-U]DW[Em*">
+                        <mutation component_type="SpaceView" set_or_get="set" property_name="HeightPercent" is_generic="false" instance_name="فاصله_h_1"></mutation>
+                        <field name="COMPONENT_SELECTOR">فاصله_h_1</field>
+                        <field name="PROP">HeightPercent</field>
+                        <value name="VALUE">
+                          <block type="math_number" id="c#B:v+wcXRj}2,Sjr$)T">
+                            <field name="NUM">1</field>
+                          </block>
+                        </value>
+                        <next>
+                          <block type="component_set_get" id="7)|X*BB|%QKZ@w_}s}dT">
+                            <mutation component_type="SpaceView" set_or_get="set" property_name="WidthPercent" is_generic="false" instance_name="فاصلة_w_2"></mutation>
+                            <field name="COMPONENT_SELECTOR">فاصلة_w_2</field>
+                            <field name="PROP">WidthPercent</field>
+                            <value name="VALUE">
+                              <block type="math_number" id=",j8XbYJU@|m+l;B2}=7m">
+                                <field name="NUM">2</field>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="component_set_get" id="O3H/x_TK8$|q*6@N;*%-">
+                                <mutation component_type="SpaceView" set_or_get="set" property_name="WidthPercent" is_generic="false" instance_name="فاصلة_w_2"></mutation>
+                                <field name="COMPONENT_SELECTOR">فاصلة_w_2</field>
+                                <field name="PROP">WidthPercent</field>
+                                <value name="VALUE">
+                                  <block type="math_number" id="#aDlp9,8|a^4}dK)uU1l" collapsed="true">
+                                    <field name="NUM">2</field>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="component_set_get" id="^-rl:WLq;l;TyrQcKUh]">
+                                    <mutation component_type="SpaceView" set_or_get="set" property_name="WidthPercent" is_generic="false" instance_name="فاصله_w_2"></mutation>
+                                    <field name="COMPONENT_SELECTOR">فاصله_w_2</field>
+                                    <field name="PROP">WidthPercent</field>
+                                    <value name="VALUE">
+                                      <block type="math_number" id="Q8.f^M8H@U88(j?{n?Wf">
+                                        <field name="NUM">2</field>
+                                      </block>
+                                    </value>
+                                    <next>
+                                      <block type="component_set_get" id="^oo+9qI7?($6:^-G@^8|">
+                                        <mutation component_type="SpaceView" set_or_get="set" property_name="Height" is_generic="false" instance_name="فاصله_H_2px"></mutation>
+                                        <field name="COMPONENT_SELECTOR">فاصله_H_2px</field>
+                                        <field name="PROP">Height</field>
+                                        <value name="VALUE">
+                                          <block type="math_number" id="d@{yjvyp+3xLkG^I!_[S" collapsed="true">
+                                            <field name="NUM">2</field>
+                                          </block>
+                                        </value>
+                                        <next>
+                                          <block type="component_set_get" id="_9oJ2LA8_Rz;{e!82=A[">
+                                            <mutation component_type="SpaceView" set_or_get="set" property_name="WidthPercent" is_generic="false" instance_name="فالصله_w8"></mutation>
+                                            <field name="COMPONENT_SELECTOR">فالصله_w8</field>
+                                            <field name="PROP">WidthPercent</field>
+                                            <value name="VALUE">
+                                              <block type="math_number" id="znV6lIxcd_WnI7Pq4rwU">
+                                                <field name="NUM">8</field>
+                                              </block>
+                                            </value>
+                                            <next>
+                                              <block type="component_set_get" id="OUo}lB4GT7IQsb;eF=4A">
+                                                <mutation component_type="Label" set_or_get="set" property_name="FontSize" is_generic="false" instance_name="نص_1_8"></mutation>
+                                                <field name="COMPONENT_SELECTOR">نص_1_8</field>
+                                                <field name="PROP">FontSize</field>
+                                                <value name="VALUE">
+                                                  <block type="math_number" id="B/z}h-$?6I3ic4!+BI|g">
+                                                    <field name="NUM">8</field>
+                                                  </block>
+                                                </value>
+                                                <next>
+                                                  <block type="component_set_get" id="Cl2{5}#10I=TR(Q^]IE!">
+                                                    <mutation component_type="Label" set_or_get="set" property_name="FontSize" is_generic="false" instance_name="نص_2_8"></mutation>
+                                                    <field name="COMPONENT_SELECTOR">نص_2_8</field>
+                                                    <field name="PROP">FontSize</field>
+                                                    <value name="VALUE">
+                                                      <block type="math_number" id="Q@QSCX/ZOLo2lHp]#y|R" collapsed="true">
+                                                        <field name="NUM">8</field>
+                                                      </block>
+                                                    </value>
+                                                    <next>
+                                                      <block type="component_set_get" id="kj7qMzTlK%Mhf395=O80">
+                                                        <mutation component_type="Label" set_or_get="set" property_name="FontSize" is_generic="false" instance_name="نص_3_8"></mutation>
+                                                        <field name="COMPONENT_SELECTOR">نص_3_8</field>
+                                                        <field name="PROP">FontSize</field>
+                                                        <value name="VALUE">
+                                                          <block type="math_number" id="hVzya/WNinvm1Vv8*Kx}">
+                                                            <field name="NUM">8</field>
+                                                          </block>
+                                                        </value>
+                                                        <next>
+                                                          <block type="component_set_get" id="E3eAlfvqm+F,0vzI${7=">
+                                                            <mutation component_type="Label" set_or_get="set" property_name="FontSize" is_generic="false" instance_name="نص_4_8"></mutation>
+                                                            <field name="COMPONENT_SELECTOR">نص_4_8</field>
+                                                            <field name="PROP">FontSize</field>
+                                                            <value name="VALUE">
+                                                              <block type="math_number" id="nLri(i@#h@7.:~:8W:(p" collapsed="true">
+                                                                <field name="NUM">8</field>
+                                                              </block>
+                                                            </value>
+                                                            <next>
+                                                              <block type="component_set_get" id="r#]8qAt#l#U6Hlc~7@5{">
+                                                                <mutation component_type="Label" set_or_get="set" property_name="FontSize" is_generic="false" instance_name="رقم_الهويه_10"></mutation>
+                                                                <field name="COMPONENT_SELECTOR">رقم_الهويه_10</field>
+                                                                <field name="PROP">FontSize</field>
+                                                                <value name="VALUE">
+                                                                  <block type="math_number" id="x9,e.HH05aSbTi;;%iL=" collapsed="true">
+                                                                    <field name="NUM">10</field>
+                                                                  </block>
+                                                                </value>
+                                                                <next>
+                                                                  <block type="component_set_get" id="jTbGTolxIj~x`{3q=u[$">
+                                                                    <mutation component_type="Label" set_or_get="set" property_name="FontSize" is_generic="false" instance_name="تاريخ_الميلاد_هـ_10"></mutation>
+                                                                    <field name="COMPONENT_SELECTOR">تاريخ_الميلاد_هـ_10</field>
+                                                                    <field name="PROP">FontSize</field>
+                                                                    <value name="VALUE">
+                                                                      <block type="math_number" id="ItnG^7%?ZZ/%fT-ftx%h">
+                                                                        <field name="NUM">10</field>
+                                                                      </block>
+                                                                    </value>
+                                                                    <next>
+                                                                      <block type="component_set_get" id="gcI4o.0Z(Qj{S8s|vGU/">
+                                                                        <mutation component_type="Label" set_or_get="set" property_name="FontSize" is_generic="false" instance_name="تاريخ_الانتها_هـ_10"></mutation>
+                                                                        <field name="COMPONENT_SELECTOR">تاريخ_الانتها_هـ_10</field>
+                                                                        <field name="PROP">FontSize</field>
+                                                                        <value name="VALUE">
+                                                                          <block type="math_number" id="uU0cne;7WE47IJT*/EB6">
+                                                                            <field name="NUM">10</field>
+                                                                          </block>
+                                                                        </value>
+                                                                        <next>
+                                                                          <block type="component_set_get" id="CL,6:)_5W?t7yl6s|U%_">
+                                                                            <mutation component_type="Label" set_or_get="set" property_name="FontSize" is_generic="false" instance_name="مكان_الميلاد_10"></mutation>
+                                                                            <field name="COMPONENT_SELECTOR">مكان_الميلاد_10</field>
+                                                                            <field name="PROP">FontSize</field>
+                                                                            <value name="VALUE">
+                                                                              <block type="math_number" id="1.zNn;BEdx!Q4_iV1%31">
+                                                                                <field name="NUM">10</field>
+                                                                              </block>
+                                                                            </value>
+                                                                            <next>
+                                                                              <block type="component_set_get" id="YNvJT].s.KfII:EIXL4q">
+                                                                                <mutation component_type="Label" set_or_get="set" property_name="FontSize" is_generic="false" instance_name="رقم_الهويه_E_8"></mutation>
+                                                                                <field name="COMPONENT_SELECTOR">رقم_الهويه_E_8</field>
+                                                                                <field name="PROP">FontSize</field>
+                                                                                <value name="VALUE">
+                                                                                  <block type="math_number" id="AeS*N2Ha}]7RW:yR7]3!">
+                                                                                    <field name="NUM">8</field>
+                                                                                  </block>
+                                                                                </value>
+                                                                                <next>
+                                                                                  <block type="component_set_get" id="*ljfsuxQui[*$jkJna#W">
+                                                                                    <mutation component_type="Label" set_or_get="set" property_name="FontSize" is_generic="false" instance_name="تاريخ_الميلاد_م_8"></mutation>
+                                                                                    <field name="COMPONENT_SELECTOR">تاريخ_الميلاد_م_8</field>
+                                                                                    <field name="PROP">FontSize</field>
+                                                                                    <value name="VALUE">
+                                                                                      <block type="math_number" id="gMIs/gayaV:km^qWLuQ@">
+                                                                                        <field name="NUM">8</field>
+                                                                                      </block>
+                                                                                    </value>
+                                                                                    <next>
+                                                                                      <block type="component_set_get" id="}rT!/RJFZL;2^YU,2;U#">
+                                                                                        <mutation component_type="Label" set_or_get="set" property_name="FontSize" is_generic="false" instance_name="تاريخ_الانتها_م_8"></mutation>
+                                                                                        <field name="COMPONENT_SELECTOR">تاريخ_الانتها_م_8</field>
+                                                                                        <field name="PROP">FontSize</field>
+                                                                                        <value name="VALUE">
+                                                                                          <block type="math_number" id="u/rQne3(g-IT+um420M(">
+                                                                                            <field name="NUM">8</field>
+                                                                                          </block>
+                                                                                        </value>
+                                                                                        <next>
+                                                                                          <block type="component_set_get" id="*{b^Gh1h7$1+~.9?xLm:">
+                                                                                            <mutation component_type="Label" set_or_get="set" property_name="FontSize" is_generic="false" instance_name="E_1_8"></mutation>
+                                                                                            <field name="COMPONENT_SELECTOR">E_1_8</field>
+                                                                                            <field name="PROP">FontSize</field>
+                                                                                            <value name="VALUE">
+                                                                                              <block type="math_number" id="9M(g_4[Hf$9{_8DSYN*]" collapsed="true">
+                                                                                                <field name="NUM">8</field>
+                                                                                              </block>
+                                                                                            </value>
+                                                                                            <next>
+                                                                                              <block type="component_set_get" id="Z~(v^3~^~u~j)$u=W%eV">
+                                                                                                <mutation component_type="Label" set_or_get="set" property_name="FontSize" is_generic="false" instance_name="E_2_8"></mutation>
+                                                                                                <field name="COMPONENT_SELECTOR">E_2_8</field>
+                                                                                                <field name="PROP">FontSize</field>
+                                                                                                <value name="VALUE">
+                                                                                                  <block type="math_number" id="J_zdzyEZV[Ts)rrKersL" collapsed="true">
+                                                                                                    <field name="NUM">8</field>
+                                                                                                  </block>
+                                                                                                </value>
+                                                                                                <next>
+                                                                                                  <block type="component_set_get" id="[q%]kH`C~O|6mSl?~BA_">
+                                                                                                    <mutation component_type="Label" set_or_get="set" property_name="FontSize" is_generic="false" instance_name="E_3_8"></mutation>
+                                                                                                    <field name="COMPONENT_SELECTOR">E_3_8</field>
+                                                                                                    <field name="PROP">FontSize</field>
+                                                                                                    <value name="VALUE">
+                                                                                                      <block type="math_number" id="m#YxfIwOjDzRQ]crIW/4" collapsed="true">
+                                                                                                        <field name="NUM">8</field>
+                                                                                                      </block>
+                                                                                                    </value>
+                                                                                                    <next>
+                                                                                                      <block type="component_set_get" id="bxzR|:#uFP=*;L6E42?2">
+                                                                                                        <mutation component_type="HorizontalArrangement" set_or_get="set" property_name="HeightPercent" is_generic="false" instance_name="ح_H_22"></mutation>
+                                                                                                        <field name="COMPONENT_SELECTOR">ح_H_22</field>
+                                                                                                        <field name="PROP">HeightPercent</field>
+                                                                                                        <value name="VALUE">
+                                                                                                          <block type="math_number" id="yRbp?bG`W.`NSue4d(AP" collapsed="true">
+                                                                                                            <field name="NUM">22</field>
+                                                                                                          </block>
+                                                                                                        </value>
+                                                                                                        <next>
+                                                                                                          <block type="component_set_get" id="*_jBQ98!-T%}9ezIZvb@">
+                                                                                                            <mutation component_type="VerticalArrangement" set_or_get="set" property_name="HeightPercent" is_generic="false" instance_name="حاويه_H_6"></mutation>
+                                                                                                            <field name="COMPONENT_SELECTOR">حاويه_H_6</field>
+                                                                                                            <field name="PROP">HeightPercent</field>
+                                                                                                            <value name="VALUE">
+                                                                                                              <block type="math_number" id="gYS4/KfZWM;$2:{7B@G4">
+                                                                                                                <field name="NUM">6</field>
+                                                                                                              </block>
+                                                                                                            </value>
+                                                                                                            <next>
+                                                                                                              <block type="component_set_get" id="heAt=4BR./ot:`AMLhoA">
+                                                                                                                <mutation component_type="VerticalArrangement" set_or_get="set" property_name="WidthPercent" is_generic="false" instance_name="حاويه_w_22"></mutation>
+                                                                                                                <field name="COMPONENT_SELECTOR">حاويه_w_22</field>
+                                                                                                                <field name="PROP">WidthPercent</field>
+                                                                                                                <value name="VALUE">
+                                                                                                                  <block type="math_number" id="6{+CHBhb5j(U)TojsHk4" collapsed="true">
+                                                                                                                    <field name="NUM">22</field>
+                                                                                                                  </block>
+                                                                                                                </value>
+                                                                                                                <next>
+                                                                                                                  <block type="component_set_get" id="Uk)9/v)4DZtG%LwdEf(i">
+                                                                                                                    <mutation component_type="VerticalArrangement" set_or_get="set" property_name="WidthPercent" is_generic="false" instance_name="حاويه_H14_w22"></mutation>
+                                                                                                                    <field name="COMPONENT_SELECTOR">حاويه_H14_w22</field>
+                                                                                                                    <field name="PROP">WidthPercent</field>
+                                                                                                                    <value name="VALUE">
+                                                                                                                      <block type="math_number" id="[E9C]mw-dPOLBRWZ%~^f">
+                                                                                                                        <field name="NUM">22</field>
+                                                                                                                      </block>
+                                                                                                                    </value>
+                                                                                                                    <next>
+                                                                                                                      <block type="component_set_get" id="Y_-lk9B5j|=/Z/,C2Bnb">
+                                                                                                                        <mutation component_type="VerticalArrangement" set_or_get="set" property_name="HeightPercent" is_generic="false" instance_name="حاويه_H14_w22"></mutation>
+                                                                                                                        <field name="COMPONENT_SELECTOR">حاويه_H14_w22</field>
+                                                                                                                        <field name="PROP">HeightPercent</field>
+                                                                                                                        <value name="VALUE">
+                                                                                                                          <block type="math_number" id="da4aO~(c}@H0zFj++0!O">
+                                                                                                                            <field name="NUM">14</field>
+                                                                                                                          </block>
+                                                                                                                        </value>
+                                                                                                                        <next>
+                                                                                                                          <block type="component_set_get" id="6Od(PxwZYu~+3|$^!S|W">
+                                                                                                                            <mutation component_type="VerticalArrangement" set_or_get="set" property_name="WidthPercent" is_generic="false" instance_name="حاويه_الهوية"></mutation>
+                                                                                                                            <field name="COMPONENT_SELECTOR">حاويه_الهوية</field>
+                                                                                                                            <field name="PROP">WidthPercent</field>
+                                                                                                                            <value name="VALUE">
+                                                                                                                              <block type="math_number" id="mN7c*}d96%7Q4yLE]m$Q" collapsed="true">
+                                                                                                                                <field name="NUM">96</field>
+                                                                                                                              </block>
+                                                                                                                            </value>
+                                                                                                                            <next>
+                                                                                                                              <block type="component_set_get" id="w4f,s}M%;|W6f#I_1_Ee">
+                                                                                                                                <mutation component_type="Label" set_or_get="set" property_name="FontSize" is_generic="false" instance_name="رقم_النسخة"></mutation>
+                                                                                                                                <field name="COMPONENT_SELECTOR">رقم_النسخة</field>
+                                                                                                                                <field name="PROP">FontSize</field>
+                                                                                                                                <value name="VALUE">
+                                                                                                                                  <block type="math_number" id="fnZJI(i2)YY=nDgL4)N=">
+                                                                                                                                    <field name="NUM">16</field>
+                                                                                                                                  </block>
+                                                                                                                                </value>
+                                                                                                                                <next>
+                                                                                                                                  <block type="component_set_get" id="=LBOOs.I]zHOBwj]:_BM">
+                                                                                                                                    <mutation component_type="VerticalArrangement" set_or_get="set" property_name="HeightPercent" is_generic="false" instance_name="حاويه_الهوية"></mutation>
+                                                                                                                                    <field name="COMPONENT_SELECTOR">حاويه_الهوية</field>
+                                                                                                                                    <field name="PROP">HeightPercent</field>
+                                                                                                                                    <value name="VALUE">
+                                                                                                                                      <block type="math_number" id="Z?cg7{}{GT2TY$D%-Umb">
+                                                                                                                                        <field name="NUM">32</field>
+                                                                                                                                      </block>
+                                                                                                                                    </value>
+                                                                                                                                    <next>
+                                                                                                                                      <block type="component_set_get" id="]xwjmnkI38(oJ$X#M%]w">
+                                                                                                                                        <mutation component_type="HorizontalArrangement" set_or_get="set" property_name="HeightPercent" is_generic="false" instance_name="ح_1_h_8"></mutation>
+                                                                                                                                        <field name="COMPONENT_SELECTOR">ح_1_h_8</field>
+                                                                                                                                        <field name="PROP">HeightPercent</field>
+                                                                                                                                        <value name="VALUE">
+                                                                                                                                          <block type="math_number" id="U)F2luzCCx(]cjcpJ_X8">
+                                                                                                                                            <field name="NUM">8</field>
+                                                                                                                                          </block>
+                                                                                                                                        </value>
+                                                                                                                                      </block>
+                                                                                                                                    </next>
+                                                                                                                                  </block>
+                                                                                                                                </next>
+                                                                                                                              </block>
+                                                                                                                            </next>
+                                                                                                                          </block>
+                                                                                                                        </next>
+                                                                                                                      </block>
+                                                                                                                    </next>
+                                                                                                                  </block>
+                                                                                                                </next>
+                                                                                                              </block>
+                                                                                                            </next>
+                                                                                                          </block>
+                                                                                                        </next>
+                                                                                                      </block>
+                                                                                                    </next>
+                                                                                                  </block>
+                                                                                                </next>
+                                                                                              </block>
+                                                                                            </next>
+                                                                                          </block>
+                                                                                        </next>
+                                                                                      </block>
+                                                                                    </next>
+                                                                                  </block>
+                                                                                </next>
+                                                                              </block>
+                                                                            </next>
+                                                                          </block>
+                                                                        </next>
+                                                                      </block>
+                                                                    </next>
+                                                                  </block>
+                                                                </next>
+                                                              </block>
+                                                            </next>
+                                                          </block>
+                                                        </next>
+                                                      </block>
+                                                    </next>
+                                                  </block>
+                                                </next>
+                                              </block>
+                                            </next>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+  </block>
+  <block type="component_event" id="12%ugptb5v!(|*T)4a{V" collapsed="true" x="-2950" y="-9130">
+    <mutation component_type="VerticalScrollArrangement" is_generic="false" instance_name="حاويه_2" event_name="Click"></mutation>
+    <field name="COMPONENT_SELECTOR">حاويه_2</field>
+    <statement name="DO">
+      <block type="component_method" id="wYwyH#Mhsukuj+eZxg3`">
+        <mutation component_type="CustomWebView" method_name="GoToUrl" is_generic="false" instance_name="CustomWebView1"></mutation>
+        <field name="COMPONENT_SELECTOR">CustomWebView1</field>
+        <value name="ARG0">
+          <block type="text" id="21k|8;]{h$+L}Erl(|y]" collapsed="true">
+            <field name="TEXT">https://sdaia.gov.sa/ar/default.aspx</field>
+          </block>
+        </value>
+      </block>
+    </statement>
+  </block>
+  <block type="component_event" id="z(Q^!P%xX?|2Q1@8OxiA" x="-5390" y="-8970">
+    <mutation component_type="Form" is_generic="false" instance_name="Screen_1_" event_name="BackPressed"></mutation>
+    <field name="COMPONENT_SELECTOR">Screen_1_</field>
+    <statement name="DO">
+      <block type="controls_if" id="=/]F/!}aTSD.,%n:F[y$">
+        <mutation elseif="1" else="1"></mutation>
+        <value name="IF0">
+          <block type="logic_compare" id=";|L?E[sgdO~s#/Pxiq+g">
+            <field name="OP">EQ</field>
+            <value name="A">
+              <block type="component_component_block" id="?$:+*_0PZen8^Rr4$Jj2">
+                <mutation component_type="VerticalArrangement" instance_name="حاوية_منبثقة_1"></mutation>
+                <field name="COMPONENT_SELECTOR">حاوية_منبثقة_1</field>
+              </block>
+            </value>
+            <value name="B">
+              <block type="logic_boolean" id="}O{,rv~ox6GRxrk}-JMz">
+                <field name="BOOL">TRUE</field>
+              </block>
+            </value>
+          </block>
+        </value>
+        <statement name="DO0">
+          <block type="component_method" id=",7g]WmK6rM8Dsarq+W2A">
+            <mutation component_type="CustomSheet" method_name="Dismiss" is_generic="false" instance_name="CustomSheet1"></mutation>
+            <field name="COMPONENT_SELECTOR">CustomSheet1</field>
+            <value name="ARG0">
+              <block type="math_number" id="w.eB5=?iCJb`[v5]);v_" collapsed="true">
+                <field name="NUM">1</field>
