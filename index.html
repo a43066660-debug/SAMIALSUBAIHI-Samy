@@ -1,4 +1,11 @@
+/* positioned at the end of the track: track length - 100% (thumb width) */
 .gui-switch > input:checked {
-  background: var(--track-color-active);
-  --thumb-position: calc((var(--track-size) - 100%) * var(--isLTR));
+  --thumb-position: calc(var(--track-size) - 100%);
+}
+
+/* positioned in the center of the track: half the track - half the thumb */
+.gui-switch > input:indeterminate {
+  --thumb-position: calc(
+    (var(--track-size) / 2) - (var(--thumb-size) / 2)
+  );
 }
