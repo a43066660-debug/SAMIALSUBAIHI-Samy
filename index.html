@@ -1,11 +1,54 @@
-/* positioned at the end of the track: track length - 100% (thumb width) */
-.gui-switch > input:checked {
-  --thumb-position: calc(var(--track-size) - 100%);
-}
-
-/* positioned in the center of the track: half the track - half the thumb */
-.gui-switch > input:indeterminate {
-  --thumb-position: calc(
-    (var(--track-size) / 2) - (var(--thumb-size) / 2)
-  );
-}
+alias: RODI - Refill ATO - Finished
+description: ""
+triggers:
+  - type: turned_off
+    device_id: acbd50af8b493cb409970c6cd1040d05
+    entity_id: 0c6a2b9576e4c07f4c5d8014a5f115eb
+    domain: switch
+    trigger: device
+  - trigger: state
+    entity_id:
+      - input_select.ato_level_state
+    from: In-Use
+    to: Refilled
+conditions:
+  - condition: device
+    type: is_off
+    device_id: acbd50af8b493cb409970c6cd1040d05
+    entity_id: 833ea930720a4826ef808f466f2c8cec
+    domain: switch
+  - condition: numeric_state
+    entity_id: sensor.sensor_tado_thermostat_outdoor_temperature
+    below: 30
+actions:
+  - data: {}
+    target:
+      entity_id: switch.plug_ro_booster_pump_switch
+    action: switch.turn_off
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - data: {}
+    target:
+      entity_id: switch.sonoff_1000e5f654_1
+    action: switch.turn_off
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - data: {}
+    target:
+      entity_id: switch.sonoff_1000e5f654_2
+    action: switch.turn_off
+  - data: {}
+    target:
+      entity_id: switch.sonoff_1000e5f654_3
+    action: switch.turn_off
+  - metadata: {}
+    data:
+      message: ATO Refill - Completed
+    action: notify.mobile_app_iphone
+mode: restart
