@@ -45,6 +45,14 @@
 
     <script>
         // قاعدة بيانات جغرافية مصغرة لبعض مدن وأحياء السعودية (الإحداثيات: خط العرض، خط الطول)
+        let currentMarker = null;
+
+const customIcon = L.icon({
+    iconUrl: 'https://imagetourls.com/ar/v?u=https%3A%2F%2Fcdn.imagetourls.com%2Fuploads%2FtyImg%2FgZ6yrfmF.png',
+    iconSize:,
+    iconAnchor:,
+    popupAnchor: [0, -32]
+});
         const locations = [
             { name: "الرياض (العاصمة)", lat: 24.7136, lng: 46.6753, type: "city" },
             { name: "الرياض - حي العليا", lat: 24.7105, lng: 46.6669, type: "district" },
