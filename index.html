@@ -113,7 +113,7 @@
     } else { 
         currentMarker = L.marker(e.latlng).addTo(map); 
     }
-        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}>format=jsonv2&lon=${lng}&accept-language=ar`)
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=ar`)
         .then(response => response.json())
         .then(data => {
             if (data && data.address) {
