@@ -1,54 +1,110 @@
-alias: RODI - Refill ATO - Finished
-description: ""
-triggers:
-  - type: turned_off
-    device_id: acbd50af8b493cb409970c6cd1040d05
-    entity_id: 0c6a2b9576e4c07f4c5d8014a5f115eb
-    domain: switch
-    trigger: device
-  - trigger: state
-    entity_id:
-      - input_select.ato_level_state
-    from: In-Use
-    to: Refilled
-conditions:
-  - condition: device
-    type: is_off
-    device_id: acbd50af8b493cb409970c6cd1040d05
-    entity_id: 833ea930720a4826ef808f466f2c8cec
-    domain: switch
-  - condition: numeric_state
-    entity_id: sensor.sensor_tado_thermostat_outdoor_temperature
-    below: 30
-actions:
-  - data: {}
-    target:
-      entity_id: switch.plug_ro_booster_pump_switch
-    action: switch.turn_off
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 5
-      milliseconds: 0
-  - data: {}
-    target:
-      entity_id: switch.sonoff_1000e5f654_1
-    action: switch.turn_off
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 5
-      milliseconds: 0
-  - data: {}
-    target:
-      entity_id: switch.sonoff_1000e5f654_2
-    action: switch.turn_off
-  - data: {}
-    target:
-      entity_id: switch.sonoff_1000e5f654_3
-    action: switch.turn_off
-  - metadata: {}
-    data:
-      message: ATO Refill - Completed
-    action: notify.mobile_app_iphone
-mode: restart
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خريطة المدن والأحياء</title>
+    <!-- استدعاء مكتبة الخرائط المجانية Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com" />
+    <script src="https://unpkg.com"></script>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; font-family: Arial, sans-serif; overflow: hidden; }
+        #map { height: 100%; width: 100%; z-index: 1; }
+        
+        /* تصميم شريط البحث العائم فوق الخريطة */
+        .search-container {
+            position: absolute; top: 15px; right: 15px; left: 15px;
+            z-index: 1000; background: white; padding: 10px;
+            border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .search-box {
+            width: 100%; padding: 12px; border: 1px solid #ccc;
+            border-radius: 6px; font-size: 16px; box-sizing: border-box; outline: none;
+        }
+        
+        /* تصميم قائمة النتائج المنبثقة */
+        .results-list {
+            list-style: none; margin: 5px 0 0 0; padding: 0;
+            max-height: 200px; overflow-y: auto; background: white;
+            border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: none;
+        }
+        .results-list li {
+            padding: 12px; border-bottom: 1px solid #f0f0f0; cursor: pointer; font-size: 15px;
+        }
+        .results-list li:hover { background-color: #f7f7f7; }
+    </style>
+</head>
+<body>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-box" placeholder="ابحث عن مدينة أو حي في السعودية...">
+        <ul id="resultsList" class="results-list"></ul>
+    </div>
+
+    <div id="map"></div>
+
+    <script>
+        // قاعدة بيانات جغرافية مصغرة لبعض مدن وأحياء السعودية (الإحداثيات: خط العرض، خط الطول)
+        const locations = [
+            { name: "الرياض (العاصمة)", lat: 24.7136, lng: 46.6753, type: "city" },
+            { name: "الرياض - حي العليا", lat: 24.7105, lng: 46.6669, type: "district" },
+            { name: "الرياض - حي الصحافة", lat: 24.8016, lng: 46.6294, type: "district" },
+            { name: "جدة", lat: 21.5433, lng: 39.1728, type: "city" },
+            { name: "جدة - حي الصفا", lat: 21.5794, lng: 39.2131, type: "district" },
+            { name: "جدة - حي النعيم", lat: 21.6247, lng: 39.1481, type: "district" },
+            { name: "مكة المكرمة", lat: 21.3891, lng: 39.8579, type: "city" },
+            { name: "مكة المكرمة - حي العزيزية", lat: 21.4111, lng: 39.8702, type: "district" },
+            { name: "المدينة المنورة", lat: 24.5247, lng: 39.5692, type: "city" },
+            { name: "الدمام", lat: 26.4207, lng: 50.0888, type: "city" }
+        ];
+
+        // تهيئة الخريطة وتثبيتها افتراضياً على السعودية
+        const map = L.map('map').setView([23.8859, 45.0792], 6);
+
+        // تحميل أشكال الخرائط من OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        const searchInput = document.getElementById('searchInput');
+        const resultsList = document.getElementById('resultsList');
+
+        // خوارزمية تصفية البحث أثناء الكتابة
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim().toLowerCase();
+            resultsList.innerHTML = '';
+            
+            if (query === '') {
+                resultsList.style.display = 'none';
+                return;
+            }
+
+            const filtered = locations.filter(loc => loc.name.toLowerCase().includes(query));
+
+            if (filtered.length > 0) {
+                resultsList.style.display = 'block';
+                filtered.forEach(loc => {
+                    const li = document.createElement('li');
+                    li.textContent = loc.name;
+                    li.addEventListener('click', function() {
+                        // عند اختيار الموقع: تحريك الخريطة وإضافة دبوس ماركر
+                        map.setView([loc.lat, loc.lng], loc.type === 'city' ? 10 : 14);
+                        L.marker([loc.lat, loc.lng]).addTo(map).bindPopup(loc.name).openPopup();
+                        
+                        searchInput.value = loc.name;
+                        resultsList.style.display = 'none';
+
+                        // إرسال البيانات المحددة إلى تطبيق Kodular فوراً
+                        if (window.AppInventor) {
+                            window.AppInventor.setWebViewString(JSON.stringify({name: loc.name, lat: loc.lat, lng: loc.lng}));
+                        }
+                    });
+                    resultsList.appendChild(li);
+                });
+            } else {
+                resultsList.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
