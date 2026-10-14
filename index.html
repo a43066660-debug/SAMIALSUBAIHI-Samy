@@ -86,18 +86,23 @@ const customIcon = L.icon({
                 resultsList.style.display = 'none';
                 return;
             }
+li.addEventListener('click', function() {
+    map.setView([loc.lat, loc.lng], loc.type === "city" ? 10 : 14);
+    
+    if (currentMarker !== null) {
+        map.removeLayer(currentMarker);
+    }
+    
+    currentMarker = L.marker([loc.lat, loc.lng], { icon: customIcon }).addTo(map).bindPopup(loc.name).openPopup();
+    
+    searchInput.value = loc.name;
+    resultsList.style.display = 'none';
+    
+    if (window.AppInventor) {
+        window.AppInventor.setWebViewString(JSON.stringify({name: loc.name, lat: loc.lat, lng: loc.lng}));
+    }
+});
 
-            const filtered = locations.filter(loc => loc.name.toLowerCase().includes(query));
-
-            if (filtered.length > 0) {
-                resultsList.style.display = 'block';
-                filtered.forEach(loc => {
-                    const li = document.createElement('li');
-                    li.textContent = loc.name;
-                    li.addEventListener('click', function() {
-                        // عند اختيار الموقع: تحريك الخريطة وإضافة دبوس ماركر
-                        map.setView([loc.lat, loc.lng], loc.type === 'city' ? 10 : 14);
-                        L.marker([loc.lat, loc.lng]).addTo(map).bindPopup(loc.name).openPopup();
                         
                         searchInput.value = loc.name;
                         resultsList.style.display = 'none';
