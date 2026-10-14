@@ -179,6 +179,18 @@ document.getElementById('copyBtn').addEventListener('click', function() {
         alert("لم نتمكن من النسخ تلقائياً: " + err);
     });
 });
-    </script>
+   // كود ذكي لفصل الخريطة عن الحقول تلقائياً داخل تطبيق Kodular
+if (window.location.search.includes('mode=map')) {
+    // إذا كان الرابط مخصصاً للأعلى: اخفِ الحقول السفلية وصندوق البحث تماماً
+    document.querySelector('.address-form').style.display = 'none';
+    document.querySelector('.search-container').style.display = 'none';
+    document.getElementById('map').style.height = '100vh'; 
+} else if (window.location.search.includes('mode=form')) {
+    // إذا كان الرابط مخصصاً للأسفل: اخفِ الخريطة تماماً واترك الحقول وزر النسخ بوضوح
+    document.getElementById('map').style.display = 'none';
+}
+
+</script>
 </body>
 </html>
+ 
