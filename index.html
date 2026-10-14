@@ -166,8 +166,9 @@ map.on('contextmenu', function(e) {
                 document.getElementById('addr-short').value = (addr.road ? addr.road + '، ' : '') + (addr.suburb || '');
             }
         })
-        .catch(err => console.log('خطأ في جلب تفاصيل الموقع:', err));
-});
-    </script>
-</body>
-</html>
+        169         .catch(err => console.log('خطأ في جلب تفاصيل الموقع:', err));
+170 });
+171 setTimeout(function(){ map.invalidateSize(); }, 300);
+172 </script>
+173 </body>
+174 </html>
