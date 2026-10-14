@@ -179,7 +179,8 @@ document.getElementById('copyBtn').addEventListener('click', function() {
         alert("لم نتمكن من النسخ تلقائياً: " + err);
     });
 });
-   // كود ذكي لفصل الخريطة عن الحقول تلقائياً داخل تطبيق Kodular
+
+// كود ذكي لفصل الخريطة عن الحقول تلقائياً داخل تطبيق Kodular
 if (window.location.search.includes('mode=map')) {
     // إذا كان الرابط مخصصاً للأعلى: اخفِ الحقول السفلية وصندوق البحث تماماً
     document.querySelector('.address-form').style.display = 'none';
@@ -193,4 +194,3 @@ if (window.location.search.includes('mode=map')) {
 </script>
 </body>
 </html>
- 
