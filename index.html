@@ -153,7 +153,7 @@ map.on('contextmenu', function(e) {
     }
 
     // جلب تفاصيل العنوان الوطني جغرافياً باللغة العربية
-    fetch(`https://openstreetmap.org{lat}&lon=${lng}&accept-language=ar`)
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=ar`)
         .then(response => response.json())
         .then(data => {
             if (data && data.address) {
