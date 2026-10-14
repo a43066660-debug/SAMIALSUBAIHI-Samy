@@ -1,69 +1,41 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>خريطة المدن والأحياء</title>
-    <!-- استدعاء مكتبة الخرائط المجانية Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <title>محدد المواقع والعناوين الوطنية</title>
+    
+    <!-- السطر 8: رابط الـ CSS الخاص بالخريطة -->
+    <link rel="stylesheet" href="رابط_الـ_CSS_هنا" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    
+    <!-- Sسطر 9: رابط الـ JavaScript الخاص بالخريطة -->
+    <script src="رابط_الـ_JS_هنا" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
     <style>
-        body, html { margin: 0; padding: 0; height: auto; font-family: Arial, sans-serif; }
-        #map { height: 350px; width: 100%; z-index: 1; }
-        /* تصميم شريط البحث العائم فوق الخريطة */
-        .search-container {
-            position: absolute; top: 15px; right: 15px; left: 15px;
-            z-index: 1000; background: white; padding: 10px;
-            border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        .search-box {
-            width: 100%; padding: 12px; border: 1px solid #ccc;
-            border-radius: 6px; font-size: 16px; box-sizing: border-box; outline: none;
-        }
-        /* تصميم قائمة النتائج المنبثقة */
-        .results-list {
-            list-style: none; margin: 5px 0 0 0; padding: 0;
-            max-height: 200px; overflow-y: auto; background: white;
-            border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: none;
-        }
-        .results-list li {
-            padding: 12px; border-bottom: 1px solid #f0f0f0; cursor: pointer; font-size: 15px;
-        }
+        body, html { margin: 0; padding: 0; height: auto; font-family: Arial, sans-serif; background-color: #fcfcfc; }
+        #map { height: 350px; width: 100%; z-index: 1; border-bottom: 2px solid #e0e0e0; }
+        .search-container { position: relative; padding: 15px; max-width: 400px; margin: 10px auto; z-index: 10; }
+        .search-box { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; text-align: right; direction: rtl; }
+        .results-list { position: absolute; width: calc(100% - 30px); background: white; border: 1px solid #ccc; border-top: none; max-height: 200px; overflow-y: auto; list-style: none; padding: 0; margin: 0; border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: none; text-align: right; direction: rtl; }
+        .results-list li { padding: 12px; border-bottom: 1px solid #f0f0f0; cursor: pointer; font-size: 15px; }
         .results-list li:hover { background-color: #f7f7f7; }
-               .leaflet-marker-icon {
-            filter: hue-rotate(140deg) saturate(200%) !important;
-        }
-                .address-form {
-            width: 90%;
-            max-width: 400px;
-            margin: 20px auto;
-            direction: rtl;
-            font-family: Arial, sans-serif;
-        }
-        .address-field {
-            width: 100%;
-            padding: 15px 5px;
-            border: none;
-            border-bottom: 1px solid #e0e0e0;
-            font-size: 16px;
-            color: #333;
-            outline: none;
-            box-sizing: border-box;
-            background-color: transparent;
-        }
-        .address-field::placeholder {
-            color: #aaa;
-        }
+        .leaflet-marker-icon { filter: hue-rotate(140deg) saturate(200%) !important; }
+        .address-form { width: 90%; max-width: 400px; margin: 20px auto; direction: rtl; }
+        .address-field { width: 100%; padding: 15px 5px; border: none; border-bottom: 1px solid #e0e0e0; font-size: 16px; color: #333; outline: none; box-sizing: border-box; background-color: transparent; }
+        .address-field::placeholder { color: #aaa; }
+        .address-field:focus { border-bottom: 1px solid #007bff; }
     </style>
 </head>
 <body>
+
     <div class="search-container">
         <input type="text" id="searchInput" class="search-box" placeholder="ابحث عن مدينة أو حي في السعودية...">
         <ul id="resultsList" class="results-list"></ul>
     </div>
-<div id="map"></div>
-<div class="address-form">
-    <input type="text" class="address-field" id="addr-suburb" placeholder="حي">
+
+    <div id="map"></div>
+
+    <div class="address-form">
         <input type="text" class="address-field" id="addr-suburb" placeholder="حي">
         <input type="text" class="address-field" id="addr-building" placeholder="رقم المبنى">
         <input type="text" class="address-field" id="addr-postal" placeholder="الرمز البريدي">
@@ -71,8 +43,8 @@
         <input type="text" class="address-field" id="addr-unit" placeholder="رقم الوحدة">
         <input type="text" class="address-field" id="addr-short" placeholder="العنوان المختصر">
     </div>
+
     <script>
-        // قاعدة بيانات جغرافية مصغرة لبعض مدن وأحياء السعودية (الإحداثيات: خط العرض، خط الطول)
         const locations = [
             { name: "الرياض (العاصمة)", lat: 24.7136, lng: 46.6753, type: "city" },
             { name: "الرياض - حي العليا", lat: 24.7105, lng: 46.6669, type: "district" },
@@ -86,18 +58,17 @@
             { name: "الدمام", lat: 26.4207, lng: 50.0888, type: "city" }
         ];
 
-        // تهيئة الخريطة وتثبيتها افتراضياً على السعودية
         const map = L.map('map').setView([23.8859, 45.0792], 6);
-
-        // تحميل أشكال الخرائط من OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        
+        // هنا رابط مربعات الخريطة
+        L.tileLayer('رابط_مربعات_الخريطة_هنا', {
             attribution: '© OpenStreetMap'
         }).addTo(map);
 
+        let currentMarker = null;
         const searchInput = document.getElementById('searchInput');
         const resultsList = document.getElementById('resultsList');
 
-        // خوارزمية تصفية البحث أثناء الكتابة
         searchInput.addEventListener('input', function() {
             const query = this.value.trim().toLowerCase();
             resultsList.innerHTML = '';
@@ -108,60 +79,59 @@
             }
 
             const filtered = locations.filter(loc => loc.name.toLowerCase().includes(query));
-
+            
             if (filtered.length > 0) {
                 resultsList.style.display = 'block';
                 filtered.forEach(loc => {
                     const li = document.createElement('li');
                     li.textContent = loc.name;
                     li.addEventListener('click', function() {
-                        // عند اختيار الموقع: تحريك الخريطة وإضافة دبوس ماركر
-                        map.setView([loc.lat, loc.lng], loc.type === 'city' ? 10 : 14);
-                        L.marker([loc.lat, loc.lng]).addTo(map).bindPopup(loc.name).openPopup();
+                        const zoomLevel = loc.type === 'city' ? 9 : 14;
+                        map.setView([loc.lat, loc.lng], zoomLevel);
                         
+                        if (currentMarker) {
+                            currentMarker.setLatLng([loc.lat, loc.lng]);
+                        } else {
+                            currentMarker = L.marker([loc.lat, loc.lng]).addTo(map);
+                        }
+                        currentMarker.bindPopup(loc.name).openPopup();
                         searchInput.value = loc.name;
                         resultsList.style.display = 'none';
-
-                        // إرسال البيانات المحددة إلى تطبيق Kodular فوراً
-                        if (window.AppInventor) {
-                            window.AppInventor.setWebViewString(JSON.stringify({name: loc.name, lat: loc.lat, lng: loc.lng}));
-                        }
                     });
                     resultsList.appendChild(li);
                 });
             } else {
                 resultsList.style.display = 'none';
             }
-            // تعريف المتغير للدبوس الحالي لمنع تكرار الدبابيس على الخريطة
-let currentMarker = null;
+        });
 
-// ميزة تعبئة البيانات تلقائياً عند الضغط المطول على الخريطة
-map.on('contextmenu', function(e) {
-    const lat = e.latlng.lat;
-    const lng = e.latlng.lng;
+        document.addEventListener('click', function(e) {
+            if (e.target !== searchInput) { resultsList.style.display = 'none'; }
+        });
 
-    // نقل الدبوس إلى مكان الضغط المطول الجديد أو إنشاؤه
-    if (currentMarker) {
-        currentMarker.setLatLng(e.latlng);
-    } else {
-        currentMarker = L.marker(e.latlng).addTo(map);
-    }
-    // جلب تفاصيل العنوان الوطني جغرافياً باللغة العربية
-    fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=ar`)
-        .then(response => response.json())
-        .then(data => {
-            if (data && data.address) {
-                const addr = data.address;
-                // تعبئة الخانات تلقائياً بناءً على مكان الضغط
-                document.getElementById('addr-suburb').value = addr.suburb || addr.neighbourhood || addr.quarter || "";
-                document.getElementById('addr-building').value = addr.house_number || "";
-                document.getElementById('addr-postal').value = addr.postcode || "";
-                document.getElementById('addr-short').value = (addr.road ? addr.road + '، ' : '') + (addr.suburb || '');
-            }
-        })
-        169         .catch(err => console.log('خطأ في جلب تفاصيل الموقع:', err));
-170 });
-171 setTimeout(function(){ map.invalidateSize(); }, 300);
-172 </script>
-173 </body>
-174 </html>
+        map.on('contextmenu', function(e) {
+            const lat = e.latlng.lat;
+            const lng = e.latlng.lng;
+
+            if (currentMarker) { currentMarker.setLatLng(e.latlng); } 
+            else { currentMarker = L.marker(e.latlng).addTo(map); }
+
+            // السطر المسؤول عن جلب تفاصيل العنوان الوطني
+            fetch(`رابط_طلب_العنوان_الوطني_هنا`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.address) {
+                        const addr = data.address;
+                        document.getElementById('addr-suburb').value = addr.suburb || addr.neighbourhood || addr.quarter || "";
+                        document.getElementById('addr-building').value = addr.house_number || "";
+                        document.getElementById('addr-postal').value = addr.postcode || "";
+                        document.getElementById('addr-short').value = (addr.road ? addr.road + '، ' : '') + (addr.suburb || '');
+                    }
+                })
+                .catch(err => console.log(err));
+        });
+
+        setTimeout(function(){ map.invalidateSize(); }, 400);
+    </script>
+</body>
+</html>
