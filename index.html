@@ -105,26 +105,28 @@
         });
 
         map.on('contextmenu', function(e) {
-            const lat = e.latlng.lat;
-            const lng = e.latlng.lng;
+    const lat = e.latlng.lat;
+    const lng = e.latlng.lng;
 
-            if (currentMarker) { currentMarker.setLatLng(e.latlng); } 
-            else { currentMarker = L.marker(e.latlng).addTo(map); }
+    if (currentMarker) { 
+        currentMarker.setLatLng(e.latlng); 
+    } else { 
+        currentMarker = L.marker(e.latlng).addTo(map); 
+    }
 
-            // السطر المسؤول عن جلب تفاصيل العنوان الوطني
-            fetch(`رابط_طلب_العنوان_الوطني_هنا`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data.address) {
-                        const addr = data.address;
-                        document.getElementById('addr-suburb').value = addr.suburb || addr.neighbourhood || addr.quarter || "";
-                        document.getElementById('addr-building').value = addr.house_number || "";
-                        document.getElementById('addr-postal').value = addr.postcode || "";
-                        document.getElementById('addr-short').value = (addr.road ? addr.road + '، ' : '') + (addr.suburb || '');
-                    }
-                })
-                .catch(err => console.log(err));
-        });
+    fetch(`https://openstreetmap.org{lat}&lon=${lng}&accept-language=ar`)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.address) {
+                const addr = data.address;
+                document.getElementById('addr-suburb').value = addr.suburb || addr.neighbourhood || addr.quarter || "";
+                document.getElementById('addr-building').value = addr.house_number || "";
+                document.getElementById('addr-postal').value = addr.postcode || "";
+                document.getElementById('addr-short').value = (addr.road ? addr.road + '، ' : '') + (addr.suburb || '');
+            }
+        })
+        .catch(err => console.log(err));
+});
 
         setTimeout(function(){ map.invalidateSize(); }, 400);
     </script>
