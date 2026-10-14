@@ -1,43 +1,42 @@
-<!DOCTYPE html >
-< html  lang =" ar " dir =" rtl " >
-<head>​​
-    < meta  charset =" UTF-8 " >
-    < meta  name =" viewport " content =" width=device-width, initial-scale=1.0 " >
-    < عنوان > مدينة المدن والأحياء </ عنوان >
-    <!-- اتصل بمكتبة بريد الرسائل -->
-    < link  rel =" stylesheet " href =" https://unpkg.com/leaflet@1.9.4/dist/leaflet.css " integrity =" sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY= " crossorigin ="" />
-< script  src =" https://unpkg.com/leaflet@1.9.4/dist/leaflet.js " integrity =" sha256-20nQCchB9co0qIjJZRGuk2 / Z9VM+kNiyxNV1lvTlZBo= " crossorigin ="" > </script>
-    < style >
-        body ,  html { margin :  0 ; padding :  0 ; height :  100 % ; font-family : Arial , sans-serif; overflow : hidden; }
-        #map { الارتفاع : 100 % ؛ العرض : 100 % ؛ ترتيب الطبقات : 1 ؛ }   
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خريطة المدن والأحياء</title>
+    <!-- استدعاء مكتبة الخرائط المجانية Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com" />
+    <script src="https://unpkg.com"></script>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; font-family: Arial, sans-serif; overflow: hidden; }
+        #map { height: 100%; width: 100%; z-index: 1; }
         
-        /* تصميم شريط البحث العائم فوق الكرة الأرضية */
-        . حاوية البحث {
-            الموضع : مطلق؛ أعلى :  15 بكسل ؛ يمين :  15 بكسل ؛ يسار :  15 بكسل ؛
-            z-index :  1000 ; background : white; padding :  10 px ;
-            border-radius :  8 px ; box-shadow :  0  4 px  15 px  rgba ( 0 , 0 , 0 , 0.2 );
+        /* تصميم شريط البحث العائم فوق الخريطة */
+        .search-container {
+            position: absolute; top: 15px; right: 15px; left: 15px;
+            z-index: 1000; background: white; padding: 10px;
+            border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        . search-box {
-            العرض :  100 % ؛ الحشو :  12 بكسل ؛ الحدود :  1 بكسل صلب #ccc ؛​
-            border-radius :  6 px ; font-size :  16 px ; box-sizing : border-box; outline : none;
+        .search-box {
+            width: 100%; padding: 12px; border: 1px solid #ccc;
+            border-radius: 6px; font-size: 16px; box-sizing: border-box; outline: none;
         }
         
-        /* قائمة خيارات التسوق */
-        . results-list {
-            list-style : none; margin :  5 px  0  0  0 ; padding :  0 ;
-            الحد الأقصى للارتفاع :  200 بكسل ؛ تجاوز المحتوى الرأسي : تلقائي؛ الخلفية : بيضاء؛
-            border-radius :  6 px ; box-shadow :  0  4 px  10 px  rgba ( 0 , 0 , 0 , 0.1 ); display : none;
+        /* تصميم قائمة النتائج المنبثقة */
+        .results-list {
+            list-style: none; margin: 5px 0 0 0; padding: 0;
+            max-height: 200px; overflow-y: auto; background: white;
+            border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: none;
         }
-        . results-list  li {
-            الحشو :  12 بكسل ؛ الحد السفلي :  1 بكسل صلب # f0f0f0 ؛ المؤشر : مؤشر؛ حجم الخط :  15 بكسل ؛
+        .results-list li {
+            padding: 12px; border-bottom: 1px solid #f0f0f0; cursor: pointer; font-size: 15px;
         }
-        .results -list  li : hover { background-color :  # f7f7f7 ; }
-    </ style >
-</ head >
-< نص الجسم >
+        .results-list li:hover { background-color: #f7f7f7; }
+    </style>
+</head>
+<body>
 
-    < div  class =" search-container " >
-        < نوع الإدخال  =" text " id =" searchInput " class =" مربع البحث " placeholder =" ابحث عن مدينة أو حي في السعودية... " >
+    <div class="search-container">
         <input type="text" id="searchInput" class="search-box" placeholder="ابحث عن مدينة أو حي في السعودية...">
         <ul id="resultsList" class="results-list"></ul>
     </div>
