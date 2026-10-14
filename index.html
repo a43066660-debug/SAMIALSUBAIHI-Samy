@@ -10,7 +10,6 @@
     <style>
         body, html { margin: 0; padding: 0; height: auto; font-family: Arial, sans-serif; }
         #map { height: 350px; width: 100%; z-index: 1; }
-        
         /* تصميم شريط البحث العائم فوق الخريطة */
         .search-container {
             position: absolute; top: 15px; right: 15px; left: 15px;
@@ -21,7 +20,6 @@
             width: 100%; padding: 12px; border: 1px solid #ccc;
             border-radius: 6px; font-size: 16px; box-sizing: border-box; outline: none;
         }
-        
         /* تصميم قائمة النتائج المنبثقة */
         .results-list {
             list-style: none; margin: 5px 0 0 0; padding: 0;
@@ -56,18 +54,14 @@
         .address-field::placeholder {
             color: #aaa;
         }
-
     </style>
 </head>
 <body>
-
     <div class="search-container">
         <input type="text" id="searchInput" class="search-box" placeholder="ابحث عن مدينة أو حي في السعودية...">
         <ul id="resultsList" class="results-list"></ul>
     </div>
-
 <div id="map"></div>
-
 <div class="address-form">
     <input type="text" class="address-field" id="addr-suburb" placeholder="حي">
         <input type="text" class="address-field" id="addr-suburb" placeholder="حي">
@@ -77,7 +71,6 @@
         <input type="text" class="address-field" id="addr-unit" placeholder="رقم الوحدة">
         <input type="text" class="address-field" id="addr-short" placeholder="العنوان المختصر">
     </div>
-
     <script>
         // قاعدة بيانات جغرافية مصغرة لبعض مدن وأحياء السعودية (الإحداثيات: خط العرض، خط الطول)
         const locations = [
@@ -153,14 +146,12 @@ map.on('contextmenu', function(e) {
     } else {
         currentMarker = L.marker(e.latlng).addTo(map);
     }
-
     // جلب تفاصيل العنوان الوطني جغرافياً باللغة العربية
     fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=ar`)
         .then(response => response.json())
         .then(data => {
             if (data && data.address) {
                 const addr = data.address;
-                
                 // تعبئة الخانات تلقائياً بناءً على مكان الضغط
                 document.getElementById('addr-suburb').value = addr.suburb || addr.neighbourhood || addr.quarter || "";
                 document.getElementById('addr-building').value = addr.house_number || "";
