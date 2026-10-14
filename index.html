@@ -137,7 +137,37 @@
             } else {
                 resultsList.style.display = 'none';
             }
-        });
+            // تعريف المتغير للدبوس الحالي لمنع تكرار الدبابيس على الخريطة
+let currentMarker = null;
+
+// ميزة تعبئة البيانات تلقائياً عند الضغط المطول على الخريطة
+map.on('contextmenu', function(e) {
+    const lat = e.latlng.lat;
+    const lng = e.latlng.lng;
+
+    // نقل الدبوس إلى مكان الضغط المطول الجديد أو إنشاؤه
+    if (currentMarker) {
+        currentMarker.setLatLng(e.latlng);
+    } else {
+        currentMarker = L.marker(e.latlng).addTo(map);
+    }
+
+    // جلب تفاصيل العنوان الوطني جغرافياً باللغة العربية
+    fetch(`https://openstreetmap.org{lat}&lon=${lng}&accept-language=ar`)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.address) {
+                const addr = data.address;
+                
+                // تعبئة الخانات تلقائياً بناءً على مكان الضغط
+                document.getElementById('addr-suburb').value = addr.suburb || addr.neighbourhood || addr.quarter || "";
+                document.getElementById('addr-building').value = addr.house_number || "";
+                document.getElementById('addr-postal').value = addr.postcode || "";
+                document.getElementById('addr-short').value = (addr.road ? addr.road + '، ' : '') + (addr.suburb || '');
+            }
+        })
+        .catch(err => console.log('خطأ في جلب تفاصيل الموقع:', err));
+});
     </script>
 </body>
 </html>
