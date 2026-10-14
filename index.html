@@ -148,6 +148,33 @@
 });
 
         setTimeout(function(){ map.invalidateSize(); }, 400);
+        // ميزة نسخ العنوان الوطني تلقائياً عند الضغط على الزر الجديد
+document.getElementById('copyBtn').addEventListener('click', function() {
+    const suburb = document.getElementById('addr-suburb').value;
+    const building = document.getElementById('addr-building').value;
+    const postal = document.getElementById('addr-postal').value;
+    const additional = document.getElementById('addr-additional').value;
+    const unit = document.getElementById('addr-unit').value;
+    const shortAddr = document.getElementById('addr-short').value;
+
+    // تجميع البيانات المكتوبة في نص واحد منظم
+    const fullAddress = `العنوان الوطني:\nالحي: ${suburb || 'غير محدد'}\nرقم المبنى: ${building || 'غير محدد'}\nالرمز البريدي: ${postal || 'غير محدد'}\nالرمز الإضافي: ${additional || 'غير محدد'}\nرقم الوحدة: ${unit || 'غير محدد'}\nالعنوان المختصر: ${shortAddr || 'غير محدد'}`;
+
+    // أمر النسخ إلى حافظة الجوال
+    navigator.clipboard.writeText(fullAddress).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.textContent = "تم النسخ بنجاح! ✓";
+        btn.style.backgroundColor = "#28a745"; // تغيير لون الزر للأخضر
+        
+        // إعادة الزر لشكلة الطبيعي بعد ثانيتين
+        setTimeout(() => {
+            btn.textContent = "نسخ العنوان الوطني";
+            btn.style.backgroundColor = "#007bff";
+        }, 2000);
+    }).catch(err => {
+        alert("لم نتمكن من النسخ تلقائياً: " + err);
+    });
+});
     </script>
 </body>
 </html>
