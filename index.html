@@ -181,26 +181,15 @@ document.getElementById('copyBtn').addEventListener('click', function() {
 });
 
 // كود ذكي لفصل الخريطة عن الحقول تلقائياً داخل تطبيق Kodular
-// كود ذكي ومعدل لفصل الخريطة عن الحقول تلقائياً وبأمان
 if (window.location.search.includes('mode=map')) {
-    // وضع التطبيق العالي: اخفِ الحقول وصندوق البحث
+    // إذا كان الرابط مخصصاً للأعلى: اخفِ الحقول السفلية وصندوق البحث تماماً
     document.querySelector('.address-form').style.display = 'none';
     document.querySelector('.search-container').style.display = 'none';
     document.getElementById('map').style.height = '100vh'; 
 } else if (window.location.search.includes('mode=form')) {
-    // وضع التطبيق السفلي: اخفِ الخريطة تماماً واظهر الحقول وصندوق البحث بوضوح
+    // إذا كان الرابط مخصصاً للأسفل: اخفِ الخريطة تماماً واترك الحقول وزر النسخ بوضوح
     document.getElementById('map').style.display = 'none';
-    document.querySelector('.address-form').style.display = 'block';
-    document.querySelector('.search-container').style.display = 'block';
 }
-} else {
-    // الوضع الطبيعي للمتصفح العادي: إظهار كل شيء بشكل متناسق وثابت
-    document.getElementById('map').style.display = 'block';
-    document.getElementById('map').style.height = '350px';
-    document.querySelector('.address-form').style.display = 'block';
-    document.querySelector('.search-container').style.display = 'block';
-}
-
 </script>
 </body>
 </html>
