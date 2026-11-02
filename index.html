@@ -78,34 +78,34 @@
             { name: "الدمام", lat: 26.4207, lng: 50.0888, type: "city" }
         ];
 
-        const map = L.map( map ).setView([23.8859, 45.0792], 6);
+        const map = L.map('map').setView([23.8859, 45.0792], 6);
         
-        L.tileLayer( https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png , {
-    attribution:  © OpenStreetMap 
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
 }).addTo(map);
 
         let currentMarker = null;
-        const searchInput = document.getElementById( searchInput );
-        const resultsList = document.getElementById( resultsList );
+        const searchInput = document.getElementById('searchInput');
+        const resultsList = document.getElementById('resultsList');
 
-        searchInput.addEventListener( input , function() {
+        searchInput.addEventListener('input', function() {
             const query = this.value.trim().toLowerCase();
-            resultsList.innerHTML =   ;
+            resultsList.innerHTML = '';
             
-            if (query ===   ) {
-                resultsList.style.display =  none ;
+            if (query === '') {
+                resultsList.style.display = 'none';
                 return;
             }
 
             const filtered = locations.filter(loc => loc.name.toLowerCase().includes(query));
             
             if (filtered.length > 0) {
-                resultsList.style.display =  block ;
+                resultsList.style.display = 'block';
                 filtered.forEach(loc => {
-                    const li = document.createElement( li );
+                    const li = document.createElement('li');
                     li.textContent = loc.name;
-                    li.addEventListener( click , function() {
-                        const zoomLevel = loc.type ===  city  ? 9 : 14;
+                    li.addEventListener('click', function() {
+                        const zoomLevel = loc.type === 'city' ? 9 : 14;
                         map.setView([loc.lat, loc.lng], zoomLevel);
                         
                         if (currentMarker) {
@@ -115,20 +115,20 @@
                         }
                         currentMarker.bindPopup(loc.name).openPopup();
                         searchInput.value = loc.name;
-                        resultsList.style.display =  none ;
+                        resultsList.style.display = 'none';
                     });
                     resultsList.appendChild(li);
                 });
             } else {
-                resultsList.style.display =  none ;
+                resultsList.style.display = 'none';
             }
         });
 
-        document.addEventListener( click , function(e) {
-            if (e.target !== searchInput) { resultsList.style.display =  none ; }
+        document.addEventListener('click', function(e) {
+            if (e.target !== searchInput) { resultsList.style.display = 'none'; }
         });
 
-        map.on( contextmenu , function(e) {
+        map.on('contextmenu', function(e) {
     const lat = e.latlng.lat;
     const lng = e.latlng.lng;
 
@@ -142,10 +142,10 @@
         .then(data => {
             if (data && data.address) {
                 const addr = data.address;
-                document.getElementById( addr-suburb ).value = addr.suburb || addr.neighbourhood || addr.quarter || "";
-                document.getElementById( addr-building ).value = addr.house_number || "";
-                document.getElementById( addr-postal ).value = addr.postcode || "";
-                document.getElementById( addr-short ).value = (addr.road ? addr.road +  ،   :   ) + (addr.suburb ||   );
+                document.getElementById('addr-suburb').value = addr.suburb || addr.neighbourhood || addr.quarter || "";
+                document.getElementById('addr-building').value = addr.house_number || "";
+                document.getElementById('addr-postal').value = addr.postcode || "";
+                document.getElementById('addr-short').value = (addr.road ? addr.road + '، ' : '') + (addr.suburb || '');
             }
         })
         .catch(err => console.log(err));
@@ -153,20 +153,20 @@
 
         setTimeout(function(){ map.invalidateSize(); }, 400);
         // ميزة نسخ العنوان الوطني تلقائياً عند الضغط على الزر الجديد
-document.getElementById( copyBtn ).addEventListener( click , function() {
-    const suburb = document.getElementById( addr-suburb ).value;
-    const building = document.getElementById( addr-building ).value;
-    const postal = document.getElementById( addr-postal ).value;
-    const additional = document.getElementById( addr-additional ).value;
-    const unit = document.getElementById( addr-unit ).value;
-    const shortAddr = document.getElementById( addr-short ).value;
+document.getElementById('copyBtn').addEventListener('click', function() {
+    const suburb = document.getElementById('addr-suburb').value;
+    const building = document.getElementById('addr-building').value;
+    const postal = document.getElementById('addr-postal').value;
+    const additional = document.getElementById('addr-additional').value;
+    const unit = document.getElementById('addr-unit').value;
+    const shortAddr = document.getElementById('addr-short').value;
 
     // تجميع البيانات المكتوبة في نص واحد منظم
-    const fullAddress = `العنوان الوطني:\nالحي: ${suburb ||  غير محدد }\nرقم المبنى: ${building ||  غير محدد }\nالرمز البريدي: ${postal ||  غير محدد }\nالرمز الإضافي: ${additional ||  غير محدد }\nرقم الوحدة: ${unit ||  غير محدد }\nالعنوان المختصر: ${shortAddr ||  غير محدد }`;
+    const fullAddress = `العنوان الوطني:\nالحي: ${suburb || 'غير محدد'}\nرقم المبنى: ${building || 'غير محدد'}\nالرمز البريدي: ${postal || 'غير محدد'}\nالرمز الإضافي: ${additional || 'غير محدد'}\nرقم الوحدة: ${unit || 'غير محدد'}\nالعنوان المختصر: ${shortAddr || 'غير محدد'}`;
 
     // أمر النسخ إلى حافظة الجوال
     navigator.clipboard.writeText(fullAddress).then(() => {
-        const btn = document.getElementById( copyBtn );
+        const btn = document.getElementById('copyBtn');
         btn.textContent = "تم النسخ بنجاح! ✓";
         btn.style.backgroundColor = "#28a745"; // تغيير لون الزر للأخضر
         
@@ -181,14 +181,14 @@ document.getElementById( copyBtn ).addEventListener( click , function() {
 });
 
 // كود ذكي لفصل الخريطة عن الحقول تلقائياً داخل تطبيق Kodular
-if (window.location.search.includes( mode=map )) {
+if (window.location.search.includes('mode=map')) {
     // إذا كان الرابط مخصصاً للأعلى: اخفِ الحقول السفلية وصندوق البحث تماماً
-    document.querySelector( .address-form ).style.display =  none ;
-    document.querySelector( .search-container ).style.display =  none ;
-    document.getElementById( map ).style.height =  100vh ; 
-} else if (window.location.search.includes( mode=form )) {
+    document.querySelector('.address-form').style.display = 'none';
+    document.querySelector('.search-container').style.display = 'none';
+    document.getElementById('map').style.height = '100vh'; 
+} else if (window.location.search.includes('mode=form')) {
     // إذا كان الرابط مخصصاً للأسفل: اخفِ الخريطة تماماً واترك الحقول وزر النسخ بوضوح
-    document.getElementById( map ).style.display =  none ;
+    document.getElementById('map').style.display = 'none';
 }
 </script>
 </body>
