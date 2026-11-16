@@ -1,1 +1,280 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شحن الرصيد</title>
+    <style>
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 15px;
+        }
+        .card-box {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .balance-card {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 22px;
+        }
+        .balance-title {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        .balance-amount {
+            font-size: 32px;
+            font-weight: bold;
+        }
+        .input-group {
+            margin-bottom: 16px;
+            text-align: right;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #444;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 17px;
+            box-sizing: border-box;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 1px;
+            direction: ltr;
+        }
+        input:focus {
+            border-color: #2563eb;
+            outline: none;
+        }
+        .btn-charge {
+            background-color: #16a34a;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        .btn-charge:disabled {
+            background-color: #86efac;
+            cursor: not-allowed;
+        }
+        .result-box {
+            margin-top: 18px;
+            padding: 14px;
+            border-radius: 10px;
+            display: none;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        .success {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        .error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+    </style>
+</head>
+<body>
 
+<div class="card-box">
+    <div class="balance-card">
+        <div class="balance-title">رصيدك الحالي</div>
+        <div class="balance-amount" id="userBalance">جاري التحميل...</div>
+    </div>
+    
+    <div class="input-group">
+        <label>أدخل رقم كرت الشحن:</label>
+        <input type="text" id="cardCodeInput" placeholder="اكتب رقم الكرت هنا">
+    </div>
+
+    <button class="btn-charge" id="chargeBtn" onclick="redeemCard()">شحن الرصيد الآن</button>
+
+    <div id="resultBox" class="result-box"></div>
+</div>
+
+<script>
+    // ==========================================
+    // إعدادات قاعدة البيانات (عدّل هذه القيم لتطابق جدولك)
+    // ==========================================
+    const API_TOKEN = "F2YsIpIM14CyzaadWxaz5QIBxChhTCOW";
+    const CARDS_TABLE_ID = "ضع_رقم_جدول_الكروت_هنا"; 
+    const USERS_TABLE_ID = "ضع_رقم_جدول_المستخدمين_هنا";
+    
+    // أسماء الأعمدة في جدول المستخدمين (تأكد من مطابقتها)
+    const USER_SEARCH_COLUMN = "Phone"; // اسم عمود البحث عن المستخدم (مثل Phone أو Email أو ID)
+    const USER_POINTS_COLUMN = "Points"; // اسم عمود الرصيد في جدول المستخدمين
+    // ==========================================
+
+    // قراءة معرف المستخدم القادم من تطبيق Kodular عبر الرابط (مثلاً ?user=777123456)
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentUserId = urlParams.get('user');
+
+    let userRowId = null;
+    let currentPoints = 0;
+
+    // 1. جلب بيانات المستخدم ورصيده عند فتح الصفحة
+    window.onload = async function() {
+        if (!currentUserId) {
+            document.getElementById("userBalance").innerText = "0";
+            showResult("تنبيه: لم يتم التعرف على حساب المستخدم! افتح الصفحة من داخل التطبيق.", "error");
+            document.getElementById("chargeBtn").disabled = true;
+            return;
+        }
+
+        try {
+            const url = `https://baserow.io{USERS_TABLE_ID}/?user_field_names=true&filter__${USER_SEARCH_COLUMN}__equal=${encodeURIComponent(currentUserId)}`;
+            const response = await fetch(url, {
+                headers: { "Authorization": `Token ${API_TOKEN}` }
+            });
+            const data = await response.json();
+
+            if (data.results && data.results.length > 0) {
+                const user = data.results[0];
+                userRowId = user.id;
+                currentPoints = Number(user[USER_POINTS_COLUMN]) || 0;
+                document.getElementById("userBalance").innerText = currentPoints + " نقطة";
+            } else {
+                document.getElementById("userBalance").innerText = "غير موجود";
+                showResult("لم يتم العثور على بيانات المستخدم في قاعدة البيانات.", "error");
+                document.getElementById("chargeBtn").disabled = true;
+            }
+        } catch (error) {
+            document.getElementById("userBalance").innerText = "خطأ";
+            showResult("فشل الاتصال بالسيرفر لجلب الرصيد.", "error");
+        }
+    };
+
+    // 2. عملية شحن الكرت وتحديث الجداول
+    async function redeemCard() {
+        const code = document.getElementById("cardCodeInput").value.trim();
+        const btn = document.getElementById("chargeBtn");
+
+        if (!code) {
+            showResult("يرجى إدخال رقم الكرت أولاً!", "error");
+            return;
+        }
+
+        if (!userRowId) {
+            showResult("لا يمكن الشحن قبل تحميل بيانات المستخدم!", "error");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerText = "جاري التحقق من الكرت...";
+
+        try {
+            // الخطوة أ: البحث عن الكرت في جدول الكروت
+            const cardSearchUrl = `https://baserow.io{CARDS_TABLE_ID}/?user_field_names=true&filter__Code__equal=${encodeURIComponent(code)}`;
+            const cardRes = await fetch(cardSearchUrl, {
+                headers: { "Authorization": `Token ${API_TOKEN}` }
+            });
+            const cardData = await cardRes.json();
+
+            if (!cardData.results || cardData.results.length === 0) {
+                showResult("❌ رقم الكرت غير صحيح!", "error");
+                resetBtn();
+                return;
+            }
+
+            const card = cardData.results[0];
+            const cardRowId = card.id;
+            const cardValue = Number(card.Value) || 0;
+            const cardStatus = card.Status;
+
+            // الخطوة ب: التأكد من أن الكرت جديد ولم يُستخدم
+            if (cardStatus !== "new") {
+                showResult("⚠️ هذا الكرت مستخدم مسبقاً!", "error");
+                resetBtn();
+                return;
+            }
+
+            btn.innerText = "جاري إضافة النقاط...";
+
+            // الخطوة ج: حرق الكرت (تغيير حالته إلى used في جدول الكروت)
+            const updateCardUrl = `https://baserow.io{CARDS_TABLE_ID}/${cardRowId}/?user_field_names=true`;
+            const updateCardRes = await fetch(updateCardUrl, {
+                method: "PATCH",
+                headers: {
+                    "Authorization": `Token ${API_TOKEN}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ "Status": "used" })
+            });
+
+            if (!updateCardRes.ok) {
+                throw new Error("فشل تحديث حالة الكرت، حاول مرة أخرى.");
+            }
+
+            // الخطوة د: إضافة النقاط وحفظ الرصيد الجديد في جدول المستخدمين
+            const newTotalPoints = currentPoints + cardValue;
+            const updateUserUrl = `https://baserow.io{USERS_TABLE_ID}/${userRowId}/?user_field_names=true`;
+            const updateUserRes = await fetch(updateUserUrl, {
+                method: "PATCH",
+                headers: {
+                    "Authorization": `Token ${API_TOKEN}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ [USER_POINTS_COLUMN]: newTotalPoints })
+            });
+
+            if (updateUserRes.ok) {
+                currentPoints = newTotalPoints;
+                document.getElementById("userBalance").innerText = currentPoints + " نقطة";
+                document.getElementById("cardCodeInput").value = "";
+                showResult(`✅ تم شحن <b>${cardValue} نقطة</b> بنجاح! رصيدك الجديد هو <b>${currentPoints} نقطة</b>.`, "success");
+            } else {
+                throw new Error("تم تفعيل الكرت ولكن حدث خطأ في حفظ الرصيد، تواصل مع الإدارة.");
+            }
+
+        } catch (error) {
+            showResult(error.message, "error");
+        }
+
+        resetBtn();
+    }
+
+    function resetBtn() {
+        const btn = document.getElementById("chargeBtn");
+        btn.disabled = false;
+        btn.innerText = "شحن الرصيد الآن";
+    }
+
+    function showResult(msg, type) {
+        const box = document.getElementById("resultBox");
+        box.innerHTML = msg;
+        box.className = "result-box " + type;
+        box.style.display = "block";
+    }
+</script>
+
+</body>
+</html>
