@@ -24,106 +24,36 @@
             max-width: 420px;
             text-align: center;
         }
-        h2 {
-            color: #1a1a1a;
-            margin-bottom: 20px;
-            font-size: 21px;
-        }
-        .input-group {
-            margin-bottom: 16px;
-            text-align: right;
-        }
-        label {
-            display: block;
-            margin-bottom: 6px;
-            color: #444;
-            font-weight: bold;
-            font-size: 14px;
-        }
-        .row-input {
-            display: flex;
-            gap: 8px;
-        }
+        h2 { color: #1a1a1a; margin-bottom: 18px; font-size: 21px; }
+        .input-group { margin-bottom: 15px; text-align: right; }
+        label { display: block; margin-bottom: 6px; color: #444; font-weight: bold; font-size: 14px; }
+        .row-input { display: flex; gap: 8px; }
         input {
-            width: 100%;
-            padding: 12px;
-            border: 1.5px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 16px;
-            box-sizing: border-box;
-            text-align: center;
-            font-weight: bold;
-            letter-spacing: 1px;
-            direction: ltr;
+            width: 100%; padding: 12px; border: 1.5px solid #d1d5db;
+            border-radius: 8px; font-size: 16px; box-sizing: border-box;
+            text-align: center; font-weight: bold; letter-spacing: 1px; direction: ltr;
         }
-        input:focus {
-            border-color: #2563eb;
-            outline: none;
-        }
+        input:focus { border-color: #2563eb; outline: none; }
         .btn-gen {
-            background-color: #374151;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0 14px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: bold;
-            white-space: nowrap;
+            background-color: #374151; color: white; border: none; border-radius: 8px;
+            padding: 0 14px; cursor: pointer; font-size: 13px; font-weight: bold; white-space: nowrap;
         }
         .btn-submit {
-            background-color: #16a34a;
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 14px;
-            border-radius: 8px;
-            font-size: 17px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 8px;
+            background-color: #16a34a; color: white; border: none; width: 100%;
+            padding: 14px; border-radius: 8px; font-size: 17px; font-weight: bold;
+            cursor: pointer; margin-top: 8px;
         }
-        .btn-submit:disabled {
-            background-color: #86efac;
-            cursor: not-allowed;
-        }
+        .btn-submit:disabled { background-color: #86efac; cursor: not-allowed; }
         .result-box {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            display: none;
-            font-size: 15px;
-            line-height: 1.6;
+            margin-top: 20px; padding: 15px; border-radius: 8px;
+            display: none; font-size: 14px; line-height: 1.6; word-break: break-word;
         }
-        .success {
-            background-color: #dcfce7;
-            color: #166534;
-            border: 1px solid #bbf7d0;
-        }
-        .error {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
+        .success { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .error { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
         .btn-copy {
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 6px;
-            margin-top: 10px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            width: 100%;
-        }
-        .change-id {
-            margin-top: 15px;
-            font-size: 12px;
-            color: #6b7280;
-            text-decoration: underline;
-            cursor: pointer;
-            display: inline-block;
+            background-color: #2563eb; color: white; border: none; padding: 10px 18px;
+            border-radius: 6px; margin-top: 10px; cursor: pointer; font-size: 14px;
+            font-weight: bold; width: 100%;
         }
     </style>
 </head>
@@ -132,6 +62,11 @@
 <div class="card-box">
     <h2>إضافة كرت شحن محمي</h2>
     
+    <div class="input-group">
+        <label>رقم جدول الكروت (Table ID):</label>
+        <input type="text" id="tableIdInput" placeholder="اكتب رقم الجدول من Baserow (يحفظ تلقائياً)">
+    </div>
+
     <div class="input-group">
         <label>رقم الكرت (Code):</label>
         <div class="row-input">
@@ -142,79 +77,75 @@
 
     <div class="input-group">
         <label>المبلغ / النقاط (Value):</label>
-        <input type="number" id="cardValue" placeholder="مثال: 100" min="1">
+        <input type="text" id="cardValue" placeholder="مثال: 100">
     </div>
 
     <button class="btn-submit" id="saveBtn" onclick="verifyAndSaveCard()">فحص وحفظ الكرت</button>
 
     <div id="resultBox" class="result-box"></div>
-    
-    <div>
-        <span class="change-id" onclick="resetTableId()">تغيير رقم الجدول (Table ID)</span>
-    </div>
 </div>
 
 <script>
     const API_TOKEN = "F2YsIpIM14CyzaadWxaz5QIBxChhTCOW";
 
-    // دالة للحصول على رقم الجدول أو طلبه مرة واحدة فقط
-    function getTableId() {
-        let tableId = localStorage.getItem("baserow_cards_table_id");
-        if (!tableId) {
-            tableId = prompt("أدخل رقم جدول الكروت (Table ID) من Baserow (سيتم حفظه في جوالك ولن يُطلب مرة أخرى):");
-            if (tableId && tableId.trim() !== "") {
-                localStorage.setItem("baserow_cards_table_id", tableId.trim());
-            }
+    window.onload = function() {
+        const savedId = localStorage.getItem("baserow_cards_table_id");
+        if (savedId) {
+            document.getElementById("tableIdInput").value = savedId;
         }
-        return tableId ? tableId.trim() : null;
+    };
+
+    function toEnglishDigits(str) {
+        return str.replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)).trim();
     }
 
-    function resetTableId() {
-        localStorage.removeItem("baserow_cards_table_id");
-        getTableId();
-    }
-
-    // توليد رقم عشوائي آمن من 10 أرقام عند الضغط على الزر
     function generateNumericCode() {
         const numbers = "0123456789";
         const array = new Uint32Array(10);
         window.crypto.getRandomValues(array);
-        
         let code = "";
         for (let i = 0; i < 10; i++) {
-            if (i === 0) {
-                code += (array[i] % 9) + 1;
-            } else {
-                code += numbers[array[i] % numbers.length];
-            }
+            code += (i === 0) ? ((array[i] % 9) + 1) : numbers[array[i] % numbers.length];
         }
         document.getElementById("cardCode").value = code;
     }
 
-    // فحص عدم التكرار وحفظ الكرت في Baserow
+    // دالة ذكية تحاول الاتصال المباشر أولاً، وإذا منعها المتصفح تستخدم وسيط CORS تلقائياً
+    async function smartFetch(targetUrl, options) {
+        try {
+            const res = await fetch(targetUrl, options);
+            return res;
+        } catch (err) {
+            // في حال فشل الاتصال المباشر بسبب قيود المتصفح، نستخدم وسيط corsproxy.io
+            const proxyUrl = "https://corsproxy.io?" + encodeURIComponent(targetUrl);
+            return await fetch(proxyUrl, options);
+        }
+    }
+
     async function verifyAndSaveCard() {
-        const tableId = getTableId();
-        if (!tableId) {
-            showResult("يجب إدخال رقم جدول الكروت (Table ID) أولاً لكي يعمل الحفظ!", "error");
+        const tableId = toEnglishDigits(document.getElementById("tableIdInput").value);
+        const code = toEnglishDigits(document.getElementById("cardCode").value);
+        const value = toEnglishDigits(document.getElementById("cardValue").value);
+        const saveBtn = document.getElementById("saveBtn");
+
+        if (!tableId || isNaN(tableId)) {
+            showResult("يرجى كتابة رقم جدول الكروت (Table ID) بأرقام صحيحة في الخانة الأولى!", "error");
             return;
         }
 
-        const code = document.getElementById("cardCode").value.trim();
-        const value = document.getElementById("cardValue").value.trim();
-        const saveBtn = document.getElementById("saveBtn");
-
-        if (!code || !value || Number(value) <= 0) {
+        if (!code || !value || isNaN(value) || Number(value) <= 0) {
             showResult("يرجى إدخال رقم الكرت والمبلغ بشكل صحيح!", "error");
             return;
         }
 
+        localStorage.setItem("baserow_cards_table_id", tableId);
         saveBtn.disabled = true;
         saveBtn.innerText = "جاري فحص عدم التكرار...";
 
         try {
-            // 1. فحص هل الكرت موجود مسبقاً لمنع التكرار
+            // 1. فحص عدم التكرار
             const checkUrl = `https://baserow.io{tableId}/?user_field_names=true&filter__Code__equal=${encodeURIComponent(code)}`;
-            const checkResponse = await fetch(checkUrl, {
+            const checkResponse = await smartFetch(checkUrl, {
                 method: "GET",
                 headers: {
                     "Authorization": `Token ${API_TOKEN}`
@@ -222,7 +153,8 @@
             });
 
             if (!checkResponse.ok) {
-                throw new Error("رقم الجدول (Table ID) غير صحيح، اضغط على 'تغيير رقم الجدول' بالأسفل لتصحيحه.");
+                const errText = await checkResponse.text();
+                throw new Error(`رفض السيرفر الطلب (${checkResponse.status}): تأكد أن رقم الجدول (${tableId}) صحيح. التفاصيل: ${errText}`);
             }
 
             const checkData = await checkResponse.json();
@@ -234,10 +166,10 @@
                 return;
             }
 
-            // 2. حفظ الكرت الجديد في Baserow
+            // 2. حفظ الكرت
             saveBtn.innerText = "جاري حفظ الكرت...";
             const saveUrl = `https://baserow.io{tableId}/?user_field_names=true`;
-            const saveResponse = await fetch(saveUrl, {
+            const saveResponse = await smartFetch(saveUrl, {
                 method: "POST",
                 headers: {
                     "Authorization": `Token ${API_TOKEN}`,
@@ -253,20 +185,19 @@
             if (saveResponse.ok) {
                 showResult(
                     `✅ تم حفظ الكرت وتفعيله بنجاح!<br>` +
-                    `رقم الكرت: <b>${code}</b><br>` +
-                    `القيمة: <b>${value} نقطة</b><br>` +
+                    `رقم الكرت: <b>${code}</b> | القيمة: <b>${value} نقطة</b><br>` +
                     `<button class="btn-copy" onclick="copyText('${code}')">نسخ الرقم لإرساله للمستخدم</button>`, 
                     "success"
                 );
                 document.getElementById("cardCode").value = "";
                 document.getElementById("cardValue").value = "";
             } else {
-                const errData = await saveResponse.json();
-                showResult("حدث خطأ أثناء الحفظ: " + JSON.stringify(errData), "error");
+                const errData = await saveResponse.text();
+                showResult(`فشل الحفظ (${saveResponse.status}): ${errData}`, "error");
             }
 
         } catch (error) {
-            showResult(error.message, "error");
+            showResult(`<b>السبب الفني:</b> ${error.message}`, "error");
         }
 
         saveBtn.disabled = false;
