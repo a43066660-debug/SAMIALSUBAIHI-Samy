@@ -33,8 +33,10 @@
         .leaflet-control-zoom, .leaflet-control-attribution {
             display: none !important;
         }
-        .leaflet-marker-icon {
-            filter: hue-rotate(140deg) saturate(200%) !important;
+        /* أيقونة دبوس مصغرة وأنيقة */
+        .small-pin {
+            background: transparent;
+            border: none;
         }
     </style>
 </head>
@@ -51,31 +53,66 @@
         const tileUrl = "https://" + "{s}.tile." + "openstreetmap.org/{z}/{x}/{y}.png";
         L.tileLayer(tileUrl).addTo(map);
 
+        // إنشاء دبوس مصغر (22x30 بكسل بدل 25x41 الافتراضي الضخم)
+        const smallPinIcon = L.divIcon({
+            className: 'small-pin',
+            html: `<svg width="22" height="30" viewBox="0 0 24 34" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 0C5.37 0 0 5.37 0 12c0 9 12 22 12 22s12-13 12-22c0-6.63-5.37-12-12-12zm0 16.5c-2.48 0-4.5-2.02-4.5-4.5s2.02-4.5 4.5-4.5 4.5 2.02 4.5 4.5-2.02 4.5-4.5 4.5z" fill="#e63946" stroke="#ffffff" stroke-width="1.5"/>
+                   </svg>`,
+            iconSize: [22, 30],
+            iconAnchor: [11, 30],
+            popupAnchor: [0, -28]
+        });
+
         let currentMarker = null;
 
         function moveToLocation(lat, lng, zoom = 14) {
-            map.setView([lat, lng], zoom);
+            const numLat = parseFloat(lat);
+            const numLng = parseFloat(lng);
+            const numZoom = parseInt(zoom) || 14;
+            if (isNaN(numLat) || isNaN(numLng)) return;
+
+            map.setView([numLat, numLng], numZoom);
             if (currentMarker) {
-                currentMarker.setLatLng([lat, lng]);
+                currentMarker.setLatLng([numLat, numLng]);
             } else {
-                currentMarker = L.marker([lat, lng]).addTo(map);
+                currentMarker = L.marker([numLat, numLng], { icon: smallPinIcon }).addTo(map);
             }
         }
 
-        function checkSelectedLocation() {
-            const saved = localStorage.getItem('selected_location');
-            if (saved) {
+        function syncLocation() {
+            // 1. القراءة من رابط الصفحة (?lat=...&lng=...) - الأضمن 100%
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('lat') && params.has('lng')) {
+                moveToLocation(params.get('lat'), params.get('lng'), params.get('zoom') || 14);
+                return;
+            }
+
+            // 2. القراءة من window.name
+            if (window.name && window.name.startsWith('LOC_DATA:')) {
                 try {
+                    const loc = JSON.parse(window.name.replace('LOC_DATA:', ''));
+                    moveToLocation(loc.lat, loc.lng, loc.zoom || 14);
+                    window.name = '';
+                    return;
+                } catch (e) {}
+            }
+
+            // 3. القراءة من localStorage
+            try {
+                const saved = localStorage.getItem('selected_location');
+                if (saved) {
                     const loc = JSON.parse(saved);
                     moveToLocation(loc.lat, loc.lng, loc.zoom || 14);
                     localStorage.removeItem('selected_location');
-                } catch (e) {}
-            }
+                }
+            } catch (e) {}
         }
 
-        checkSelectedLocation();
-        window.addEventListener('focus', checkSelectedLocation);
-        window.addEventListener('storage', checkSelectedLocation);
+        syncLocation();
+        window.addEventListener('focus', syncLocation);
+        window.addEventListener('pageshow', syncLocation);
+        setInterval(syncLocation, 600);
 
         map.on('click', function(e) {
             moveToLocation(e.latlng.lat, e.latlng.lng, map.getZoom());
