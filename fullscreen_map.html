@@ -101,25 +101,33 @@
                 li.textContent = loc.name;
                 li.addEventListener('click', function() {
                     const zoomLevel = loc.type === 'city' ? 11 : 15;
-                    const payload = JSON.stringify({
+                    const payloadObj = {
                         name: loc.name,
                         lat: loc.lat,
                         lng: loc.lng,
-                        zoom: zoomLevel
-                    });
+                        zoom: zoomLevel,
+                        time: Date.now()
+                    };
+                    const payload = JSON.stringify(payloadObj);
 
-                    localStorage.setItem('selected_location', payload);
+                    // 1. حفظ في localStorage
+                    try { localStorage.setItem('selected_location', payload); } catch (e) {}
+
+                    // 2. حفظ في window.name (يعمل حتى مع file:// في أندرويد)
+                    window.name = 'LOC_DATA:' + payload;
+
+                    // 3. إرسال إلى Kodular / App Inventor
                     if (window.AppInventor && window.AppInventor.setWebViewString) {
                         window.AppInventor.setWebViewString(payload);
                     }
 
-                    searchInput.value = loc.name;
+                    // 4. الانتقال المباشر إلى شاشة الخريطة مع تمرير الإحداثيات في الرابط
+                    window.location.href = `fullscreen_map-v2.html?lat=${loc.lat}&lng=${loc.lng}&zoom=${zoomLevel}&name=${encodeURIComponent(loc.name)}`;
                 });
                 resultsList.appendChild(li);
             });
         }
 
-        // عرض القائمة كاملة عند الفتح لتملأ الشاشة
         renderList(locations);
 
         searchInput.addEventListener('input', function() {
