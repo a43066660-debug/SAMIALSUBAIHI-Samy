@@ -2,49 +2,82 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>الخريطة الكاملة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محدد المواقع والعناوين الوطنية</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #e5e3df;
-        }
-        #map {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            width: 100vw;
-            height: 100vh;
-            cursor: pointer;
-        }
-        .leaflet-control-zoom, .leaflet-control-attribution {
-            display: none !important;
-        }
-        /* أيقونة دبوس مصغرة وأنيقة */
-        .small-pin {
-            background: transparent;
+        body, html { margin: 0; padding: 0; height: auto; font-family: Arial, sans-serif; background-color: #fcfcfc; }
+        #map { height: 350px; width: 100%; z-index: 1; border-bottom: 2px solid #e0e0e0; cursor: pointer; }
+        .leaflet-control-zoom, .leaflet-control-attribution { display: none !important; }
+        .search-container { position: relative; padding: 15px; max-width: 400px; margin: 10px auto; z-index: 1000; }
+        .search-box { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; text-align: right; direction: rtl; }
+        .results-list { position: absolute; width: calc(100% - 30px); background: white; border: 1px solid #ccc; border-top: none; max-height: 200px; overflow-y: auto; list-style: none; padding: 0; margin: 0; border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: none; text-align: right; direction: rtl; }
+        .results-list li { padding: 12px; border-bottom: 1px solid #f0f0f0; cursor: pointer; font-size: 15px; }
+        .results-list li:hover { background-color: #f7f7f7; }
+        .leaflet-marker-icon { filter: hue-rotate(140deg) saturate(200%) !important; }
+        .address-form { width: 90%; max-width: 400px; margin: 20px auto; direction: rtl; }
+        .address-field { width: 100%; padding: 15px 5px; border: none; border-bottom: 1px solid #e0e0e0; font-size: 16px; color: #333; outline: none; box-sizing: border-box; background-color: transparent; }
+        .address-field::placeholder { color: #aaa; }
+        .address-field:focus { border-bottom: 1px solid #007bff; }
+        .status-msg { text-align: center; font-size: 13px; color: #007bff; margin-top: 8px; min-height: 18px; }
+        .copy-button {
+            background-color: #007bff;
+            color: white;
             border: none;
+            padding: 14px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background 0.3s;
+            width: 100%;
+            margin-top: 15px;
+        }
+        .copy-button:active {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
 
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-box" placeholder="ابحث عن مدينة أو حي في السعودية...">
+        <ul id="resultsList" class="results-list"></ul>
+    </div>
+
     <div id="map"></div>
+    <div id="statusMsg" class="status-msg">انقر على أي موقع في الخريطة لتعبئة العنوان تلقائياً</div>
+
+    <div class="address-form">
+        <input type="text" class="address-field" id="addr-suburb" placeholder="حي">
+        <input type="text" class="address-field" id="addr-building" placeholder="رقم المبنى">
+        <input type="text" class="address-field" id="addr-postal" placeholder="الرمز البريدي">
+        <input type="text" class="address-field" id="addr-additional" placeholder="الرمز الإضافي">
+        <input type="text" class="address-field" id="addr-unit" placeholder="رقم الوحدة">
+        <input type="text" class="address-field" id="addr-short" placeholder="العنوان المختصر">
+        <div style="text-align: center;">
+            <button id="copyBtn" class="copy-button">نسخ العنوان الوطني</button>
+        </div>
+    </div>
 
     <script>
+        const locations = [
+            { name: "الرياض (العاصمة)", lat: 24.7136, lng: 46.6753, type: "city" },
+            { name: "الرياض - حي العليا", lat: 24.7105, lng: 46.6669, type: "district" },
+            { name: "الرياض - حي الصحافة", lat: 24.8016, lng: 46.6294, type: "district" },
+            { name: "جدة", lat: 21.5433, lng: 39.1728, type: "city" },
+            { name: "جدة - حي الصفا", lat: 21.5794, lng: 39.2131, type: "district" },
+            { name: "جدة - حي النعيم", lat: 21.6247, lng: 39.1481, type: "district" },
+            { name: "مكة المكرمة", lat: 21.3891, lng: 39.8579, type: "city" },
+            { name: "مكة المكرمة - حي العزيزية", lat: 21.4111, lng: 39.8702, type: "district" },
+            { name: "المدينة المنورة", lat: 24.5247, lng: 39.5692, type: "city" },
+            { name: "الدمام", lat: 26.4207, lng: 50.0888, type: "city" }
+        ];
+
         const map = L.map('map', {
             zoomControl: false,
             attributionControl: false
@@ -53,80 +86,135 @@
         const tileUrl = "https://" + "{s}.tile." + "openstreetmap.org/{z}/{x}/{y}.png";
         L.tileLayer(tileUrl).addTo(map);
 
-        // إنشاء دبوس مصغر (22x30 بكسل بدل 25x41 الافتراضي الضخم)
-        const smallPinIcon = L.divIcon({
-            className: 'small-pin',
-            html: `<svg width="22" height="30" viewBox="0 0 24 34" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 0C5.37 0 0 5.37 0 12c0 9 12 22 12 22s12-13 12-22c0-6.63-5.37-12-12-12zm0 16.5c-2.48 0-4.5-2.02-4.5-4.5s2.02-4.5 4.5-4.5 4.5 2.02 4.5 4.5-2.02 4.5-4.5 4.5z" fill="#e63946" stroke="#ffffff" stroke-width="1.5"/>
-                   </svg>`,
-            iconSize: [22, 30],
-            iconAnchor: [11, 30],
-            popupAnchor: [0, -28]
-        });
-
         let currentMarker = null;
+        const searchInput = document.getElementById('searchInput');
+        const resultsList = document.getElementById('resultsList');
+        const statusMsg = document.getElementById('statusMsg');
 
-        function moveToLocation(lat, lng, zoom = 14) {
-            const numLat = parseFloat(lat);
-            const numLng = parseFloat(lng);
-            const numZoom = parseInt(zoom) || 14;
-            if (isNaN(numLat) || isNaN(numLng)) return;
-
-            map.setView([numLat, numLng], numZoom);
+        function selectLocation(lat, lng, popupText = null) {
             if (currentMarker) {
-                currentMarker.setLatLng([numLat, numLng]);
+                currentMarker.setLatLng([lat, lng]);
             } else {
-                currentMarker = L.marker([numLat, numLng], { icon: smallPinIcon }).addTo(map);
+                currentMarker = L.marker([lat, lng]).addTo(map);
             }
+
+            if (popupText) {
+                currentMarker.bindPopup(popupText).openPopup();
+            }
+
+            statusMsg.textContent = "جاري جلب تفاصيل العنوان...";
+
+            const apiBase = "https://" + "nominatim." + "openstreetmap.org/reverse";
+            const apiUrl = `${apiBase}?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=ar`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.address) {
+                        const addr = data.address;
+                        const suburb = addr.suburb || addr.neighbourhood || addr.quarter || addr.city_district || addr.town || addr.city || "";
+                        const building = addr.house_number || "";
+                        const postal = addr.postcode || "";
+                        const road = addr.road || "";
+
+                        document.getElementById('addr-suburb').value = suburb;
+                        document.getElementById('addr-building').value = building;
+                        document.getElementById('addr-postal').value = postal;
+                        document.getElementById('addr-short').value = (road ? road + '، ' : '') + suburb;
+
+                        if (!popupText && data.display_name) {
+                            currentMarker.bindPopup(suburb || "الموقع المحدد").openPopup();
+                        }
+                        statusMsg.textContent = "تم تحديث بيانات العنوان بنجاح ✓";
+                    } else {
+                        statusMsg.textContent = "لم يتم العثور على تفاصيل دقيقة لهذا الموقع.";
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                    statusMsg.textContent = "تعذر الاتصال بخادم العناوين، تأكد من الإنترنت.";
+                });
         }
 
-        function syncLocation() {
-            // 1. القراءة من رابط الصفحة (?lat=...&lng=...) - الأضمن 100%
-            const params = new URLSearchParams(window.location.search);
-            if (params.has('lat') && params.has('lng')) {
-                moveToLocation(params.get('lat'), params.get('lng'), params.get('zoom') || 14);
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim().toLowerCase();
+            resultsList.innerHTML = '';
+            
+            if (query === '') {
+                resultsList.style.display = 'none';
                 return;
             }
 
-            // 2. القراءة من window.name
-            if (window.name && window.name.startsWith('LOC_DATA:')) {
-                try {
-                    const loc = JSON.parse(window.name.replace('LOC_DATA:', ''));
-                    moveToLocation(loc.lat, loc.lng, loc.zoom || 14);
-                    window.name = '';
-                    return;
-                } catch (e) {}
-            }
-
-            // 3. القراءة من localStorage
-            try {
-                const saved = localStorage.getItem('selected_location');
-                if (saved) {
-                    const loc = JSON.parse(saved);
-                    moveToLocation(loc.lat, loc.lng, loc.zoom || 14);
-                    localStorage.removeItem('selected_location');
-                }
-            } catch (e) {}
-        }
-
-        syncLocation();
-        window.addEventListener('focus', syncLocation);
-        window.addEventListener('pageshow', syncLocation);
-        setInterval(syncLocation, 600);
-
-        map.on('click', function(e) {
-            moveToLocation(e.latlng.lat, e.latlng.lng, map.getZoom());
-            const payload = JSON.stringify({
-                lat: e.latlng.lat,
-                lng: e.latlng.lng
-            });
-            if (window.AppInventor && window.AppInventor.setWebViewString) {
-                window.AppInventor.setWebViewString(payload);
+            const filtered = locations.filter(loc => loc.name.toLowerCase().includes(query));
+            
+            if (filtered.length > 0) {
+                resultsList.style.display = 'block';
+                filtered.forEach(loc => {
+                    const li = document.createElement('li');
+                    li.textContent = loc.name;
+                    li.addEventListener('click', function() {
+                        const zoomLevel = loc.type === 'city' ? 11 : 15;
+                        map.setView([loc.lat, loc.lng], zoomLevel);
+                        searchInput.value = loc.name;
+                        resultsList.style.display = 'none';
+                        selectLocation(loc.lat, loc.lng, loc.name);
+                    });
+                    resultsList.appendChild(li);
+                });
+            } else {
+                resultsList.style.display = 'none';
             }
         });
 
-        setTimeout(function(){ map.invalidateSize(); }, 300);
-        window.addEventListener('resize', function(){ map.invalidateSize(); });
+        document.addEventListener('click', function(e) {
+            if (e.target !== searchInput) {
+                resultsList.style.display = 'none';
+            }
+        });
+
+        map.on('click', function(e) {
+            selectLocation(e.latlng.lat, e.latlng.lng);
+        });
+
+        setTimeout(function(){ map.invalidateSize(); }, 400);
+
+        document.getElementById('copyBtn').addEventListener('click', function() {
+            const suburb = document.getElementById('addr-suburb').value;
+            const building = document.getElementById('addr-building').value;
+            const postal = document.getElementById('addr-postal').value;
+            const additional = document.getElementById('addr-additional').value;
+            const unit = document.getElementById('addr-unit').value;
+            const shortAddr = document.getElementById('addr-short').value;
+
+            const fullAddress = `العنوان الوطني:
+الحي: ${suburb || 'غير محدد'}
+رقم المبنى: ${building || 'غير محدد'}
+الرمز البريدي: ${postal || 'غير محدد'}
+الرمز الإضافي: ${additional || 'غير محدد'}
+رقم الوحدة: ${unit || 'غير محدد'}
+العنوان المختصر: ${shortAddr || 'غير محدد'}`;
+
+            navigator.clipboard.writeText(fullAddress).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.textContent = "تم النسخ بنجاح! ✓";
+                btn.style.backgroundColor = "#28a745";
+                
+                setTimeout(() => {
+                    btn.textContent = "نسخ العنوان الوطني";
+                    btn.style.backgroundColor = "#007bff";
+                }, 2000);
+            }).catch(err => {
+                alert("لم نتمكن من النسخ تلقائياً: " + err);
+            });
+        });
+
+        if (window.location.search.includes('mode=map')) {
+            document.querySelector('.address-form').style.display = 'none';
+            document.querySelector('.search-container').style.display = 'none';
+            document.getElementById('map').style.height = '100vh'; 
+        } else if (window.location.search.includes('mode=form')) {
+            document.getElementById('map').style.display = 'none';
+        }
     </script>
 </body>
 </html>
