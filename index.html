@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>محدد المواقع والعناوين الوطنية</title>
     
-    <link rel="stylesheet" href="https://unpkg.com" crossorigin="" />
-    <script src="https://unpkg.com" crossorigin=""></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
     <style>
         body, html { margin: 0; padding: 0; height: auto; font-family: Arial, sans-serif; background-color: #fcfcfc; }
         #map { height: 350px; width: 100%; z-index: 1; border-bottom: 2px solid #e0e0e0; cursor: pointer; }
+        .leaflet-control-zoom, .leaflet-control-attribution { display: none !important; }
         .search-container { position: relative; padding: 15px; max-width: 400px; margin: 10px auto; z-index: 1000; }
         .search-box { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; text-align: right; direction: rtl; }
         .results-list { position: absolute; width: calc(100% - 30px); background: white; border: 1px solid #ccc; border-top: none; max-height: 200px; overflow-y: auto; list-style: none; padding: 0; margin: 0; border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: none; text-align: right; direction: rtl; }
@@ -77,18 +78,19 @@
             { name: "الدمام", lat: 26.4207, lng: 50.0888, type: "city" }
         ];
 
-        const map = L.map('map').setView([23.8859, 45.0792], 6);
+        const map = L.map('map', {
+            zoomControl: false,
+            attributionControl: false
+        }).setView([23.8859, 45.0792], 6);
         
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
-        }).addTo(map);
+        const tileUrl = "https://" + "{s}.tile." + "openstreetmap.org/{z}/{x}/{y}.png";
+        L.tileLayer(tileUrl).addTo(map);
 
         let currentMarker = null;
         const searchInput = document.getElementById('searchInput');
         const resultsList = document.getElementById('resultsList');
         const statusMsg = document.getElementById('statusMsg');
 
-        // دالة موحدة لتحديث الدبوس وجلب العنوان تلقائياً
         function selectLocation(lat, lng, popupText = null) {
             if (currentMarker) {
                 currentMarker.setLatLng([lat, lng]);
@@ -102,7 +104,10 @@
 
             statusMsg.textContent = "جاري جلب تفاصيل العنوان...";
 
-            fetch(`https://openstreetmap.org{lat}&lon=${lng}&accept-language=ar`)
+            const apiBase = "https://" + "nominatim." + "openstreetmap.org/reverse";
+            const apiUrl = `${apiBase}?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=ar`;
+
+            fetch(apiUrl)
                 .then(response => response.json())
                 .then(data => {
                     if (data && data.address) {
@@ -131,7 +136,6 @@
                 });
         }
 
-        // البحث في القائمة
         searchInput.addEventListener('input', function() {
             const query = this.value.trim().toLowerCase();
             resultsList.innerHTML = '';
@@ -153,8 +157,6 @@
                         map.setView([loc.lat, loc.lng], zoomLevel);
                         searchInput.value = loc.name;
                         resultsList.style.display = 'none';
-                        
-                        // تعبئة البيانات تلقائياً عند اختيار نتيجة البحث
                         selectLocation(loc.lat, loc.lng, loc.name);
                     });
                     resultsList.appendChild(li);
@@ -170,14 +172,12 @@
             }
         });
 
-        // عند النقر أو اللمس في أي مكان على الخريطة
         map.on('click', function(e) {
             selectLocation(e.latlng.lat, e.latlng.lng);
         });
 
         setTimeout(function(){ map.invalidateSize(); }, 400);
 
-        // نسخ العنوان الوطني
         document.getElementById('copyBtn').addEventListener('click', function() {
             const suburb = document.getElementById('addr-suburb').value;
             const building = document.getElementById('addr-building').value;
@@ -186,10 +186,35 @@
             const unit = document.getElementById('addr-unit').value;
             const shortAddr = document.getElementById('addr-short').value;
 
-            const fullAddress = `العنوان الوطني:\nالحي: ${suburb || 'غير محدد'}\nرقم المبنى: ${building || 'غير محدد'}\nالرمز البريدي: ${postal || 'غير محدد'}\nالرمز الإضافي: ${additional || 'غير محدد'}\nرقم الوحدة: ${unit || 'غير محدد'}\nالعنوان المختصر: ${shortAddr || 'غير محدد'}`;
+            const fullAddress = `العنوان الوطني:
+الحي: ${suburb || 'غير محدد'}
+رقم المبنى: ${building || 'غير محدد'}
+الرمز البريدي: ${postal || 'غير محدد'}
+الرمز الإضافي: ${additional || 'غير محدد'}
+رقم الوحدة: ${unit || 'غير محدد'}
+العنوان المختصر: ${shortAddr || 'غير محدد'}`;
 
             navigator.clipboard.writeText(fullAddress).then(() => {
                 const btn = document.getElementById('copyBtn');
                 btn.textContent = "تم النسخ بنجاح! ✓";
                 btn.style.backgroundColor = "#28a745";
                 
+                setTimeout(() => {
+                    btn.textContent = "نسخ العنوان الوطني";
+                    btn.style.backgroundColor = "#007bff";
+                }, 2000);
+            }).catch(err => {
+                alert("لم نتمكن من النسخ تلقائياً: " + err);
+            });
+        });
+
+        if (window.location.search.includes('mode=map')) {
+            document.querySelector('.address-form').style.display = 'none';
+            document.querySelector('.search-container').style.display = 'none';
+            document.getElementById('map').style.height = '100vh'; 
+        } else if (window.location.search.includes('mode=form')) {
+            document.getElementById('map').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
