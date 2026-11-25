@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>البحث الكامل</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            direction: rtl;
+            overflow: hidden;
+        }
+        .search-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
+        }
+        .search-header {
+            width: 100%;
+            padding: 12px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .search-box {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 16px;
+            text-align: right;
+            background-color: #ffffff;
+            outline: none;
+        }
+        .search-box:focus {
+            border-color: #007bff;
+        }
+        .results-list {
+            flex: 1;
+            width: 100%;
+            list-style: none;
+            overflow-y: auto;
+            background-color: #ffffff;
+        }
+        .results-list li {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            font-size: 16px;
+            color: #222;
+        }
+        .results-list li:active {
+            background-color: #e9f2ff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="search-screen">
+        <div class="search-header">
+            <input type="text" id="searchInput" class="search-box" placeholder="ابحث عن مدينة أو حي..." autofocus>
+        </div>
+        <ul id="resultsList" class="results-list"></ul>
+    </div>
+
+    <script>
+        const locations = [
+            { name: "الرياض (العاصمة)", lat: 24.7136, lng: 46.6753, type: "city" },
+            { name: "الرياض - حي العليا", lat: 24.7105, lng: 46.6669, type: "district" },
+            { name: "الرياض - حي الصحافة", lat: 24.8016, lng: 46.6294, type: "district" },
+            { name: "جدة", lat: 21.5433, lng: 39.1728, type: "city" },
+            { name: "جدة - حي الصفا", lat: 21.5794, lng: 39.2131, type: "district" },
+            { name: "جدة - حي النعيم", lat: 21.6247, lng: 39.1481, type: "district" },
+            { name: "مكة المكرمة", lat: 21.3891, lng: 39.8579, type: "city" },
+            { name: "مكة المكرمة - حي العزيزية", lat: 21.4111, lng: 39.8702, type: "district" },
+            { name: "المدينة المنورة", lat: 24.5247, lng: 39.5692, type: "city" },
+            { name: "الدمام", lat: 26.4207, lng: 50.0888, type: "city" }
+        ];
+
+        const searchInput = document.getElementById('searchInput');
+        const resultsList = document.getElementById('resultsList');
+
+        function renderList(items) {
+            resultsList.innerHTML = '';
+            items.forEach(loc => {
+                const li = document.createElement('li');
+                li.textContent = loc.name;
+                li.addEventListener('click', function() {
+                    const zoomLevel = loc.type === 'city' ? 11 : 15;
+                    const payload = JSON.stringify({
+                        name: loc.name,
+                        lat: loc.lat,
+                        lng: loc.lng,
+                        zoom: zoomLevel
+                    });
+
+                    localStorage.setItem('selected_location', payload);
+                    if (window.AppInventor && window.AppInventor.setWebViewString) {
+                        window.AppInventor.setWebViewString(payload);
+                    }
+
+                    searchInput.value = loc.name;
+                });
+                resultsList.appendChild(li);
+            });
+        }
+
+        // عرض القائمة كاملة عند الفتح لتملأ الشاشة
+        renderList(locations);
+
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim().toLowerCase();
+            if (query === '') {
+                renderList(locations);
+                return;
+            }
+            const filtered = locations.filter(loc => loc.name.toLowerCase().includes(query));
+            renderList(filtered);
+        });
+    </script>
+</body>
+</html>
